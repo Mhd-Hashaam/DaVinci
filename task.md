@@ -63,12 +63,12 @@
   - [x] Update Reset to work with history
   - [x] Test with various edits
 
-## Phase 4: Model Selection ⏳
-- [ ] Create ModelSelector component
-- [ ] Add dropdown with models (Gemini 2.5 Flash, 1.5 Pro, Imagen 3)
-- [ ] Visual active state indicator
-- [ ] Integrate into Sidebar
-- [ ] Connect to generation API
+## Phase 4: Model Selection ✅
+- [x] Create ModelSelector component
+- [x] Add dropdown with models (Gemini 2.5 Flash, 1.5 Pro, Imagen 3)
+- [x] Visual active state indicator
+- [x] Integrate into Sidebar
+- [x] Connect to generation API
 
 ## Phase 5: Branding Improvements ⏳
 - [ ] Spelling corrections

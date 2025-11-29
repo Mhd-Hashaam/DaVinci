@@ -16,6 +16,8 @@ interface SidebarProps {
     setIsCollapsed: (collapsed: boolean) => void;
     generationCount: number;
     setGenerationCount: (count: number) => void;
+    model: AIModel;
+    setModel: (model: AIModel) => void;
 }
 
 const MIN_WIDTH = 240;
@@ -31,7 +33,9 @@ const Sidebar: React.FC<SidebarProps> = ({
     isCollapsed,
     setIsCollapsed,
     generationCount,
-    setGenerationCount
+    setGenerationCount,
+    model,
+    setModel
 }) => {
     const [isResizing, setIsResizing] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(true);
@@ -41,7 +45,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     const [imageSize, setImageSize] = useState<ImageSize>('Medium');
     const [promptEnhance, setPromptEnhance] = useState<PromptEnhance>('Auto');
     const [style, setStyle] = useState<StylePreset>('Dynamic');
-    const [model, setModel] = useState<AIModel>('Gemini 2.5 Flash');
 
     const sidebarRef = useRef<HTMLDivElement>(null);
     const settingsRef = useRef<HTMLDivElement>(null);

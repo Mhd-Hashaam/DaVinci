@@ -8,6 +8,7 @@ import EditModal from './components/EditModal';
 import InteractiveTutorial from './components/Tutorial';
 import { generateImage } from './services/gemini';
 import { GeneratedImage, AspectRatio } from './types';
+import { AIModel } from './types/settings';
 import { MOCK_IMAGES, MODEL_NAME } from './constants';
 import { Sparkles, Layers, Search, Archive, HelpCircle } from 'lucide-react';
 
@@ -22,6 +23,7 @@ const App: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [loadingPrompt, setLoadingPrompt] = useState<string | null>(null);
   const [generationCount, setGenerationCount] = useState(1);
+  const [model, setModel] = useState<AIModel>('Gemini 2.5 Flash');
 
   // Layout State
   const [sidebarWidth, setSidebarWidth] = useState(260);
@@ -43,7 +45,7 @@ const App: React.FC = () => {
       // Simulate multiple generations if count > 1
       // In a real app, the API would handle batching or we'd loop requests
       // For now, we'll just generate one and duplicate it with unique IDs for the demo
-      const imageUrl = await generateImage(prompt, aspectRatio);
+      const imageUrl = await generateImage(prompt, aspectRatio, model);
 
       const newImages: GeneratedImage[] = Array.from({ length: generationCount }).map((_, i) => ({
         id: crypto.randomUUID(),
@@ -51,7 +53,7 @@ const App: React.FC = () => {
         prompt: prompt,
         aspectRatio: aspectRatio,
         timestamp: Date.now() + i, // slight offset
-        model: MODEL_NAME,
+        model: model,
       }));
 
       setImages((prev) => [...newImages, ...prev]);
@@ -106,6 +108,8 @@ const App: React.FC = () => {
         setIsCollapsed={setIsSidebarCollapsed}
         generationCount={generationCount}
         setGenerationCount={setGenerationCount}
+        model={model}
+        setModel={setModel}
       />
 
       <main

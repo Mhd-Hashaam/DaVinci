@@ -1,72 +1,91 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Cpu, ChevronDown } from 'lucide-react';
+import React from 'react';
+import { Sparkles, Zap, Brain, Image as ImageIcon } from 'lucide-react';
 import { AIModel } from '../types/settings';
 
 interface ModelSelectorProps {
     selected: AIModel;
-    onChange: (value: AIModel) => void;
+    onChange: (model: AIModel) => void;
 }
 
 const ModelSelector: React.FC<ModelSelectorProps> = ({ selected, onChange }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    const options: AIModel[] = ['Gemini 2.5 Flash', 'Gemini 1.5 Pro', 'Imagen 3'];
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    const models: { id: AIModel; label: string; description: string; icon: React.ReactNode; color: string }[] = [
+        {
+            id: 'Gemini 2.5 Flash',
+            label: 'Gemini 2.5 Flash',
+            description: 'Fastest generation, great for iteration',
+            icon: <Zap size={16} />,
+            color: 'text-yellow-400'
+        },
+        {
+            id: 'Gemini 1.5 Pro',
+            label: 'Gemini 1.5 Pro',
+            description: 'High reasoning, better complex prompts',
+            icon: <Brain size={16} />,
+            color: 'text-blue-400'
+        },
+        {
+            id: 'Imagen 3',
+            label: 'Imagen 3',
+            description: 'Photorealistic, best for artistic styles',
+            icon: <ImageIcon size={16} />,
+            color: 'text-purple-400'
+        }
+    ];
 
     return (
-        <div className="space-y-2" ref={dropdownRef}>
-            <label className="text-xs text-zinc-500 font-medium flex items-center gap-1.5">
-                <Cpu size={12} className="text-blue-500" />
-                Model
+        <div className="space-y-3">
+            <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+                <Sparkles size={12} className="text-indigo-400" />
+                AI Model
             </label>
+
             <div className="relative">
                 <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="w-full p-2.5 bg-white/5 border border-white/10 rounded-lg flex items-center justify-between hover:bg-white/10 hover:border-white/20 transition-all text-sm group"
+                    className="w-full flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
+                    onClick={() => {
+                        // This could toggle a dropdown, but for now we'll just cycle or show a list
+                        // For this implementation, let's render the list directly below instead of a dropdown button
+                    }}
                 >
-                    <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
-                        <span className="text-zinc-200 font-medium">{selected}</span>
+                    <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg bg-white/5 ${models.find(m => m.id === selected)?.color}`}>
+                            {models.find(m => m.id === selected)?.icon}
+                        </div>
+                        <div className="text-left">
+                            <div className="text-sm font-medium text-white">
+                                {models.find(m => m.id === selected)?.label}
+                            </div>
+                            <div className="text-[10px] text-zinc-500">
+                                {models.find(m => m.id === selected)?.description}
+                            </div>
+                        </div>
                     </div>
-                    <ChevronDown size={16} className={`text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {isOpen && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-[#18181b] border border-white/10 rounded-lg shadow-2xl z-50 overflow-hidden">
-                        {options.map(option => (
-                            <button
-                                key={option}
-                                onClick={() => {
-                                    onChange(option);
-                                    setIsOpen(false);
-                                }}
-                                className={`
-                                    w-full px-3 py-2.5 text-left text-sm transition-colors flex items-center gap-2
-                                    ${selected === option
-                                        ? 'bg-indigo-600 text-white'
-                                        : 'text-zinc-300 hover:bg-white/10'
-                                    }
-                                `}
-                            >
-                                {selected === option && (
-                                    <div className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
-                                )}
-                                {selected !== option && <div className="w-2 h-2"></div>}
-                                <span>{option}</span>
-                            </button>
-                        ))}
-                    </div>
-                )}
+                <div className="mt-2 space-y-1">
+                    {models.map((model) => (
+                        <button
+                            key={model.id}
+                            onClick={() => onChange(model.id)}
+                            className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all ${selected === model.id
+                                    ? 'bg-indigo-600/10 border border-indigo-600/20'
+                                    : 'hover:bg-white/5 border border-transparent'
+                                }`}
+                        >
+                            <div className={`p-1.5 rounded-md ${selected === model.id ? 'bg-indigo-600/20' : 'bg-white/5'} ${model.color}`}>
+                                {model.icon}
+                            </div>
+                            <div className="text-left flex-1">
+                                <div className={`text-xs font-medium ${selected === model.id ? 'text-indigo-300' : 'text-zinc-300'}`}>
+                                    {model.label}
+                                </div>
+                            </div>
+                            {selected === model.id && (
+                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
+                            )}
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
     );

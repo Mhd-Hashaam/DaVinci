@@ -7,11 +7,12 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateImage = async (
   prompt: string,
-  aspectRatio: AspectRatio = "1:1"
+  aspectRatio: AspectRatio = "1:1",
+  model: string = MODEL_NAME
 ): Promise<string> => {
   try {
     const response = await ai.models.generateContent({
-      model: MODEL_NAME,
+      model: model,
       contents: {
         parts: [
           {
@@ -32,13 +33,13 @@ export const generateImage = async (
     const candidate = response.candidates?.[0];
 
     if (candidate?.content?.parts) {
-        for (const part of candidate.content.parts) {
-            if (part.inlineData) {
-                const base64EncodeString: string = part.inlineData.data;
-                imageUrl = `data:${part.inlineData.mimeType};base64,${base64EncodeString}`;
-                break; // Found the image, exit loop
-            }
+      for (const part of candidate.content.parts) {
+        if (part.inlineData) {
+          const base64EncodeString: string = part.inlineData.data;
+          imageUrl = `data:${part.inlineData.mimeType};base64,${base64EncodeString}`;
+          break; // Found the image, exit loop
         }
+      }
     }
 
     if (!imageUrl) {
@@ -50,7 +51,7 @@ export const generateImage = async (
 
       // Check for safety stops or other finish reasons
       if (candidate?.finishReason && candidate.finishReason !== 'STOP') {
-         throw new Error(`Image generation stopped. Reason: ${candidate.finishReason}`);
+        throw new Error(`Image generation stopped. Reason: ${candidate.finishReason}`);
       }
 
       throw new Error("No image data found in response");
