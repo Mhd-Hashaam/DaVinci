@@ -20,7 +20,7 @@
 ### 1. Sidebar Components
 *   **Header:**
     *   Contains a **Collapse Button** (`PanelLeft` icon from Lucide) aligned left.
-    *   **Logo Text:** "DeVinchi" (Sans-serif, Semi-bold, White). Hidden when collapsed.
+    *   **Logo Text:** "DaVinci" (Sans-serif, Semi-bold, White). Hidden when collapsed.
 *   **Navigation:**
     *   Vertical list: Explore, Create, Archive.
     *   **Active State:** `bg-white/10`, text-white, shadow-sm.
@@ -80,10 +80,10 @@
 
 ---
 
-## 5. Animations & Transitions# DeVinchi Studio - UI Design Specification
+## 5. Animations & Transitions# DaVinci Studio - UI Design Specification
 
 ## 1. Project Overview & Aesthetic
-**DeVinchi Studio** is a high-fidelity AI image generation web application. The design philosophy is "Professional Creative Studio." It borrows aesthetic cues from Midjourney, Linear, and V0, focusing on a dark, immersive environment where the content (images) takes center stage.
+**DaVinci Studio** is a high-fidelity AI image generation web application. The design philosophy is "Professional Creative Studio." It borrows aesthetic cues from Midjourney, Linear, and V0, focusing on a dark, immersive environment where the content (images) takes center stage.
 
 *   **Theme:** Deep Dark Mode (Zinc-950 base).
 *   **Vibe:** Industrial, Minimalist, Precision-engineered.

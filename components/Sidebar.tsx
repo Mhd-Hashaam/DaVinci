@@ -7,6 +7,8 @@ import StyleDropdown from './StyleDropdown';
 import ModelSelector from './ModelSelector';
 import { ImageDimension, ImageSize, PromptEnhance, StylePreset, AIModel } from '../types/settings';
 
+import Logo from './Logo';
+
 interface SidebarProps {
     activeTab: string;
     setActiveTab: (tab: string) => void;
@@ -306,8 +308,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 {/* Header with Collapse Button & Logo */}
                 <div className={`h-16 flex items-center px-5 border-b border-white/5 shrink-0 bg-[#09090b] ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
                     {!isCollapsed && (
-                        <div ref={logoRef} className="flex items-center">
-                            <span className="font-semibold text-lg tracking-tight text-zinc-100 whitespace-nowrap">
+                        <div ref={logoRef} className="flex items-center gap-3">
+                            <Logo size={24} />
+                            <span className="font-semibold text-lg tracking-tight text-zinc-100 whitespace-nowrap font-display">
                                 DaVinci
                             </span>
                         </div>
