@@ -83,9 +83,17 @@
   - [x] Update Tailwind config
   - [x] Apply throughout app
 
-## Phase 6: Explore Section ⏳
-- [ ] Create Explore page
-- [ ] Implement masonry grid
-- [ ] Add filters (Trending, Recent, Following)
-- [ ] Implement infinite scroll
-- [ ] Add like/bookmark functionality
+## Phase 6: Explore Section ✅
+- [x] Create Explore page
+- [x] Implement masonry grid
+- [x] Add filters (Trending, Recent, Following)
+- [x] Implement infinite scroll
+- [x] Add like/bookmark functionality
+
+## Phase 7: Prompt Bar Redesign ✅
+- [x] Lift state to App.tsx
+- [x] Redesign PromptBar UI (Firefly style)
+- [x] Move Model Selector to PromptBar
+- [x] Move Aspect Ratio to PromptBar
+- [x] Move Style Selector to PromptBar
+- [x] Cleanup Sidebar

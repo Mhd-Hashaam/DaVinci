@@ -6,10 +6,12 @@ import ImageModal from './components/ImageModal';
 import MockupModal from './components/MockupModal';
 import EditModal from './components/EditModal';
 import InteractiveTutorial from './components/Tutorial';
+import ExploreGrid from './components/ExploreGrid';
+import ExploreFilters from './components/ExploreFilters';
 import { generateImage } from './services/gemini';
 import { GeneratedImage, AspectRatio } from './types';
-import { AIModel } from './types/settings';
-import { MOCK_IMAGES, MODEL_NAME } from './constants';
+import { AIModel, ImageDimension, ImageSize, PromptEnhance, StylePreset } from './types/settings';
+import { MOCK_IMAGES, EXPLORE_IMAGES, MODEL_NAME } from './constants';
 import { Sparkles, Layers, Search, Archive, HelpCircle } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -25,6 +27,18 @@ const App: React.FC = () => {
   const [generationCount, setGenerationCount] = useState(1);
   const [model, setModel] = useState<AIModel>('Gemini 2.5 Flash');
 
+  // Explore State
+  const [exploreImages, setExploreImages] = useState<GeneratedImage[]>([]);
+  const [exploreFilter, setExploreFilter] = useState('trending');
+  const [exploreTimeframe, setExploreTimeframe] = useState('This Week');
+  const [explorePage, setExplorePage] = useState(1);
+
+  // Generation Settings State (Lifted from Sidebar)
+  const [imageDimension, setImageDimension] = useState<AspectRatio | AspectRatio[]>('1:1');
+  const [imageSize, setImageSize] = useState<ImageSize>('Medium');
+  const [promptEnhance, setPromptEnhance] = useState<PromptEnhance>('Auto');
+  const [style, setStyle] = useState<StylePreset>('Dynamic');
+
   // Layout State
   const [sidebarWidth, setSidebarWidth] = useState(260);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -32,9 +46,10 @@ const App: React.FC = () => {
   // Load initial mock data
   useEffect(() => {
     setImages(MOCK_IMAGES);
+    setExploreImages(EXPLORE_IMAGES);
   }, []);
 
-  const handleGenerate = async (prompt: string, aspectRatio: AspectRatio) => {
+  const handleGenerate = async (prompt: string, aspectRatio: AspectRatio | AspectRatio[]) => {
     setIsGenerating(true);
     setLoadingPrompt(prompt);
 
@@ -42,19 +57,23 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
-      // Simulate multiple generations if count > 1
-      // In a real app, the API would handle batching or we'd loop requests
-      // For now, we'll just generate one and duplicate it with unique IDs for the demo
-      const imageUrl = await generateImage(prompt, aspectRatio, model);
+      const ratiosToGenerate = Array.isArray(aspectRatio) ? aspectRatio : [aspectRatio];
 
-      const newImages: GeneratedImage[] = Array.from({ length: generationCount }).map((_, i) => ({
-        id: crypto.randomUUID(),
-        url: imageUrl,
-        prompt: prompt,
-        aspectRatio: aspectRatio,
-        timestamp: Date.now() + i, // slight offset
-        model: model,
-      }));
+      // Generate for each selected aspect ratio
+      const generationPromises = ratiosToGenerate.map(async (ratio) => {
+        const imageUrl = await generateImage(prompt, ratio, model);
+        return Array.from({ length: generationCount }).map((_, i) => ({
+          id: crypto.randomUUID(),
+          url: imageUrl,
+          prompt: prompt,
+          aspectRatio: ratio,
+          timestamp: Date.now() + i, // slight offset
+          model: model,
+        }));
+      });
+
+      const results = await Promise.all(generationPromises);
+      const newImages = results.flat();
 
       setImages((prev) => [...newImages, ...prev]);
     } catch (error: any) {
@@ -84,6 +103,17 @@ const App: React.FC = () => {
     });
   };
 
+  const loadMoreExplore = () => {
+    // Simulate loading more images
+    const moreImages = EXPLORE_IMAGES.map(img => ({
+      ...img,
+      id: crypto.randomUUID(), // New IDs to avoid key conflicts
+      timestamp: Date.now() - Math.random() * 10000000
+    }));
+    setExploreImages(prev => [...prev, ...moreImages]);
+    setExplorePage(prev => prev + 1);
+  };
+
   const contentMargin = isSidebarCollapsed ? 80 : sidebarWidth;
 
   const getDisplayedImages = () => {
@@ -108,8 +138,6 @@ const App: React.FC = () => {
         setIsCollapsed={setIsSidebarCollapsed}
         generationCount={generationCount}
         setGenerationCount={setGenerationCount}
-        model={model}
-        setModel={setModel}
       />
 
       <main
@@ -124,7 +152,16 @@ const App: React.FC = () => {
             {/* Search / Prompt Area */}
             <div className="flex-1 max-w-4xl mx-auto w-full">
               {activeTab === 'create' ? (
-                <PromptBar onGenerate={handleGenerate} isGenerating={isGenerating} />
+                <PromptBar
+                  onGenerate={handleGenerate}
+                  isGenerating={isGenerating}
+                  model={model}
+                  setModel={setModel}
+                  aspectRatio={imageDimension}
+                  setAspectRatio={(ratio) => setImageDimension(ratio)}
+                  style={style}
+                  setStyle={setStyle}
+                />
               ) : (
                 <div className="bg-white/5 border border-white/5 rounded-2xl h-12 flex items-center px-4 text-zinc-500 w-full max-w-2xl mx-auto">
                   <Search size={18} className="mr-3" />
@@ -181,16 +218,33 @@ const App: React.FC = () => {
             </div>
           )}
 
-          <ImageGrid
-            images={displayedImages}
-            onImageClick={setSelectedImage}
-            onMockupClick={setMockupImage}
-            onBookmarkClick={handleBookmark}
-            onEditClick={setEditImage}
-          />
+          {activeTab === 'explore' ? (
+            <>
+              <ExploreFilters
+                activeFilter={exploreFilter}
+                onFilterChange={setExploreFilter}
+                timeframe={exploreTimeframe}
+                onTimeframeChange={setExploreTimeframe}
+              />
+              <ExploreGrid
+                images={exploreImages}
+                onImageClick={setSelectedImage}
+                onLoadMore={loadMoreExplore}
+                hasMore={true}
+              />
+            </>
+          ) : (
+            <ImageGrid
+              images={displayedImages}
+              onImageClick={setSelectedImage}
+              onMockupClick={setMockupImage}
+              onBookmarkClick={handleBookmark}
+              onEditClick={setEditImage}
+            />
+          )}
 
           {/* Empty States */}
-          {displayedImages.length === 0 && !isGenerating && (
+          {displayedImages.length === 0 && !isGenerating && activeTab !== 'explore' && (
             <div className="flex flex-col items-center justify-center h-[50vh] text-zinc-600">
               <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6 rotate-12">
                 {activeTab === 'bookmarks' ? <Archive size={32} className="opacity-50" /> : <Sparkles size={32} className="opacity-50" />}

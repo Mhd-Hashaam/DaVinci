@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Compass, Image as ImageIcon, Archive, ChevronRight, Sliders, Zap, PanelLeft } from 'lucide-react';
 import { gsap } from 'gsap';
-import ImageDimensionSelector from './ImageDimensionSelector';
 import PromptEnhanceDropdown from './PromptEnhanceDropdown';
-import StyleDropdown from './StyleDropdown';
-import ModelSelector from './ModelSelector';
-import { ImageDimension, ImageSize, PromptEnhance, StylePreset, AIModel } from '../types/settings';
+import { PromptEnhance, AIModel } from '../types/settings';
 
-import Logo from './Logo';
+import BrandLogo from './BrandLogo';
 
 interface SidebarProps {
     activeTab: string;
@@ -18,8 +15,6 @@ interface SidebarProps {
     setIsCollapsed: (collapsed: boolean) => void;
     generationCount: number;
     setGenerationCount: (count: number) => void;
-    model: AIModel;
-    setModel: (model: AIModel) => void;
 }
 
 const MIN_WIDTH = 240;
@@ -35,18 +30,13 @@ const Sidebar: React.FC<SidebarProps> = ({
     isCollapsed,
     setIsCollapsed,
     generationCount,
-    setGenerationCount,
-    model,
-    setModel
+    setGenerationCount
 }) => {
     const [isResizing, setIsResizing] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(true);
 
     // Generation settings state
-    const [imageDimension, setImageDimension] = useState<ImageDimension>('1:1');
-    const [imageSize, setImageSize] = useState<ImageSize>('Medium');
     const [promptEnhance, setPromptEnhance] = useState<PromptEnhance>('Auto');
-    const [style, setStyle] = useState<StylePreset>('Dynamic');
 
     const sidebarRef = useRef<HTMLDivElement>(null);
     const settingsRef = useRef<HTMLDivElement>(null);
@@ -308,11 +298,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                 {/* Header with Collapse Button & Logo */}
                 <div className={`h-16 flex items-center px-5 border-b border-white/5 shrink-0 bg-[#09090b] ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
                     {!isCollapsed && (
-                        <div ref={logoRef} className="flex items-center gap-3">
-                            <Logo size={24} />
-                            <span className="font-semibold text-lg tracking-tight text-zinc-100 whitespace-nowrap font-display">
-                                DaVinci
-                            </span>
+                        <div ref={logoRef} className="flex-1 min-w-0">
+                            <BrandLogo />
                         </div>
                     )}
 
@@ -332,7 +319,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {menuItems.map((item, index) => (
                             <button
                                 key={item.id}
-                                ref={(el) => navItemsRef.current[index] = el}
+                                ref={(el) => { if (el) navItemsRef.current[index] = el; }}
                                 onClick={() => setActiveTab(item.id)}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 w-full group relative
                     ${activeTab === item.id
@@ -376,30 +363,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                                 {showAdvanced && (
                                     <div className="space-y-5 animate-in slide-in-from-top-2 duration-200">
-                                        {/* Image Dimensions */}
-                                        <ImageDimensionSelector
-                                            selectedDimension={imageDimension}
-                                            selectedSize={imageSize}
-                                            onDimensionChange={setImageDimension}
-                                            onSizeChange={setImageSize}
-                                        />
 
                                         {/* Prompt Enhance */}
                                         <PromptEnhanceDropdown
                                             selected={promptEnhance}
                                             onChange={setPromptEnhance}
-                                        />
-
-                                        {/* Style */}
-                                        <StyleDropdown
-                                            selected={style}
-                                            onChange={setStyle}
-                                        />
-
-                                        {/* Model */}
-                                        <ModelSelector
-                                            selected={model}
-                                            onChange={setModel}
                                         />
 
                                         {/* Image Count */}

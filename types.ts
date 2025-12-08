@@ -9,7 +9,7 @@ export interface GeneratedImage {
   model: string;
 }
 
-export type AspectRatio = "1:1" | "3:4" | "4:3" | "9:16" | "16:9";
+export type AspectRatio = "1:1" | "3:4" | "4:3" | "9:16" | "16:9" | "4:5" | "2:3" | "5:7";
 
 export interface GenerationConfig {
   aspectRatio: AspectRatio;
