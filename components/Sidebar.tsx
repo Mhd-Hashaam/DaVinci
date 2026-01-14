@@ -17,7 +17,7 @@ interface SidebarProps {
     setGenerationCount: (count: number) => void;
 }
 
-const MIN_WIDTH = 240;
+const MIN_WIDTH = 220;
 const MAX_WIDTH = 480;
 const COLLAPSED_WIDTH = 80;
 
@@ -292,7 +292,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <>
             <div
                 ref={sidebarRef}
-                className="fixed left-0 top-0 h-full bg-[#09090b] border-r border-white/5 flex flex-col z-50 select-none shadow-2xl"
+                className="h-full bg-[#09090b] border-r border-white/5 flex flex-col z-50 select-none shadow-2xl"
                 style={{ width: isCollapsed ? COLLAPSED_WIDTH : width }}
             >
                 {/* Header with Collapse Button & Logo */}
@@ -381,9 +381,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                                                     <button
                                                         key={num}
                                                         onClick={() => setGenerationCount(num)}
-                                                        className={`flex-1 h-8 rounded-lg text-xs font-medium transition-all ${generationCount === num
-                                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                                                            : 'bg-white/5 text-zinc-400 hover:bg-white/10'
+                                                        className={`flex-1 h-8 rounded-lg text-xs font-medium transition-all border ${generationCount === num
+                                                            ? 'bg-transparent border-indigo-500 text-indigo-400 shadow-sm shadow-indigo-500/10'
+                                                            : 'bg-transparent border-white/5 text-zinc-500 hover:border-white/20 hover:text-zinc-300'
                                                             }`}
                                                     >
                                                         {num}
@@ -398,7 +398,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                                                 <span className="text-zinc-400">Guidance Scale</span>
                                                 <span className="text-zinc-500 font-mono">7.5</span>
                                             </div>
-                                            <input type="range" className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:bg-indigo-400 hover:[&::-webkit-slider-thumb]:scale-125 transition-all" />
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="20"
+                                                step="0.5"
+                                                className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:bg-indigo-400 hover:[&::-webkit-slider-thumb]:scale-125 transition-all"
+                                            />
                                         </div>
 
                                         {/* Reset Button */}

@@ -10,21 +10,21 @@ interface ModelSelectorProps {
 const ModelSelector: React.FC<ModelSelectorProps> = ({ selected, onChange }) => {
     const models: { id: AIModel; label: string; description: string; icon: React.ReactNode; color: string }[] = [
         {
-            id: 'Gemini 2.5 Flash',
+            id: 'gemini-2.5-flash',
             label: 'Gemini 2.5 Flash',
             description: 'Fastest generation, great for iteration',
             icon: <Zap size={16} />,
             color: 'text-yellow-400'
         },
         {
-            id: 'Gemini 1.5 Pro',
+            id: 'gemini-1.5-pro',
             label: 'Gemini 1.5 Pro',
             description: 'High reasoning, better complex prompts',
             icon: <Brain size={16} />,
             color: 'text-blue-400'
         },
         {
-            id: 'Imagen 3',
+            id: 'imagen-3',
             label: 'Imagen 3',
             description: 'Photorealistic, best for artistic styles',
             icon: <ImageIcon size={16} />,
@@ -68,8 +68,8 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ selected, onChange }) => 
                             key={model.id}
                             onClick={() => onChange(model.id)}
                             className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all ${selected === model.id
-                                    ? 'bg-indigo-600/10 border border-indigo-600/20'
-                                    : 'hover:bg-white/5 border border-transparent'
+                                ? 'bg-indigo-600/10 border border-indigo-600/20'
+                                : 'hover:bg-white/5 border border-transparent'
                                 }`}
                         >
                             <div className={`p-1.5 rounded-md ${selected === model.id ? 'bg-indigo-600/20' : 'bg-white/5'} ${model.color}`}>

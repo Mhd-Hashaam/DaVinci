@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -16,14 +18,14 @@ const NeuralMaterial = shaderMaterial(
         uOpacity: 0.43,
     },
     // Vertex Shader
-    `
+    `precision mediump float;
     varying float vDistortion;
     uniform float uTime;
     uniform float uFrequency;
     uniform float uAmplitude;
     uniform float uDensity;
     uniform float uStrength;
-
+    
     // Classic Perlin 3D Noise 
     vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
     vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -107,7 +109,7 @@ const NeuralMaterial = shaderMaterial(
     }
   `,
     // Fragment Shader
-    `
+    `precision mediump float;
     uniform float uOpacity;
     uniform float uDeepPurple;
     varying float vDistortion;
@@ -151,9 +153,15 @@ const NeuralOrb: React.FC<NeuralOrbProps> = ({ interactive = true, mousePosition
             meshRef.current.rotation.y += delta * 0.05;
         }
 
-        if (materialRef.current && interactive && mousePosition) {
-            const mouseX = mousePosition.x;
-            const mouseY = mousePosition.y;
+        // Animate shader time
+        if (materialRef.current) {
+            materialRef.current.uTime += delta;
+        }
+
+        if (materialRef.current && interactive) {
+            // Use prop if provided, otherwise use R3F pointer
+            const mouseX = mousePosition ? mousePosition.x : (state.pointer.x + 1) / 2;
+            const mouseY = mousePosition ? mousePosition.y : (state.pointer.y + 1) / 2;
 
             // Update uniforms based on window mouse position
             materialRef.current.uFrequency = THREE.MathUtils.lerp(

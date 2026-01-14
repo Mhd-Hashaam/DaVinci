@@ -32,7 +32,7 @@ const PromptEnhanceDropdown: React.FC<PromptEnhanceDropdownProps> = ({ selected,
             <div className="relative">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="w-full p-2.5 bg-white/5 border border-white/10 rounded-lg flex items-center justify-between hover:bg-white/10 hover:border-white/20 transition-all text-sm"
+                    className="w-full p-2.5 bg-transparent border border-white/10 rounded-lg flex items-center justify-between hover:border-white/20 transition-all text-sm"
                 >
                     <span className="text-zinc-200 font-medium">{selected}</span>
                     <ChevronDown size={16} className={`text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />

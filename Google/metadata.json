@@ -1,0 +1,5 @@
+{
+  "name": "Ethereal Queen Card Recreation",
+  "description": "A pixel-perfect recreation of the Ethereal Queen UI card featuring glassmorphism effects, crisp typography, and high-fidelity styling using Tailwind CSS and GSAP.",
+  "requestFramePermissions": []
+}

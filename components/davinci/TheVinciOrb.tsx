@@ -7,7 +7,7 @@ import { shaderMaterial } from '@react-three/drei';
 import { extend } from '@react-three/fiber';
 import { WebGLErrorBoundary } from '@/components/WebGLErrorBoundary';
 
-// Custom Shader Material - TheVinci Style (Deep Mauve/Purple Palette)
+// Custom Shader Material - TheVinci Style (Ambient Purple/Magenta)
 const TheVinciMaterial = shaderMaterial(
     {
         uTime: 0,
@@ -17,6 +17,8 @@ const TheVinciMaterial = shaderMaterial(
         uStrength: 0.33,
         uDeepPurple: 0.7,
         uOpacity: 0.43,
+        uBreathPhase: 0,        // Breathing animation
+        uColorShift: 0,         // Ambient color shifting
     },
     // Vertex Shader
     `precision mediump float;
@@ -109,33 +111,41 @@ const TheVinciMaterial = shaderMaterial(
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
     }
   `,
-    // Fragment Shader - EXTREME: Pure Purple/Magenta ONLY (Zero Green)
+    // Fragment Shader - Ambient Purple/Magenta with Color Shifting
     `precision mediump float;
     uniform float uOpacity;
     uniform float uDeepPurple;
+    uniform float uColorShift;
     varying float vDistortion;
 
     void main() {
-        // Simple gradient: Deep Purple -> Magenta -> Violet
-        // ZERO GREEN CHANNEL - no possibility of white
         float t = abs(vDistortion) * 3.0;
         
-        // Purple base (R: 0.4-0.8, G: 0.0, B: 0.6-1.0)
-        float r = 0.4 + sin(t * 2.0) * 0.4;  // 0.0 to 0.8
-        float g = 0.0;                        // ALWAYS ZERO - no white!
-        float b = 0.6 + cos(t * 1.5) * 0.4;  // 0.2 to 1.0
+        // Ambient color shifting - colors flow smoothly over time
+        float shift = uColorShift;
+        
+        // Base colors: Deep Violet -> Royal Purple -> Electric Magenta
+        // Using sin/cos with phase shift for smooth ambient transitions
+        float r = 0.35 + sin(t * 2.0 + shift) * 0.25 + sin(shift * 0.5) * 0.15;
+        float g = 0.02 + sin(shift * 0.3) * 0.02;  // Tiny bit of green for depth
+        float b = 0.55 + cos(t * 1.5 + shift * 0.7) * 0.35;
+        
+        // Add electric magenta highlights based on distortion peaks
+        float highlight = smoothstep(0.1, 0.3, abs(vDistortion));
+        r += highlight * 0.2;
+        b += highlight * 0.15;
         
         // Shift toward magenta based on uniform
-        r = mix(r, 0.7, uDeepPurple * 0.5);
-        b = mix(b, 0.9, uDeepPurple * 0.3);
+        r = mix(r, 0.65, uDeepPurple * 0.4);
+        b = mix(b, 0.85, uDeepPurple * 0.3);
         
-        // Clamp everything to safe ranges
-        r = clamp(r, 0.1, 0.75);
-        g = 0.0;  // FORCE ZERO
-        b = clamp(b, 0.3, 0.95);
+        // Clamp to prevent white
+        r = clamp(r, 0.15, 0.7);
+        g = clamp(g, 0.0, 0.08);
+        b = clamp(b, 0.35, 0.95);
         
-        // Alpha
-        float alpha = clamp(abs(vDistortion) * 2.5 + uOpacity, 0.3, 0.9);
+        // Alpha - more visible on peaks
+        float alpha = clamp(abs(vDistortion) * 2.0 + uOpacity, 0.35, 0.85);
         
         gl_FragColor = vec4(r, g, b, alpha);
     }
@@ -145,19 +155,34 @@ const TheVinciMaterial = shaderMaterial(
 extend({ TheVinciMaterial });
 
 // Inner Orb Mesh Component
-const OrbMesh: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mousePosition }) => {
+const OrbMesh: React.FC<{ mousePosition: { x: number; y: number }, baseScale?: number, position?: [number, number, number] }> = ({ mousePosition, baseScale = 0.9, position = [-0.4, 0.2, 0] }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const materialRef = useRef<any>(null);
 
     useFrame((state, delta) => {
+        // Clamp delta for consistent animation
+        const d = Math.min(delta, 0.05);
+
         // Continuous Y rotation
         if (meshRef.current) {
-            meshRef.current.rotation.y += delta * 0.05;
+            meshRef.current.rotation.y += d * 0.5;
         }
 
         // Animate shader time
         if (materialRef.current) {
-            materialRef.current.uTime += delta;
+            materialRef.current.uTime += d;
+
+            // Ambient color shifting - slow, smooth
+            materialRef.current.uColorShift += d * 0.8;
+
+            // Breathing pulse - affects scale
+            materialRef.current.uBreathPhase += d * 2;
+        }
+
+        // Breathing scale animation
+        if (meshRef.current && materialRef.current) {
+            const breathScale = baseScale + Math.sin(materialRef.current.uBreathPhase) * 0.03;
+            meshRef.current.scale.setScalar(breathScale);
         }
 
         // Mouse interactivity
@@ -202,8 +227,8 @@ const OrbMesh: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mouseP
     });
 
     return (
-        <mesh ref={meshRef} scale={0.9}>
-            <icosahedronGeometry args={[1, 64]} />
+        <mesh ref={meshRef} position={position} scale={baseScale}>
+            <icosahedronGeometry args={[1, 13]} />
             {/* @ts-ignore */}
             <theVinciMaterial
                 ref={materialRef}
@@ -218,11 +243,21 @@ const OrbMesh: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mouseP
 interface TheVinciOrbProps {
     size?: number;
     className?: string;
+    position?: [number, number, number];
+    width?: number | string;
+    height?: number | string;
+    orbScale?: number;
+    debug?: boolean;
 }
 
 export const TheVinciOrb: React.FC<TheVinciOrbProps> = ({
     size = 120,
-    className = ""
+    className = "",
+    position = [-0.4, 0.2, 0],
+    width = 250,
+    height = 200,
+    orbScale = 0.9,
+    debug = false
 }) => {
     const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
 
@@ -240,7 +275,7 @@ export const TheVinciOrb: React.FC<TheVinciOrbProps> = ({
     return (
         <div
             className={`relative ${className}`}
-            style={{ width: size, height: size }}
+            style={{ width: width, height: height }}
         >
             <WebGLErrorBoundary
                 fallback={
@@ -258,19 +293,23 @@ export const TheVinciOrb: React.FC<TheVinciOrbProps> = ({
                         failIfMajorPerformanceCaveat: false
                     }}
                     dpr={[1, 2]}
-                    style={{ background: 'transparent' }}
+                    style={{
+                        background: debug ? 'transparent' : 'transparent',
+                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'
+                    }}
                 >
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} />
 
                     <Suspense fallback={null}>
-                        <OrbMesh mousePosition={mousePosition} />
+                        <OrbMesh mousePosition={mousePosition} baseScale={orbScale} position={position} />
                     </Suspense>
                 </Canvas>
             </WebGLErrorBoundary>
 
-            {/* Background glow */}
-            <div className="absolute inset-0 bg-purple-500/10 rounded-full blur-2xl -z-10" />
+            {/* Ambient outer glow - multi-layer */}
+            <div className="absolute inset-0 rounded-full blur-3xl -z-10 opacity-40 bg-gradient-to-br from-purple-600/50 via-violet-500/30 to-fuchsia-500/40 animate-pulse" style={{ animationDuration: '4s' }} />
+            <div className="absolute inset-2 rounded-full blur-2xl -z-10 opacity-30 bg-purple-500/50" />
         </div>
     );
 };

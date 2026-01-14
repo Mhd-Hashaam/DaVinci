@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, RefreshCw, Check, Sparkles, Crop, Scissors, Undo2, Redo2 } from 'lucide-react';
+import { X, RefreshCw, Check, Sparkles, Crop, Scissors, Undo2, Redo2, Loader2 } from 'lucide-react';
 import { GeneratedImage } from '../types';
+import { api } from '@/lib/api/client';
 
 interface EditModalProps {
     image: GeneratedImage | null;
@@ -33,6 +34,8 @@ const EditModal: React.FC<EditModalProps> = ({ image, onClose, onSave, onApplyTo
     const [clipPath, setClipPath] = useState('none');
     const [customClipPath, setCustomClipPath] = useState('');
     const [aiPrompt, setAiPrompt] = useState('');
+    const [isAiEditing, setIsAiEditing] = useState(false);
+    const [editedImageUrl, setEditedImageUrl] = useState<string | null>(null);
 
     const [history, setHistory] = useState<EditorState[]>([]);
     const [historyIndex, setHistoryIndex] = useState(-1);
@@ -371,13 +374,54 @@ const EditModal: React.FC<EditModalProps> = ({ image, onClose, onSave, onApplyTo
                                     Edit with AI
                                 </label>
                                 <div className="flex gap-3">
-                                    <input type="text" value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="Describe changes (e.g., 'make it more vibrant', 'add sunset background')" className="flex-1 px-5 py-3.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
-                                    <button className="px-6 py-3.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition-colors flex items-center gap-2 font-semibold text-sm shadow-lg shadow-indigo-500/30 whitespace-nowrap">
-                                        <Sparkles size={18} />
-                                        Apply AI Edit
+                                    <input
+                                        type="text"
+                                        value={aiPrompt}
+                                        onChange={(e) => setAiPrompt(e.target.value)}
+                                        placeholder="Describe changes (e.g., 'make it more vibrant', 'add sunset background')"
+                                        className="flex-1 px-5 py-3.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                        disabled={isAiEditing}
+                                    />
+                                    <button
+                                        onClick={async () => {
+                                            if (!aiPrompt.trim() || !image) return;
+                                            setIsAiEditing(true);
+                                            try {
+                                                const result = await api.edit({
+                                                    imageUrl: image.url,
+                                                    prompt: aiPrompt,
+                                                    model: image.model || 'gemini-2.5-flash',
+                                                });
+                                                if (result.success && result.editedImageUrl) {
+                                                    setEditedImageUrl(result.editedImageUrl);
+                                                    setAiPrompt('');
+                                                } else {
+                                                    alert(result.error || 'AI edit failed');
+                                                }
+                                            } catch (error) {
+                                                console.error('AI edit error:', error);
+                                                alert('Failed to apply AI edit');
+                                            } finally {
+                                                setIsAiEditing(false);
+                                            }
+                                        }}
+                                        disabled={isAiEditing || !aiPrompt.trim()}
+                                        className="px-6 py-3.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition-colors flex items-center gap-2 font-semibold text-sm shadow-lg shadow-indigo-500/30 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isAiEditing ? (
+                                            <><Loader2 size={18} className="animate-spin" /> Editing...</>
+                                        ) : (
+                                            <><Sparkles size={18} /> Apply AI Edit</>
+                                        )}
                                     </button>
                                 </div>
                                 <p className="text-xs text-zinc-500 mt-2.5">Use AI to modify colors, style, backgrounds, or add elements</p>
+                                {editedImageUrl && (
+                                    <div className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-xl">
+                                        <p className="text-sm text-green-400 mb-2">✓ AI edit applied! New image generated.</p>
+                                        <a href={editedImageUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-400 hover:underline">View edited image →</a>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
