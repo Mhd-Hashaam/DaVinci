@@ -48,6 +48,14 @@ interface FittingRoomState {
     triggerGalleryView: () => void;
     triggerCreateView: () => void;
     resetArtWallNavigation: () => void;
+
+    // 3D Mode State
+    viewMode: '2d' | '3d';
+    setViewMode: (mode: '2d' | '3d') => void;
+    selected3DModelPath: string | null;
+    set3DModel: (path: string | null) => void;
+    shirtColor: string;
+    setShirtColor: (color: string) => void;
 }
 
 export const useFittingRoomStore = create<FittingRoomState>()(
@@ -148,6 +156,14 @@ export const useFittingRoomStore = create<FittingRoomState>()(
             triggerGalleryView: () => set({ shouldOpenGallery: true }),
             triggerCreateView: () => set({ shouldOpenCreate: true }),
             resetArtWallNavigation: () => set({ shouldOpenGallery: false, shouldOpenCreate: false }),
+
+            // 3D Mode State
+            viewMode: '2d',
+            setViewMode: (mode) => set({ viewMode: mode }),
+            selected3DModelPath: '/Apparel Media/Shirt 3D Models/basic_t-shirt.glb',
+            set3DModel: (path) => set({ selected3DModelPath: path }),
+            shirtColor: '#ffffff',
+            setShirtColor: (color) => set({ shirtColor: color }),
         }),
         {
             name: 'fitting-room-storage', // localStorage key
@@ -155,9 +171,13 @@ export const useFittingRoomStore = create<FittingRoomState>()(
                 // Only persist selections, not modal state
                 selectedShirts: state.selectedShirts,
                 activeShirtId: state.activeShirtId,
-                // designs: state.designs, // Don't persist designs for now (starts empty)
+                designs: state.designs,
                 activeDesignId: state.activeDesignId,
                 closetMode: state.closetMode,
+                // 3D Mode persistence
+                viewMode: state.viewMode,
+                selected3DModelPath: state.selected3DModelPath,
+                shirtColor: state.shirtColor,
             }),
         }
     )

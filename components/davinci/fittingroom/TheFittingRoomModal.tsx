@@ -142,6 +142,31 @@ export const TheFittingRoomModal: React.FC<TheFittingRoomModalProps> = ({ isOpen
         window.addEventListener('mouseup', handleMouseUp);
     }, [closetWidth]);
 
+    // Constraint: Defer rendering of heavy content (3D Canvas) until animation starts
+    // This prevents the "heavy" Canvas initialization from causing a frame drop at the start of the GSAP animation.
+    const [shouldRenderContent, setShouldRenderContent] = useState(false);
+
+    useEffect(() => {
+        let timeout: NodeJS.Timeout;
+        if (isOpen) {
+            // Wait a small amount of time (e.g. 100ms) to let the GSAP animation start smoothly
+            // The content opacity fades in at 0.4s (400ms) anyway, so this is safe.
+            timeout = setTimeout(() => {
+                setShouldRenderContent(true);
+            }, 300);
+        } else {
+            // Immediate unmount or wait for close animation?
+            // Better to keep it mounted during close animation, then unmount.
+            // But since 'isOpen' controls the parent, we can just let it handle it.
+            // Actually, we want to reset this when it closes so next open is fresh.
+            const closeAnimDuration = 1000; // ample time
+            timeout = setTimeout(() => {
+                setShouldRenderContent(false);
+            }, closeAnimDuration);
+        }
+        return () => clearTimeout(timeout);
+    }, [isOpen]);
+
     useGSAP(() => {
         if (isOpen) {
             // Reset modal position for animation (START ABOVE VIEWPORT)
@@ -253,46 +278,50 @@ export const TheFittingRoomModal: React.FC<TheFittingRoomModalProps> = ({ isOpen
                     ref={contentRef}
                     className="relative z-10 w-full h-full flex flex-col opacity-0"
                 >
-                    {/* Close Button - Bottom Right (mirrored from Apparel) */}
-                    <button
-                        onClick={onClose}
-                        className="absolute bottom-1 right-1 p-1 text-zinc-400 hover:text-white transition-colors z-[60] cursor-pointer"
-                    >
-                        <X size={20} />
-                    </button>
+                    {shouldRenderContent && (
+                        <>
+                            {/* Close Button - Bottom Right (mirrored from Apparel) */}
+                            <button
+                                onClick={onClose}
+                                className="absolute bottom-1 right-1 p-1 text-zinc-400 hover:text-white transition-colors z-[60] cursor-pointer"
+                            >
+                                <X size={20} />
+                            </button>
 
-                    {/* Three-Panel Layout Container */}
-                    <div
-                        className="flex-1 w-full h-full grid gap-0 p-4 pt-2 pb-8 transition-[grid-template-columns] duration-75 ease-linear"
-                        style={{
-                            gridTemplateColumns: `${closetWidth}% 1fr ${artWallWidth}%`
-                        }}
-                    >
-                        {/* TheCloset - Left Panel (Resizable) */}
-                        <div className="relative h-full rounded-l-2xl border border-white/5 bg-black/20 backdrop-blur-sm overflow-hidden group/closet">
-                            <TheCloset />
-                            {/* Resize Handle (Right Edge) */}
+                            {/* Three-Panel Layout Container */}
                             <div
-                                onMouseDown={handleClosetResizeStart}
-                                className="absolute top-0 bottom-0 right-0 w-1.5 z-50 cursor-col-resize hover:bg-[var(--lamp-color)]/50 transition-colors opacity-0 group-hover/closet:opacity-100"
-                            />
-                        </div>
+                                className="flex-1 w-full h-full grid gap-0 p-4 pt-2 pb-8 transition-[grid-template-columns] duration-75 ease-linear"
+                                style={{
+                                    gridTemplateColumns: `${closetWidth}% 1fr ${artWallWidth}%`
+                                }}
+                            >
+                                {/* TheCloset - Left Panel (Resizable) */}
+                                <div className="relative h-full rounded-l-2xl border border-white/5 bg-black/20 backdrop-blur-sm overflow-hidden group/closet">
+                                    <TheCloset />
+                                    {/* Resize Handle (Right Edge) */}
+                                    <div
+                                        onMouseDown={handleClosetResizeStart}
+                                        className="absolute top-0 bottom-0 right-0 w-1.5 z-50 cursor-col-resize hover:bg-[var(--lamp-color)]/50 transition-colors opacity-0 group-hover/closet:opacity-100"
+                                    />
+                                </div>
 
-                        {/* TheMirror - Center Panel (Flexible) */}
-                        <div className="relative h-full border-y border-white/5 bg-black/10 overflow-hidden">
-                            <TheMirror />
-                        </div>
+                                {/* TheMirror - Center Panel (Flexible) */}
+                                <div className="relative h-full border-y border-white/5 bg-black/10 overflow-hidden">
+                                    <TheMirror />
+                                </div>
 
-                        {/* TheArtWall - Right Panel (Resizable) */}
-                        <div className="relative h-full rounded-r-2xl border border-white/5 bg-black/20 backdrop-blur-sm overflow-hidden group/artwall">
-                            {/* Resize Handle */}
-                            <div
-                                onMouseDown={handleArtWallResizeStart}
-                                className="absolute top-0 bottom-0 left-0 w-1.5 z-50 cursor-col-resize hover:bg-[var(--lamp-color)]/50 transition-colors opacity-0 group-hover/artwall:opacity-100"
-                            />
-                            <TheArtWall />
-                        </div>
-                    </div>
+                                {/* TheArtWall - Right Panel (Resizable) */}
+                                <div className="relative h-full rounded-r-2xl border border-white/5 bg-black/20 backdrop-blur-sm overflow-hidden group/artwall">
+                                    {/* Resize Handle */}
+                                    <div
+                                        onMouseDown={handleArtWallResizeStart}
+                                        className="absolute top-0 bottom-0 left-0 w-1.5 z-50 cursor-col-resize hover:bg-[var(--lamp-color)]/50 transition-colors opacity-0 group-hover/artwall:opacity-100"
+                                    />
+                                    <TheArtWall />
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

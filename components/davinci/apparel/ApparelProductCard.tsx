@@ -76,23 +76,48 @@ export const ApparelProductCard: React.FC<ApparelProductCardProps> = ({ product 
                                 </motion.button>
                             )}
 
-                            {/* PLAIN: Select for Preview */}
+                            {/* PLAIN: Put in Closet */}
                             {product.category === 'plain' && (
                                 <div className={cn(
-                                    "flex items-center bg-black/80 backdrop-blur-md text-white rounded-full border border-white/10 shadow-lg overflow-visible relative pointer-events-auto transition-all duration-300",
-                                    "h-9" // EVEN MORE COMPACT
+                                    "flex items-center bg-black/90 backdrop-blur-md text-white rounded-full border border-white/10 shadow-lg overflow-visible relative pointer-events-auto transition-all duration-300",
+                                    "h-9 pl-1 pr-1"
                                 )}>
 
-                                    <button className="pl-4 pr-1 text-[10px] font-medium hover:text-zinc-300 transition-colors cursor-pointer text-center uppercase tracking-wider">
-                                        {isSelected ? 'SELECTED' : 'SELECT'}
+                                    <button
+                                        onClick={handleCheckboxClick}
+                                        className="flex items-center gap-1 pl-3 pr-1 h-full hover:text-zinc-300 transition-colors cursor-pointer group/label"
+                                    >
+                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest leading-none mt-[1px] whitespace-nowrap">
+                                            {isSelected ? 'IN CLOSET' : 'ADD IN CLOSET'}
+                                        </span>
+                                        <motion.div
+                                            className="relative w-5 h-5 opacity-90 group-hover/label:opacity-100 transition-opacity"
+                                            animate={{
+                                                rotate: [0, -15, 15, -15, 15, 0],
+                                                scale: [1, 1.1, 1]
+                                            }}
+                                            transition={{
+                                                duration: 2,
+                                                repeat: Infinity,
+                                                repeatDelay: 1,
+                                                ease: "easeInOut"
+                                            }}
+                                        >
+                                            <Image
+                                                src="/Icons/ClosetColored.png"
+                                                alt="Closet"
+                                                fill
+                                                className="object-contain"
+                                            />
+                                        </motion.div>
                                     </button>
 
                                     {/* Divider */}
-                                    <div className="w-[1px] h-3 bg-white/20 mx-2" />
+                                    <div className="w-[1px] h-3 bg-white/20 mx-1" />
 
                                     {/* Checkbox Area */}
                                     <div
-                                        className="pr-3 h-full flex items-center justify-center cursor-pointer relative group/checkbox"
+                                        className="px-2 h-full flex items-center justify-center cursor-pointer relative group/checkbox"
                                         onMouseEnter={() => setShowTooltip(true)}
                                         onMouseLeave={() => setShowTooltip(false)}
                                         onClick={handleCheckboxClick}

@@ -11,7 +11,8 @@ export interface ApparelProduct {
 }
 
 const plainImages = [
-    '/Apparel Media/Plain Shirts/1_0cde144d-2ae2-4293-aeb9-181ad08d442b.webp',
+    '/Apparel Media/Plain Shirts/Green Half Sleeve Tee Shirt.png',
+    '/Apparel Media/Plain Shirts/Black Half Sleeve Tee Shirt.webp',
     '/Apparel Media/Plain Shirts/1_1_3f987ad7-0442-4b8e-935a-c67e67734347.webp',
     '/Apparel Media/Plain Shirts/1_6_8aada9e1-9a1a-4388-8100-c88218e71abc.webp',
     '/Apparel Media/Plain Shirts/5_4c4f3d39-f246-49de-80c9-36ec1175fa1d.webp',

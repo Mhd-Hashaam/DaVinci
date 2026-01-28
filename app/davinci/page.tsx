@@ -36,21 +36,40 @@ function DaVinciStudioContent() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    // -- URL State Management --
-    // Extract state from URL or fallback to default
-    const activeTab = searchParams.get('view') || 'create';
-    const activeModal = searchParams.get('modal');
+    // -- Hybrid State Management for Performance --
+    // Use local state for immediate UI updates, sync with URL for persistence.
+    // This avoids the expensive 1-2s lag caused by Next.js router.replace() triggering full tree re-renders.
 
-    const isApparelModalOpen = activeModal === 'apparel';
-    const isFittingRoomModalOpen = activeModal === 'fittingroom';
+    const [viewState, setViewState] = useState(searchParams.get('view') || 'create');
+    const [modalState, setModalState] = useState<string | null>(searchParams.get('modal'));
 
-    // Helper to update URL state
+    // Sync with URL when Browser Back/Forward is used
+    useEffect(() => {
+        const view = searchParams.get('view') || 'create';
+        const modal = searchParams.get('modal');
+        setViewState(view);
+        setModalState(modal);
+    }, [searchParams]);
+
+    const activeTab = viewState;
+    const isApparelModalOpen = modalState === 'apparel';
+    const isFittingRoomModalOpen = modalState === 'fittingroom';
+
+    // Helper to update URL state silently
     const updateUrlState = (updates: { view?: string; modal?: string | null }) => {
-        const params = new URLSearchParams(searchParams.toString());
+        // 1. Immediate UI Update
+        if (updates.view) setViewState(updates.view);
 
-        if (updates.view) {
-            params.set('view', updates.view);
+        let newModalState = modalState;
+        if (updates.modal !== undefined) {
+            setModalState(updates.modal); // null clears it
+            newModalState = updates.modal;
         }
+
+        // 2. Silent URL Update (No Re-render)
+        const params = new URLSearchParams(window.location.search);
+
+        if (updates.view) params.set('view', updates.view);
 
         if (updates.modal === null) {
             params.delete('modal');
@@ -58,19 +77,17 @@ function DaVinciStudioContent() {
             params.set('modal', updates.modal);
         }
 
-        // Determine if we should push (history entry) or replace
-        // For modals, we often want 'push' so back button works
-        // For tabs, 'replace' is usually better to avoid history spam, but user preference varies.
-        // Let's use 'push' for modals, 'replace' for views to keep history clean but navigable.
-        if (updates.modal && updates.modal !== activeModal) {
-            router.push(`${pathname}?${params.toString()}`, { scroll: false });
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+
+        // Use pushState for new modals (so back button works), replaceState for tabs/closing
+        if (updates.modal && updates.modal !== modalState) {
+            window.history.pushState(null, '', newUrl);
         } else {
-            router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+            window.history.replaceState(null, '', newUrl);
         }
     };
 
     const setActiveTab = (tab: string) => {
-        // When switching tabs, we generally close modals unless specified
         updateUrlState({ view: tab, modal: null });
     };
 
@@ -83,23 +100,18 @@ function DaVinciStudioContent() {
     };
 
     const closeModals = () => {
-        // If we were in apparel modal and apparel tab, maybe go back to previous tab? 
-        // For now, simpler: just remove modal param.
-        // However, if view was 'apparel', checking logic below:
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams(window.location.search);
         params.delete('modal');
 
-        // If we are closing apparel modal, and we are on apparel view, do we switch view?
-        // Original logic: setPreviousTab(activeTab); if (activeTab === 'apparel') setActiveTab(previousTab);
-        // We need to replicate 'previousTab' logic or just default to 'create' or 'gallery'
+        // Logic: if in apparel view & closing modal, maybe reset view? 
+        // For now, keeping current view but just closing modal.
         if (activeTab === 'apparel' && isApparelModalOpen) {
-            // Revert to 'create' or previous if we tracked it.
-            // Simplified: Go to 'create' if closing apparel modal
-            // Or better: Let's track previous tab in a ref if needed, or just default to create.
             params.set('view', 'create');
+            setViewState('create');
         }
 
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+        setModalState(null);
+        window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
     };
 
     const [prompt, setPrompt] = useState("");
@@ -169,10 +181,13 @@ function DaVinciStudioContent() {
 
     return (
         <div className="relative w-full min-h-screen bg-black selection:bg-purple-500/30">
-            <CustomScrollbar
-                rightOffset={activeTab === 'myworks' ? '10px' : undefined}
-                mode={activeTab === 'gallery' ? 'continuous' : 'points'}
-            />
+            {/* Scrollbar - Only visible when NO modal is open */}
+            {!modalState && (
+                <CustomScrollbar
+                    rightOffset={activeTab === 'myworks' ? '10px' : undefined}
+                    mode={activeTab === 'gallery' ? 'continuous' : 'points'}
+                />
+            )}
             {/* Sparkles Background */}
             <div className={cn(
                 "absolute inset-0 w-full h-full transition-opacity duration-500",

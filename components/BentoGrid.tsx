@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Heart, Share2, Sparkles, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { IconCheck } from '@tabler/icons-react';
 import gsap from 'gsap';
+import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
+import Image from 'next/image';
 
 interface BentoGridProps {
     // Component now uses internal data for the artistic showcase as requested
@@ -32,10 +35,10 @@ const BENTO_CARDS = [
     },
     {
         id: '2',
-        title: 'Floating Islands',
-        subtitle: 'Dreamscape',
+        title: 'Anime Girl',
+        subtitle: 'Anime',
         author: '@PixelMage',
-        image: '/assets/floating-islands.png',
+        image: '/assets/Anime Purple Girl.webp',
         aspectRatio: '1 / 1',
         colSpan: 1,
         rowSpan: 1,
@@ -56,10 +59,10 @@ const BENTO_CARDS = [
     },
     {
         id: '4',
-        title: 'Abstract Geometry',
-        subtitle: 'Minimalist',
+        title: 'Earth Shake',
+        subtitle: 'Art',
         author: '@AuroraArtist',
-        image: '/assets/abstract-geometry.png',
+        image: '/assets/Earth Shake.jpg',
         aspectRatio: '1 / 1',
         colSpan: 1,
         rowSpan: 1,
@@ -69,10 +72,10 @@ const BENTO_CARDS = [
     },
     {
         id: '5',
-        title: 'Sci-Fi Generator',
-        subtitle: 'Tech Series',
+        title: 'Dream Like a Kitty',
+        subtitle: 'Cute',
         author: '@PixelMage',
-        image: '/assets/Skyline.png',
+        image: '/assets/Kitty.webp',
         aspectRatio: '12 / 8',
         colSpan: 1,
         rowSpan: 1,
@@ -123,6 +126,27 @@ const BENTO_CARDS = [
 const PremiumCard = ({ card, index }: { card: typeof BENTO_CARDS[0], index: number }) => {
     const cardRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const { designs, addDesign, removeDesign } = useFittingRoomStore();
+    const [hoveredCheck, setHoveredCheck] = useState<string | null>(null);
+
+    const isSelected = designs.some(d => d.id === card.id);
+    const isMaxReached = designs.length >= 10;
+
+    const handleArtWallToggle = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isSelected) {
+            removeDesign(card.id);
+        } else {
+            addDesign({
+                id: card.id,
+                name: card.title,
+                thumbnail: card.image,
+                fullImage: card.image,
+                category: 'showcase'
+            });
+        }
+    };
 
     useEffect(() => {
         if (!cardRef.current || !containerRef.current) return;
@@ -246,10 +270,74 @@ const PremiumCard = ({ card, index }: { card: typeof BENTO_CARDS[0], index: numb
                                 {card.title}
                             </h2>
 
-                            <button className="flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-lg text-[8px] font-bold text-white/90 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
-                                VIEW
-                                <ExternalLink size={9} className="text-white/40" />
-                            </button>
+                            {/* ARTWALL BUTTON */}
+                            <div className={cn(
+                                "flex items-center bg-black/40 backdrop-blur-md text-white rounded-full border border-white/10 overflow-visible relative transition-all duration-300",
+                                "h-9 pl-3 pr-1"
+                            )}>
+                                <button
+                                    onClick={handleArtWallToggle}
+                                    className="flex items-center gap-2 pl-1 pr-1 h-full hover:text-zinc-300 transition-colors cursor-pointer group/label"
+                                >
+                                    <span className="text-[10px] font-bold text-center uppercase tracking-widest leading-none mt-[1px] whitespace-nowrap">
+                                        {isSelected ? 'ON ARTWALL' : 'ADD'}
+                                    </span>
+                                    <motion.div
+                                        className="relative w-5 h-5 opacity-90 group-hover/label:opacity-100 transition-opacity"
+                                        animate={{
+                                            rotate: [0, -15, 15, -15, 15, 0],
+                                            scale: [1, 1.1, 1]
+                                        }}
+                                        transition={{
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            repeatDelay: 1,
+                                            ease: "easeInOut"
+                                        }}
+                                    >
+                                        <Image
+                                            src="/Icons/ArtWall.png"
+                                            alt="ArtWall"
+                                            fill
+                                            className="object-contain"
+                                        />
+                                    </motion.div>
+                                </button>
+
+                                {/* Divider */}
+                                <div className="w-[1px] h-4 bg-white/20 mx-2" />
+
+                                {/* Checkbox Area */}
+                                <div
+                                    className="px-1 h-full flex items-center justify-center cursor-pointer relative group/checkbox"
+                                    onMouseEnter={() => setHoveredCheck(card.id)}
+                                    onMouseLeave={() => setHoveredCheck(null)}
+                                    onClick={handleArtWallToggle}
+                                >
+                                    <div className={cn(
+                                        "w-4 h-4 rounded-full border border-white/60 flex items-center justify-center transition-all",
+                                        isSelected ? "bg-white border-white scale-110" : "hover:border-white hover:scale-110"
+                                    )}>
+                                        {isSelected && <IconCheck size={10} className="text-black" stroke={4} />}
+                                    </div>
+
+                                    {/* Tooltip */}
+                                    <AnimatePresence>
+                                        {hoveredCheck === card.id && (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                                                animate={{ opacity: 1, scale: 1, y: -35 }}
+                                                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                                                className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-zinc-800 text-white text-[10px] px-2 py-1 rounded-[4px] text-center shadow-xl border border-white/10 pointer-events-none z-50"
+                                            >
+                                                {isMaxReached && !isSelected
+                                                    ? 'Max 10'
+                                                    : 'Add to ArtWall'}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}

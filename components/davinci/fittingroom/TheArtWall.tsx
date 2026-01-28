@@ -21,11 +21,6 @@ export const TheArtWall: React.FC = () => {
     // Local state for popover
     const [popoverSlotIndex, setPopoverSlotIndex] = React.useState<number | null>(null);
 
-    // Clear any ghost data on mount (one-time cleanup)
-    useEffect(() => {
-        clearDesigns();
-    }, [clearDesigns]);
-
     // Handle click outside to close popover
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -58,9 +53,19 @@ export const TheArtWall: React.FC = () => {
         <div className="relative h-full flex flex-col overflow-hidden">
             {/* Header */}
             <div className="flex-shrink-0 flex items-center justify-between px-4 h-[50px] border-b border-white/5">
-                <span className="text-[15px] font-bold text-zinc-500 tracking-widest">
-                    ArtWall
-                </span>
+                <div className="flex items-center gap-3">
+                    <span className="text-[15px] font-bold text-zinc-500 tracking-widest">
+                        ArtWall
+                    </span>
+                    <div className="relative w-7 h-7 opacity-50">
+                        <Image
+                            src="/Icons/ArtWall.png"
+                            alt="ArtWall Icon"
+                            fill
+                            className="object-contain"
+                        />
+                    </div>
+                </div>
                 <div className="flex items-center gap-2">
                     <span className="text-[10px] text-zinc-600">
                         {designs.length}/10
@@ -80,7 +85,7 @@ export const TheArtWall: React.FC = () => {
             </div>
 
             {/* Grid Slots */}
-            <div className="flex-1 overflow-y-auto p-3 container-scroll">
+            <div className="flex-1 overflow-y-auto p-3 scrollbar-hide">
                 <div className="grid grid-cols-2 gap-3">
                     {/* Render filled design slots */}
                     {designs.map((design) => {
@@ -90,6 +95,7 @@ export const TheArtWall: React.FC = () => {
                             <div
                                 key={design.id}
                                 onClick={() => setActiveDesign(design.id)}
+                                onMouseEnter={() => setActiveDesign(design.id)}
                                 className={cn(
                                     "relative rounded-xl overflow-hidden cursor-pointer group transition-all aspect-[3/4]",
                                     isActive

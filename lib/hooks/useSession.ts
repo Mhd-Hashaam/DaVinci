@@ -18,7 +18,7 @@ interface UseSessionReturn {
 
     // Bookmarks
     bookmarks: GeneratedImage[];
-    toggleBookmark: (imageId: string) => Promise<boolean>;
+    toggleBookmark: (imageId: string, fallbackImage?: GeneratedImage) => Promise<boolean>;
     isBookmarked: (imageId: string) => boolean;
 
     // Settings
