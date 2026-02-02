@@ -221,6 +221,45 @@ export class SessionManager {
     }
 
     /**
+     * Save specific decal placement coordinates to an image's metadata
+     */
+    async savePlacement(imageId: string, placement: { pos: number[], scale: number, rot: number }): Promise<void> {
+        if (!isSupabaseConfigured()) return;
+
+        try {
+            // Fetch existing metadata first to merge
+            const { data: img, error: fetchError } = await (supabase as any)
+                .from('images')
+                .select('metadata')
+                .eq('id', imageId)
+                .maybeSingle(); // maybeSingle is safer than single() as it doesn't error on 0 rows
+
+            if (fetchError && fetchError.code !== 'PGRST116') {
+                console.error('Fetch error during placement save:', fetchError.message);
+            }
+
+            const currentMetadata = img?.metadata || {};
+            const updatedMetadata = {
+                ...currentMetadata,
+                placement: placement
+            };
+
+            const { error: updateError } = await (supabase as any)
+                .from('images')
+                .update({ metadata: updatedMetadata })
+                .eq('id', imageId);
+
+            if (updateError) {
+                console.error('Failed to save placement:', updateError.message);
+                throw updateError;
+            }
+        } catch (err) {
+            console.error('Critical error in savePlacement:', err);
+            throw err; // Re-throw so UI can handle it
+        }
+    }
+
+    /**
      * Load user settings
      */
     async loadSettings(): Promise<Partial<SettingsRow> | null> {

@@ -74,7 +74,7 @@ const AVAILABLE_3D_MODELS = [
     { name: 'Basic Tee', path: '/Apparel Media/Shirt 3D Models/basic_t-shirt.glb', icon: <Shirt size={24} /> },
     // { name: 'Long Sleeve', path: '/Apparel Media/Shirt 3D Models/long_sleeve_t-_shirt.glb', icon: <Shirt size={24} className="scale-x-110" /> },
     // { name: 'Oversized', path: '/Apparel Media/Shirt 3D Models/oversized_t-shirt.glb', icon: <Shirt size={28} /> },
-    // { name: 'Female Tee', path: '/Apparel Media/Shirt 3D Models/t-shirt_for_female.glb', icon: <PersonStanding size={24} /> },
+    { name: 'Female Tee', path: '/Apparel Media/Shirt 3D Models/t-shirt_for_female.glb', icon: <PersonStanding size={24} /> },
     // { name: 'Sweater', path: '/Apparel Media/Shirt 3D Models/sweater_pack.glb', icon: <Scissors size={24} /> },
     // { name: 'Dress', path: '/Apparel Media/Shirt 3D Models/nycfashion_t-_shirt_dress female.glb', icon: <Sparkles size={24} /> },
 ];
