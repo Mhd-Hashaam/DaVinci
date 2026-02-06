@@ -44,26 +44,32 @@ export function useSession(): UseSessionReturn {
         const manager = getSessionManager();
         managerRef.current = manager;
 
-        // Load all data from Supabase
+        // Load all data from Supabase incrementally
         async function loadSession() {
             setIsLoading(true);
-            try {
-                const [loadedImages, loadedBookmarks, loadedSettings] = await Promise.all([
-                    manager.loadImages(),
-                    manager.loadBookmarks(),
-                    manager.loadSettings(),
-                ]);
 
-                setImages(loadedImages);
-                setBookmarks(loadedBookmarks);
-                if (loadedSettings) {
-                    setSettings(loadedSettings);
-                }
+            // Start all loads in parallel but handle them individually
+            const imagesPromise = manager.loadImages().then(setImages);
+            const bookmarksPromise = manager.loadBookmarks().then(setBookmarks);
+            const settingsPromise = manager.loadSettings().then(s => {
+                if (s) setSettings(s);
+            });
+
+            try {
+                // Wait for images and bookmarks as they are core to the gallery
+                await Promise.all([imagesPromise, bookmarksPromise]);
             } catch (error) {
-                console.error('Failed to load session:', error);
+                console.error('Failed to load session items:', error);
             } finally {
                 setIsLoading(false);
                 setIsReady(true);
+            }
+
+            // Settings can finish whenever
+            try {
+                await settingsPromise;
+            } catch (e) {
+                console.error('Settings load failed:', e);
             }
         }
 

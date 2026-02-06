@@ -14,6 +14,8 @@ import ImageModal from '@/components/ImageModal';
 import { ApparelModal } from '@/components/davinci/apparel/ApparelModal';
 import { TheFittingRoomModal } from '@/components/davinci/fittingroom/TheFittingRoomModal';
 import { DaVinciAuthModal } from '@/components/davinci/DaVinciAuthModal';
+import { MyWorks } from '@/components/davinci/profile/MyWorks';
+import { ProfileGallerySkeleton, ProfileSectionHeaderSkeleton } from '@/components/davinci/profile/DaVinciProfileSkeleton';
 import { DaVinciProfileHero } from '@/components/davinci/profile/DaVinciProfileHero';
 import { DaVinciProfileStats } from '@/components/davinci/profile/DaVinciProfileStats';
 import { DaVinciProfileGallery } from '@/components/davinci/profile/DaVinciProfileGallery';
@@ -131,6 +133,7 @@ function DaVinciStudioContent() {
         bookmarks,
         toggleBookmark,
         saveImage: saveToSession,
+        isLoading: isSessionLoading,
     } = useSession();
 
     const { user, profile, signOut } = useAuth();
@@ -333,6 +336,18 @@ function DaVinciStudioContent() {
                                     {/* Main Gallery Column (8/12) */}
                                     <div className="lg:w-8/12">
 
+                                        {/* SESSION RESUMPTION SECTION */}
+                                        <div className="mb-12">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                                    <div className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)] animate-pulse" />
+                                                    Session_Resumption_Workstreams
+                                                </h3>
+                                                <div className="flex-1 h-px bg-white/5" />
+                                            </div>
+                                            <MyWorks />
+                                        </div>
+
                                         {/* BOOKMARKS SECTION */}
                                         <div className="mb-12">
                                             <div className="flex items-center gap-4 mb-4">
@@ -342,7 +357,9 @@ function DaVinciStudioContent() {
                                                 </h3>
                                                 <div className="flex-1 h-px bg-white/5" />
                                             </div>
-                                            {bookmarks.length > 0 ? (
+                                            {isSessionLoading ? (
+                                                <ProfileGallerySkeleton count={3} />
+                                            ) : bookmarks.length > 0 ? (
                                                 <DaVinciProfileGallery images={bookmarks} />
                                             ) : (
                                                 <div className="w-full h-130 flex flex-col items-center justify-center border border-dashed border-white/10 rounded-2xl bg-white/5">
@@ -353,19 +370,26 @@ function DaVinciStudioContent() {
                                             )}
                                         </div>
 
-                                        <div className="flex items-center gap-4 mb-8">
-                                            <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
-                                                <span className="w-2 h-2 bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                                                Creations_Archive
-                                            </h3>
-                                            <div className="flex-1 h-px bg-white/5" />
-                                            <div className="flex gap-2">
-                                                <button className="px-4 py-1.5 rounded-full bg-white text-black text-[10px] font-bold uppercase tracking-tighter">Photos</button>
-                                                <button className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-500 text-[10px] font-bold uppercase tracking-tighter hover:text-white transition-colors">Digital Art</button>
+                                        {/* CREATIONS ARCHIVE SECTION */}
+                                        <div className="mb-12">
+                                            <div className="flex items-center gap-4 mb-8">
+                                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                                    <span className="w-2 h-2 bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                                                    Creations_Archive
+                                                </h3>
+                                                <div className="flex-1 h-px bg-white/5" />
+                                                <div className="flex gap-2">
+                                                    <button className="px-4 py-1.5 rounded-full bg-white text-black text-[10px] font-bold uppercase tracking-tighter">Photos</button>
+                                                    <button className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-500 text-[10px] font-bold uppercase tracking-tighter hover:text-white transition-colors">Digital Art</button>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <DaVinciProfileGallery images={[...localImages, ...sessionImages]} />
+                                            {isSessionLoading ? (
+                                                <ProfileGallerySkeleton count={6} />
+                                            ) : (
+                                                <DaVinciProfileGallery images={[...localImages, ...sessionImages]} />
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Activity Timeline Sidebar (4/12) */}

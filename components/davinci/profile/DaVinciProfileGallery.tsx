@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Maximize2, Share2, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { GeneratedImage } from '@/types';
+import Image from 'next/image';
 
 interface DaVinciProfileGalleryProps {
     images: GeneratedImage[];
@@ -35,11 +35,17 @@ export function DaVinciProfileGallery({ images }: DaVinciProfileGalleryProps) {
                     className="relative group aspect-square rounded-[2rem] overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-2xl"
                 >
                     {/* Image */}
-                    <img
-                        src={img.url}
-                        alt={img.prompt}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
-                    />
+                    <div className="relative w-full h-full">
+                        <Image
+                            src={img.url}
+                            alt={img.prompt}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                            loading="lazy"
+                            quality={75}
+                        />
+                    </div>
 
                     {/* Glass Overlay (Cyberpunk HUD style) */}
                     <div className="absolute inset-x-4 bottom-4 p-5 rounded-[1.5rem] bg-black/40 backdrop-blur-xl border border-white/10 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 z-20">

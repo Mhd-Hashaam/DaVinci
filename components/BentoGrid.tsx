@@ -223,10 +223,13 @@ const PremiumCard = ({ card, index }: { card: typeof BENTO_CARDS[0], index: numb
                         WebkitMaskImage: '-webkit-radial-gradient(white, black)',
                     }}
                 >
-                    <img
+                    <Image
                         src={card.image}
                         alt={card.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        quality={85}
                     />
 
                     {/* Gradient overlay for wide cards */}

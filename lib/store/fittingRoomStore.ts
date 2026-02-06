@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ApparelProduct } from '@/lib/apparelProducts';
+import { FittingRoomSnapshot, DecalState } from '@/types/fittingRoomProgress';
 
 // Design item interface for TheArtWall
 export interface DesignItem {
@@ -56,6 +57,15 @@ interface FittingRoomState {
     set3DModel: (path: string | null) => void;
     shirtColor: string;
     setShirtColor: (color: string) => void;
+    // 3D placement state (persisted here for snapshots)
+    decalState: DecalState | undefined;
+    setDecalState: (state: DecalState) => void;
+
+    // Snapshot / Resume Navigation
+    shouldOpenFromProgress: boolean;
+    setShouldOpenFromProgress: (val: boolean) => void;
+    getSnapshot: () => FittingRoomSnapshot;
+    loadSnapshot: (snapshot: FittingRoomSnapshot) => void;
 }
 
 export const useFittingRoomStore = create<FittingRoomState>()(
@@ -164,6 +174,66 @@ export const useFittingRoomStore = create<FittingRoomState>()(
             set3DModel: (path) => set({ selected3DModelPath: path }),
             shirtColor: '#ffffff',
             setShirtColor: (color) => set({ shirtColor: color }),
+
+            decalState: undefined,
+            setDecalState: (state) => set({ decalState: state }),
+
+            // Snapshot Implementation
+            shouldOpenFromProgress: false,
+            setShouldOpenFromProgress: (val) => set({ shouldOpenFromProgress: val }),
+
+            getSnapshot: () => {
+                const state = get();
+                return {
+                    version: 1,
+                    closet: {
+                        selectedShirts: state.selectedShirts.map(s => ({
+                            id: s.id,
+                            apparelProductId: s.apparelProductId
+                        })),
+                        activeShirtId: state.activeShirtId,
+                        closetMode: 'all'
+                    },
+                    artWall: {
+                        designs: state.designs,
+                        activeDesignId: state.activeDesignId
+                    },
+                    mirror: {
+                        viewMode: state.viewMode,
+                        selected3DModelPath: state.selected3DModelPath,
+                        shirtColor: state.shirtColor,
+                        decalState: state.decalState
+                    },
+                    meta: {
+                        savedFromView: 'myworks',
+                        savedAt: new Date().toISOString()
+                    }
+                };
+            },
+
+            loadSnapshot: (snapshot: FittingRoomSnapshot) => {
+                // Look up full product objects from registry
+                const { apparelProducts } = require('@/lib/apparelProducts');
+                const restoredShirts = snapshot.closet.selectedShirts
+                    .map(s => apparelProducts.find((p: any) => p.id === s.id))
+                    .filter(Boolean);
+
+                set({
+                    selectedShirts: restoredShirts,
+                    activeShirtId: snapshot.closet.activeShirtId,
+                    designs: snapshot.artWall.designs.map(d => ({
+                        ...d,
+                        thumbnail: d.thumbnail || '/assets/design-fallback.png',
+                        fullImage: d.fullImage || '/assets/design-fallback.png',
+                    })),
+                    activeDesignId: snapshot.artWall.activeDesignId,
+                    viewMode: snapshot.mirror.viewMode,
+                    selected3DModelPath: snapshot.mirror.selected3DModelPath,
+                    shirtColor: snapshot.mirror.shirtColor,
+                    decalState: snapshot.mirror.decalState,
+                    shouldOpenFromProgress: true
+                });
+            },
         }),
         {
             name: 'fitting-room-storage', // localStorage key

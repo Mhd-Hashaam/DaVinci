@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, Suspense, useMemo, useState, useCallback } from 'react';
-import { Canvas, createPortal } from '@react-three/fiber';
+import { Canvas, createPortal, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Center, Decal, useTexture, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
@@ -44,17 +44,22 @@ const RepeatButton = ({
     }, []);
 
     const start = useCallback((e: React.PointerEvent) => {
+        if (e.button !== 0) return; // Only left click
         e.preventDefault();
         e.stopPropagation();
         onClick();
+
+        // Faster response: 250ms initial wait, then 50ms pulse
         timeoutRef.current = setTimeout(() => {
             intervalRef.current = setInterval(() => {
                 onClick();
             }, 50);
-        }, 300);
+        }, 250);
     }, [onClick]);
 
-    useEffect(() => stop, [stop]);
+    useEffect(() => {
+        return () => stop();
+    }, [stop]);
 
     return (
         <button
@@ -62,7 +67,7 @@ const RepeatButton = ({
             onPointerUp={stop}
             onPointerLeave={stop}
             className={cn(
-                "p-2 rounded-md bg-white/5 hover:bg-white/10 active:bg-white/20 transition-colors border border-white/5 text-white/80 hover:text-white flex items-center justify-center",
+                "p-2 rounded-md bg-white/5 hover:bg-white/10 active:bg-white/20 transition-colors border border-white/5 text-white/80 hover:text-white flex items-center justify-center cursor-pointer",
                 className
             )}
             type="button"
@@ -93,6 +98,10 @@ const NumberControl = ({
 }) => {
     const [tempValue, setTempValue] = useState(formatFn(value));
     const [isFocused, setIsFocused] = useState(false);
+    const [isScrubbing, setIsScrubbing] = useState(false);
+    const scrubStartRef = useRef<{ x: number; val: number } | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const hasDraggedRef = useRef(false);
 
     useEffect(() => {
         if (!isFocused) setTempValue(formatFn(value));
@@ -124,25 +133,123 @@ const NumberControl = ({
         }
     };
 
+    // SCRUBBER LOGIC
+    const handleScrubDown = (e: React.PointerEvent) => {
+        if (e.button !== 0 || isFocused) return; // Left click and not focused
+
+        hasDraggedRef.current = false;
+        setIsScrubbing(true);
+        scrubStartRef.current = { x: e.clientX, val: value };
+
+        const handleScrubMove = (moveEvent: PointerEvent) => {
+            if (!scrubStartRef.current) return;
+            const delta = moveEvent.clientX - scrubStartRef.current.x;
+            if (Math.abs(delta) > 3) hasDraggedRef.current = true;
+
+            let multiplier = 1;
+            if (moveEvent.shiftKey) multiplier = 10;
+            if (moveEvent.altKey || moveEvent.metaKey) multiplier = 0.1;
+            const sensitivity = step < 0.01 ? 2 : 1;
+
+            let next = scrubStartRef.current.val + (delta * step * multiplier * sensitivity);
+            if (min !== undefined) next = Math.max(min, next);
+            if (max !== undefined) next = Math.min(max, next);
+
+            const precision = step.toString().split('.')[1]?.length || 0;
+            onChange(parseFloat(next.toFixed(precision + 1)));
+        };
+
+        const handleScrubUp = () => {
+            setIsScrubbing(false);
+            scrubStartRef.current = null;
+            window.removeEventListener('pointermove', handleScrubMove);
+            window.removeEventListener('pointerup', handleScrubUp);
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+
+            // If we didn't drag, treat as a click to focus
+            if (!hasDraggedRef.current) {
+                inputRef.current?.focus();
+            }
+        };
+
+        window.addEventListener('pointermove', handleScrubMove);
+        window.addEventListener('pointerup', handleScrubUp);
+        document.body.style.cursor = 'ew-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    };
+
+    const handleDoubleClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        let defaultValue = 0;
+        if (label === "Scale") defaultValue = 0.7;
+        if (label === "Pos Y") defaultValue = 0.05;
+        onChange(defaultValue);
+    };
+
     return (
         <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
+            <div className="flex items-center gap-2 text-[10px] uppercase font-black tracking-[0.15em] mb-1 select-none text-zinc-500">
                 <Icon size={12} />
                 <span>{label}</span>
             </div>
 
-            <div className="flex items-center gap-2 bg-black/40 rounded-lg p-1 border border-white/5">
-                <RepeatButton icon={Minus} onClick={() => handleStep(-1)} className="h-7 w-7" />
-                <input
-                    type="text"
-                    value={tempValue}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={handleBlur}
-                    onChange={handleInputChange}
-                    className="flex-1 min-w-0 bg-transparent text-center font-mono text-white text-[10px] font-medium outline-none border-none"
-                    onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+            <div
+                onPointerDown={handleScrubDown}
+                onDoubleClick={handleDoubleClick}
+                className={cn(
+                    "flex items-center gap-2 bg-black/40 rounded-lg p-1 border transition-all duration-300 group cursor-ew-resize relative",
+                    isScrubbing
+                        ? "border-cyan-500 bg-black/80 ring-1 ring-cyan-500/20 drop-shadow-[0_0_8px_rgba(6,182,212,0.3)]"
+                        : "border-white/5 hover:border-white/20 hover:bg-black/60",
+                    isFocused && "border-white/40 bg-zinc-900 cursor-text"
+                )}
+                title="Drag to Scrub / Double-Click to Reset"
+            >
+                <RepeatButton
+                    icon={Minus}
+                    onClick={() => handleStep(-1)}
+                    className={cn(
+                        "h-7 w-7 transition-all z-10",
+                        !isScrubbing && "group-hover:scale-110",
+                        isFocused && "opacity-0 scale-50 pointer-events-none"
+                    )}
                 />
-                <RepeatButton icon={Plus} onClick={() => handleStep(1)} className="h-7 w-7" />
+
+                <div className="flex-1 relative h-7 flex items-center justify-center">
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={tempValue}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={handleBlur}
+                        onChange={handleInputChange}
+                        className={cn(
+                            "w-full bg-transparent text-center font-mono text-white text-[10px] font-bold outline-none border-none transition-colors",
+                            isScrubbing ? "text-cyan-400" : "text-white",
+                            !isFocused && "pointer-events-none select-none"
+                        )}
+                        onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                    />
+                </div>
+
+                <RepeatButton
+                    icon={Plus}
+                    onClick={() => handleStep(1)}
+                    className={cn(
+                        "h-7 w-7 transition-all z-10",
+                        !isScrubbing && "group-hover:scale-110",
+                        isFocused && "opacity-0 scale-50 pointer-events-none"
+                    )}
+                />
+
+                {/* Reset Hint on hover */}
+                {!isScrubbing && !isFocused && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        <span className="text-[7px] text-cyan-500 font-bold uppercase tracking-tighter bg-cyan-500/10 px-1 rounded">Double Click to Reset</span>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -256,7 +363,7 @@ const ViewerControls = ({
 // ----------------------------------------------------------------------
 // 3. T-Shirt Model Component
 // ----------------------------------------------------------------------
-const TShirtModel = ({
+const TShirtModel = React.memo(({
     designTexture,
     decalState,
     setDecalState,
@@ -271,30 +378,108 @@ const TShirtModel = ({
     const modelPath = selected3DModelPath || '/Apparel Media/Shirt 3D Models/basic_t-shirt.glb';
 
     const gltf = useGLTF(modelPath);
-    const texture = useTexture(designTexture || FALLBACK_TEXTURE);
+    const { camera } = useThree();
+
+    // MANUAL TEXTURE MANAGEMENT
+    const [texture, setTexture] = useState<THREE.Texture | null>(null);
+    const [aspectRatio, setAspectRatio] = useState(1);
+
+    useEffect(() => {
+        if (!designTexture || designTexture === FALLBACK_TEXTURE) {
+            setTexture(null);
+            return;
+        }
+
+        let isSubscribed = true;
+        const loader = new THREE.TextureLoader();
+
+        loader.load(designTexture, (newTex) => {
+            if (!isSubscribed) {
+                newTex.dispose();
+                return;
+            }
+
+            newTex.colorSpace = THREE.SRGBColorSpace;
+            newTex.anisotropy = 16;
+            newTex.needsUpdate = true;
+
+            if (newTex.image) {
+                const img = newTex.image as HTMLImageElement;
+                setAspectRatio(img.width / img.height);
+            }
+
+            setTexture(prev => {
+                if (prev) prev.dispose();
+                return newTex;
+            });
+            console.log("3D Texture Loaded & Optimized");
+        });
+
+        return () => {
+            isSubscribed = false;
+        };
+    }, [designTexture]);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (texture) texture.dispose();
+        };
+    }, []);
 
     const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
-    const [aspectRatio, setAspectRatio] = useState(1);
     const [allMeshes, setAllMeshes] = useState<THREE.Mesh[]>([]);
     const [targetMesh, setTargetMesh] = useState<THREE.Mesh | null>(null);
 
-    // SURFACE SNAPPING STATE (Stored in World Space)
-    const [worldComputedPos, setWorldComputedPos] = useState<THREE.Vector3>(new THREE.Vector3());
-    const [worldComputedQuat, setWorldComputedQuat] = useState<THREE.Quaternion>(new THREE.Quaternion());
+    // SURFACE SNAPPING STATE
+    const [worldComputedPos, setWorldComputedPos] = useState<THREE.Vector3 | null>(null);
+    const [worldComputedQuat, setWorldComputedQuat] = useState<THREE.Quaternion | null>(null);
 
-    // Texture Settings
+    // UNIFORMS
+    const uniforms = useMemo(() => ({
+        uProjectorDir: { value: new THREE.Vector3(0, 0, 1) },
+        uHitPoint: { value: new THREE.Vector3(0, 0, 0) }
+    }), []);
+
+    const isDress = selected3DModelPath?.toLowerCase().includes('dress');
+    const isFemaleTee = selected3DModelPath?.toLowerCase().includes('female') && !isDress;
+
+    const groupScale = isDress ? 0.007 : (isFemaleTee ? 2.5 : 3);
+    const groupPosition: [number, number, number] = isDress ? [0, -4.0, 0] : (isFemaleTee ? [0, -1.2, 0] : [0, 0.2, 0]);
+    const groupRotation: [number, number, number] = [0, -Math.PI / 2, 0];
+
+
+    // Update uniforms when snapping changes
+    const [uniformsReady, setUniformsReady] = useState(false);
+
     useEffect(() => {
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
-        texture.anisotropy = 16;
-        texture.needsUpdate = true;
-        if (texture.image && 'width' in (texture.image as any)) {
-            const img = texture.image as HTMLImageElement;
-            setAspectRatio(img.width / img.height);
-        }
-    }, [texture]);
+        if (worldComputedPos && worldComputedQuat) {
+            // Projector direction = outward surface normal at hit point
+            const dir = new THREE.Vector3(0, 0, 1).applyQuaternion(worldComputedQuat).normalize();
+            uniforms.uProjectorDir.value.copy(dir);
+            uniforms.uHitPoint.value.copy(worldComputedPos);
 
-    // Mesh Setup & Initial Color
+            // Just being ready is enough if we have coords
+            setUniformsReady(true);
+        } else {
+            setUniformsReady(false);
+        }
+    }, [worldComputedPos, worldComputedQuat, uniforms]);
+
+    // Mesh Color Update (Lightweight)
+    useEffect(() => {
+        if (!scene) return;
+        scene.traverse((child: any) => {
+            if (child.isMesh) {
+                const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
+                if (mat && mat.color) {
+                    mat.color.set(shirtColor);
+                }
+            }
+        });
+    }, [scene, shirtColor]);
+
+    // Mesh Extraction & Disposal (Heavyweight)
     useEffect(() => {
         if (!scene) return;
         const meshes: THREE.Mesh[] = [];
@@ -316,8 +501,7 @@ const TShirtModel = ({
                     }
                 }
                 const mat = mesh.material as THREE.MeshStandardMaterial;
-                if (mat && mat.color) {
-                    mat.color.set(shirtColor);
+                if (mat) {
                     mat.metalness = 0.0;
                     mat.roughness = 0.8;
                     mat.side = THREE.DoubleSide;
@@ -327,7 +511,24 @@ const TShirtModel = ({
         });
         setAllMeshes(meshes);
         setTargetMesh(largest);
-    }, [scene, shirtColor]);
+
+        return () => {
+            // We only dispose of the scene children if we are actually switching models or unmounting.
+            // This Effect ONLY fires when 'scene' (the clone) changes.
+            scene.traverse((child: any) => {
+                if (child.isMesh) {
+                    if (child.geometry) child.geometry.dispose();
+                    if (child.material) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach((m: any) => m.dispose());
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                }
+            });
+        };
+    }, [scene]);
 
     // CYLINDRICAL SURFACE SNAPPING
     useEffect(() => {
@@ -356,10 +557,9 @@ const TShirtModel = ({
             if (hit.face) {
                 const meshQuat = new THREE.Quaternion();
                 targetMesh.getWorldQuaternion(meshQuat);
-
                 const normal = hit.face.normal.clone().applyQuaternion(meshQuat);
-                const dummy = new THREE.Object3D();
 
+                const dummy = new THREE.Object3D();
                 const lookAtPos = hit.point.clone().add(normal);
                 const worldUp = new THREE.Vector3(0, 1, 0);
                 const matrix = new THREE.Matrix4().lookAt(hit.point, lookAtPos, worldUp);
@@ -367,21 +567,18 @@ const TShirtModel = ({
 
                 setWorldComputedPos(hit.point.clone());
                 setWorldComputedQuat(dummy.quaternion.clone());
-                onStatusChange("Surface Snapped");
+                onStatusChange("Ready");
             }
         } else {
+            setWorldComputedPos(null);
+            setWorldComputedQuat(null);
             onStatusChange("Searching...");
         }
     }, [decalState.pos, targetMesh, onStatusChange]);
 
-    const isDress = selected3DModelPath?.toLowerCase().includes('dress');
-    const isFemaleTee = selected3DModelPath?.toLowerCase().includes('female') && !isDress;
 
-    const groupScale = isDress ? 0.007 : (isFemaleTee ? 2.5 : 3);
-    const groupPosition: [number, number, number] = isDress ? [0, -4.0, 0] : (isFemaleTee ? [0, -1.2, 0] : [0, 0.2, 0]);
-    const groupRotation: [number, number, number] = [0, -Math.PI / 2, 0];
-
-    const showDecal = designTexture && designTexture !== FALLBACK_TEXTURE && targetMesh;
+    // Decal only shows when texture is loaded AND snapping is successful AND uniforms are ready.
+    const showDecal = texture && targetMesh && worldComputedPos && worldComputedQuat && uniformsReady;
 
     return (
         <group scale={groupScale} position={groupPosition} rotation={groupRotation}>
@@ -392,16 +589,13 @@ const TShirtModel = ({
                 mesh.getWorldQuaternion(meshWorldQuat);
                 mesh.getWorldScale(meshWorldScale);
 
-                // SMART DEPTH & OFFSET for Anti-Bleed + Extreme Wrapping
-                const safeInternalDepth = 0.15; // Shallow penetration to avoid back-side ghosting
-                const totalDepth = Math.max(1.5, decalState.scale * 4.0); // Large depth for extreme curvature coverage
-                const outwardOffset = (totalDepth / 2) - safeInternalDepth; // Center offset to hug front surface
+                // SCALE-AWARE DEPTH (Capped at 0.5 units to prevent back-bleed)
+                // The depth scales with the decal size to allow larger designs to wrap,
+                // but is capped at 50cm to ensure it never reaches the back of the shirt.
+                const totalDepth = Math.min(0.5, decalState.scale * 0.5);
 
-                const directionVector = new THREE.Vector3(0, 0, 1).applyQuaternion(worldComputedQuat);
-                const offsetPosWorld = worldComputedPos.clone().add(directionVector.multiplyScalar(outwardOffset));
-
-                const localPos = mesh.worldToLocal(offsetPosWorld);
-                const localQuat = worldComputedQuat.clone().premultiply(meshWorldQuat.invert());
+                const localPos = mesh.worldToLocal(worldComputedPos!.clone());
+                const localQuat = worldComputedQuat!.clone().premultiply(meshWorldQuat.invert());
                 const localRot = new THREE.Euler().setFromQuaternion(localQuat);
 
                 const finalScale: [number, number, number] = [
@@ -421,8 +615,10 @@ const TShirtModel = ({
                             map={texture}
                             transparent
                             polygonOffset
-                            polygonOffsetFactor={-50}
+                            polygonOffsetFactor={-10}
                             depthTest={true}
+                            depthWrite={false}
+                            side={THREE.FrontSide}
                             roughness={0.4}
                             metalness={0.0}
                             toneMapped={false}
@@ -430,6 +626,8 @@ const TShirtModel = ({
                             emissiveIntensity={1.2}
                             emissive={new THREE.Color(0xffffff)}
                             color={new THREE.Color(0xffffff)}
+                        // Custom shader culling removed for stability. 
+                        // Thin projection depth (20cm) handles back-bleed naturally.
                         />
                     </Decal>,
                     mesh
@@ -437,7 +635,9 @@ const TShirtModel = ({
             })}
         </group>
     );
-};
+});
+
+TShirtModel.displayName = 'TShirtModel';
 
 const LoadingFallback = () => (
     <Html center>
@@ -508,6 +708,7 @@ export const Model3DViewer = () => {
                 resetToDefaults();
             } finally {
                 lastActiveDesignId.current = activeDesignId;
+                // Add a small buffer to prevent auto-save from overriding with restoration defaults
                 setTimeout(() => setIsRestoring(false), 800);
             }
         };

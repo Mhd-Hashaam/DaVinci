@@ -13,13 +13,19 @@ const StyleDropdown: React.FC<StyleDropdownProps> = ({ selected, onChange }) => 
 
     const options: StylePreset[] = ['Dynamic', 'Cinematic', 'Photography', 'Illustration', '3D Render', 'Anime'];
 
-    const styleIcons: Record<StylePreset, React.ElementType> = {
+    const styleIcons: Record<StylePreset, any> = {
         'Dynamic': Zap,
         'Cinematic': Film,
         'Photography': Camera,
         'Illustration': Paintbrush,
         '3D Render': Box,
-        'Anime': Sparkles
+        'Anime': Sparkles,
+        'Creative': Sparkles,
+        'Fashion': Zap, // Fallback shirt icon would be better if imported
+        'None': Sparkles,
+        'Portrait': Sparkles,
+        'Stock Photo': Camera,
+        'Vibrant': Zap
     };
 
     useEffect(() => {

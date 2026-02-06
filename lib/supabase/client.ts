@@ -23,6 +23,8 @@ export const supabase = createClient<Database>(
     }
 );
 
+export const getSupabaseClient = () => supabase;
+
 /**
  * Check if Supabase is configured and available
  */

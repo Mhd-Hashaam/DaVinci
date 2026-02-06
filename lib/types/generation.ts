@@ -1,6 +1,6 @@
 // Shared types for AI image generation
 
-export type AspectRatio = '1:1' | '16:9' | '9:16' | '4:3' | '3:4' | '3:2' | '2:3' | '4:5' | '5:4' | '5:7';
+export type AspectRatio = '1:1' | '16:9' | '9:16' | '4:3' | '3:4' | '3:2' | '2:3' | '4:5' | '5:4' | '5:7' | 'auto';
 
 export type StylePreset =
     | 'Cinematic'

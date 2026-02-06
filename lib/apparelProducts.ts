@@ -8,6 +8,7 @@ export interface ApparelProduct {
     originalPrice?: number;
     colors?: string[];
     category: 'plain' | 'premade';
+    apparelProductId?: string; // Links to external product ID if needed
 }
 
 const plainImages = [

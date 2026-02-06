@@ -1,205 +1,296 @@
-/**
- * Database type definitions for Supabase
- * Auto-generated schema types for type-safe queries
- */
+export type Json =
+    | string
+    | number
+    | boolean
+    | null
+    | { [key: string]: Json | undefined }
+    | Json[]
 
-export interface Database {
+export type Database = {
     public: {
         Tables: {
-            // Generated Images Table
-            images: {
-                Row: {
-                    id: string;
-                    created_at: string;
-                    user_id: string | null;
-                    session_id: string;
-                    url: string;
-                    prompt: string;
-                    aspect_ratio: string;
-                    model: string;
-                    style: string | null;
-                    metadata: Record<string, unknown> | null;
-                };
-                Insert: {
-                    id?: string;
-                    created_at?: string;
-                    user_id?: string | null;
-                    session_id: string;
-                    url: string;
-                    prompt: string;
-                    aspect_ratio: string;
-                    model: string;
-                    style?: string | null;
-                    metadata?: Record<string, unknown> | null;
-                };
-                Update: {
-                    id?: string;
-                    created_at?: string;
-                    user_id?: string | null;
-                    session_id?: string;
-                    url?: string;
-                    prompt?: string;
-                    aspect_ratio?: string;
-                    model?: string;
-                    style?: string | null;
-                    metadata?: Record<string, unknown> | null;
-                };
-            };
-
-            // User Profiles Table
-            profiles: {
-                Row: {
-                    id: string;
-                    username: string | null;
-                    full_name: string | null;
-                    avatar_url: string | null;
-                    website: string | null;
-                    bio: string | null;
-                    created_at: string;
-                    updated_at: string;
-                };
-                Insert: {
-                    id: string;
-                    username?: string | null;
-                    full_name?: string | null;
-                    avatar_url?: string | null;
-                    website?: string | null;
-                    bio?: string | null;
-                    created_at?: string;
-                    updated_at?: string;
-                };
-                Update: {
-                    id?: string;
-                    username?: string | null;
-                    full_name?: string | null;
-                    avatar_url?: string | null;
-                    website?: string | null;
-                    bio?: string | null;
-                    created_at?: string;
-                    updated_at?: string;
-                };
-            };
-
-            // Bookmarks Table
             bookmarks: {
                 Row: {
-                    id: string;
-                    created_at: string;
-                    user_id: string | null;
-                    session_id: string;
-                    image_id: string;
-                };
+                    id: number
+                    session_id: string
+                    image_id: string
+                    created_at: string
+                }
                 Insert: {
-                    id?: string;
-                    created_at?: string;
-                    user_id?: string | null;
-                    session_id: string;
-                    image_id: string;
-                };
+                    id?: number
+                    session_id: string
+                    image_id: string
+                    created_at?: string
+                }
                 Update: {
-                    id?: string;
-                    created_at?: string;
-                    user_id?: string | null;
-                    session_id?: string;
-                    image_id?: string;
-                };
-            };
-
-            // User Settings Table
-            settings: {
+                    id?: number
+                    session_id?: string
+                    image_id?: string
+                    created_at?: string
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "bookmarks_image_id_fkey"
+                        columns: ["image_id"]
+                        isOneToOne: false
+                        referencedRelation: "images"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
+            fitting_room_progress: {
                 Row: {
-                    id: string;
-                    created_at: string;
-                    user_id: string | null;
-                    session_id: string;
-                    model: string;
-                    style: string;
-                    aspect_ratio: string;
-                    generation_count: number;
-                };
+                    id: string
+                    user_id: string
+                    title: string
+                    created_at: string
+                    updated_at: string
+                    preview_url: string | null
+                    preview_thumbnail_url: string | null
+                    state: Json
+                    app_version: string
+                    schema_version: number
+                }
                 Insert: {
-                    id?: string;
-                    created_at?: string;
-                    user_id?: string | null;
-                    session_id: string;
-                    model?: string;
-                    style?: string;
-                    aspect_ratio?: string;
-                    generation_count?: number;
-                };
+                    id?: string
+                    user_id: string
+                    title?: string
+                    created_at?: string
+                    updated_at?: string
+                    preview_url?: string | null
+                    preview_thumbnail_url?: string | null
+                    state: Json
+                    app_version?: string
+                    schema_version?: number
+                }
                 Update: {
-                    id?: string;
-                    created_at?: string;
-                    user_id?: string | null;
-                    session_id?: string;
-                    model?: string;
-                    style?: string;
-                    aspect_ratio?: string;
-                    generation_count?: number;
-                };
-            };
-
-            // Orders Table
+                    id?: string
+                    user_id?: string
+                    title?: string
+                    created_at?: string
+                    updated_at?: string
+                    preview_url?: string | null
+                    preview_thumbnail_url?: string | null
+                    state?: Json
+                    app_version?: string
+                    schema_version?: number
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "fitting_room_progress_user_id_fkey"
+                        columns: ["user_id"]
+                        isOneToOne: false
+                        referencedRelation: "users"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
+            images: {
+                Row: {
+                    id: string
+                    session_id: string
+                    url: string
+                    prompt: string
+                    aspect_ratio: string
+                    model: string
+                    metadata: Json | null
+                    created_at: string
+                }
+                Insert: {
+                    id: string
+                    session_id: string
+                    url: string
+                    prompt: string
+                    aspect_ratio: string
+                    model: string
+                    metadata?: Json | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    session_id?: string
+                    url?: string
+                    prompt?: string
+                    aspect_ratio?: string
+                    model?: string
+                    metadata?: Json | null
+                    created_at?: string
+                }
+                Relationships: []
+            }
             orders: {
                 Row: {
-                    id: string;
-                    created_at: string;
-                    user_id: string | null;
-                    session_id: string;
-                    status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered';
-                    image_id: string;
-                    mockup_type: string;
-                    size: string;
-                    color: string;
-                    quantity: number;
-                    unit_price: number;
-                    total_price: number;
-                    metadata: Record<string, unknown> | null;
-                };
+                    [key: string]: any
+                }
                 Insert: {
-                    id?: string;
-                    created_at?: string;
-                    user_id?: string | null;
-                    session_id: string;
-                    status?: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered';
-                    image_id: string;
-                    mockup_type: string;
-                    size: string;
-                    color: string;
-                    quantity: number;
-                    unit_price: number;
-                    total_price: number;
-                    metadata?: Record<string, unknown> | null;
-                };
+                    [key: string]: any
+                }
                 Update: {
-                    id?: string;
-                    created_at?: string;
-                    user_id?: string | null;
-                    session_id?: string;
-                    status?: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered';
-                    image_id?: string;
-                    mockup_type?: string;
-                    size?: string;
-                    color?: string;
-                    quantity?: number;
-                    unit_price?: number;
-                    total_price?: number;
-                    metadata?: Record<string, unknown> | null;
-                };
-            };
-        };
-        Views: {};
-        Functions: {};
-        Enums: {};
-    };
+                    [key: string]: any
+                }
+                Relationships: []
+            }
+            profiles: {
+                Row: {
+                    id: string
+                    username: string | null
+                    full_name: string | null
+                    bio: string | null
+                    website: string | null
+                    avatar_url: string | null
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id: string
+                    username?: string | null
+                    full_name?: string | null
+                    bio?: string | null
+                    website?: string | null
+                    avatar_url?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    username?: string | null
+                    full_name?: string | null
+                    bio?: string | null
+                    website?: string | null
+                    avatar_url?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "profiles_id_fkey"
+                        columns: ["id"]
+                        isOneToOne: true
+                        referencedRelation: "users"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
+            settings: {
+                Row: {
+                    [key: string]: any
+                }
+                Insert: {
+                    [key: string]: any
+                }
+                Update: {
+                    [key: string]: any
+                }
+                Relationships: []
+            }
+        }
+        Views: {
+            [_ in never]: never
+        }
+        Functions: {
+            [_ in never]: never
+        }
+        Enums: {
+            [_ in never]: never
+        }
+        CompositeTypes: {
+            [_ in never]: never
+        }
+    }
 }
 
-// Convenience types
-export type ImageRow = Database['public']['Tables']['images']['Row'];
-export type ImageInsert = Database['public']['Tables']['images']['Insert'];
-export type BookmarkRow = Database['public']['Tables']['bookmarks']['Row'];
-export type SettingsRow = Database['public']['Tables']['settings']['Row'];
-export type OrderRow = Database['public']['Tables']['orders']['Row'];
-export type OrderInsert = Database['public']['Tables']['orders']['Insert'];
-export type OrderStatus = OrderRow['status'];
-export type ProfileRow = Database['public']['Tables']['profiles']['Row'];
+type PublicSchema = Database[keyof Database]
+
+export type Tables<
+    PublicTableNameOrOptions extends
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+    | { schema: keyof Database },
+    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+    ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+            Row: infer R
+        }
+    ? R
+    : never
+    : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+            Row: infer R
+        }
+    ? R
+    : never
+    : never
+
+export type TablesInsert<
+    PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+    ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+        Insert: infer I
+    }
+    ? I
+    : never
+    : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
+    }
+    ? I
+    : never
+    : never
+
+export type TablesUpdate<
+    PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+    ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+        Update: infer U
+    }
+    ? U
+    : never
+    : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
+    }
+    ? U
+    : never
+    : never
+
+export type Enums<
+    PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
+    EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+    : never = never
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+    : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+// Helper type for Profile rows
+export type ProfileRow = Database['public']['Tables']['profiles']['Row']
+
+// Helper type for Settings rows
+export type SettingsRow = Database['public']['Tables']['settings']['Row']
+
+// Helper types for Image table
+export type ImageRow = Database['public']['Tables']['images']['Row']
+export type ImageInsert = Database['public']['Tables']['images']['Insert']
+
+// Helper types for Bookmark table
+export type BookmarkRow = Database['public']['Tables']['bookmarks']['Row']
+export type BookmarkInsert = Database['public']['Tables']['bookmarks']['Insert']

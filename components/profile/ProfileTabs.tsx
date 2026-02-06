@@ -13,6 +13,7 @@ interface ProfileTabsProps {
 export function ProfileTabs({ activeTab, onChange }: ProfileTabsProps) {
     const tabs = [
         { id: 'creations', label: 'Creations', icon: ImageIcon },
+        { id: 'myworks', label: 'My Works', icon: Folder }, // Using Folder for Saved Progress
         { id: 'liked', label: 'Liked', icon: Heart },
         { id: 'collections', label: 'Collections', icon: Folder },
     ];

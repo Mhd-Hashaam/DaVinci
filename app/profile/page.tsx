@@ -9,6 +9,8 @@ import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { MyWorks } from '@/components/davinci/profile/MyWorks';
+import { useDaVinciUIStore } from '@/lib/store/davinciUIStore';
 
 export default function ProfilePage() {
     const { user, isLoading } = useAuth();
@@ -35,6 +37,17 @@ export default function ProfilePage() {
             setIsEditOpen(true);
         }
     }, [isLoading, user, profile]);
+
+    // Check for Post-Login Redirect (e.g. from Save Progress)
+    const postLoginTab = useDaVinciUIStore(state => state.postLoginTab);
+    const setPostLoginTab = useDaVinciUIStore(state => state.setPostLoginTab);
+
+    React.useEffect(() => {
+        if (postLoginTab) {
+            setActiveProfileTab(postLoginTab);
+            setPostLoginTab(null); // Clear after handling
+        }
+    }, [postLoginTab, setPostLoginTab]);
 
     if (isLoading) {
         return (
@@ -89,6 +102,9 @@ export default function ProfilePage() {
                                 Start Creating
                             </button>
                         </div>
+                    )}
+                    {activeProfileTab === 'myworks' && (
+                        <MyWorks />
                     )}
                     {activeProfileTab === 'liked' && (
                         <div className="text-center py-20">

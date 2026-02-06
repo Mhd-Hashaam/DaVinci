@@ -38,6 +38,10 @@
     "**/*.mts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "Google",
+    "Morpha",
+    "izzythreejs-master",
+    "t-shirt-designer-webapp-main"
   ]
 }
