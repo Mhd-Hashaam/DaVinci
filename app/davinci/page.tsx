@@ -13,6 +13,7 @@ import { LampContainer } from '@/components/ui/lamp';
 import ImageModal from '@/components/ImageModal';
 import { ApparelModal } from '@/components/davinci/apparel/ApparelModal';
 import { TheFittingRoomModal } from '@/components/davinci/fittingroom/TheFittingRoomModal';
+import { PerformanceOverlay } from '@/components/davinci/PerformanceOverlay';
 import { DaVinciAuthModal } from '@/components/davinci/DaVinciAuthModal';
 import { MyWorks } from '@/components/davinci/profile/MyWorks';
 import { ProfileGallerySkeleton, ProfileSectionHeaderSkeleton } from '@/components/davinci/profile/DaVinciProfileSkeleton';
@@ -248,7 +249,9 @@ function DaVinciStudioContent() {
                     resetApparelViewRequest,
                     shouldOpenGallery,
                     shouldOpenCreate,
-                    resetArtWallNavigation
+                    resetArtWallNavigation,
+                    shouldOpenFittingRoom,
+                    resetFittingRoomViewRequest
                 } = useFittingRoomStore();
 
                 React.useEffect(() => {
@@ -264,12 +267,18 @@ function DaVinciStudioContent() {
                         setActiveTab('create');
                         resetArtWallNavigation();
                     }
+                    if (shouldOpenFittingRoom) {
+                        openFittingRoomModal();
+                        resetFittingRoomViewRequest();
+                    }
                 }, [
                     shouldOpenApparel,
                     shouldOpenGallery,
                     shouldOpenCreate,
                     resetApparelViewRequest,
                     resetArtWallNavigation,
+                    shouldOpenFittingRoom,
+                    resetFittingRoomViewRequest,
                     // eslint-disable-next-line react-hooks/exhaustive-deps
                 ]);
                 return null;
@@ -445,6 +454,9 @@ function DaVinciStudioContent() {
                     closeModals();
                 }}
             />
+
+            {/* Debug: Memory Performance Overlay (Shift+M to toggle) */}
+            <PerformanceOverlay />
         </div>
     );
 }

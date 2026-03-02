@@ -5,8 +5,20 @@ import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import RealisticShirtPreview from "../tryon";
-import { Model3DViewer } from "../tryon/Model3DViewer";
+import dynamic from 'next/dynamic';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+
+const Model3DViewer = dynamic(() => import('../tryon/Model3DViewer').then(mod => mod.Model3DViewer), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-full flex items-center justify-center bg-black/20 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-6 h-6 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                <span className="text-xs text-white/50 font-medium tracking-widest uppercase">Loading 3D Engine...</span>
+            </div>
+        </div>
+    )
+});
 import { motion, AnimatePresence } from 'framer-motion';
 import { SaveProgressButton } from './SaveProgressButton';
 

@@ -88,7 +88,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "501ec6e4-d40c-42ed-98c4-354e0b61f4da",
-        "url": "/Graphics/1.jpg",
+        "url": "/Graphics/1.webp",
         "prompt": "1",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -97,7 +97,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "285226f4-727c-4b33-a53e-d47937ef2a72",
-        "url": "/Graphics/10.jpg",
+        "url": "/Graphics/10.webp",
         "prompt": "10",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -106,7 +106,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "a9432e6d-feea-4a60-b34e-9382ab63eadf",
-        "url": "/Graphics/11.jpg",
+        "url": "/Graphics/11.webp",
         "prompt": "11",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -115,7 +115,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "563b8b46-1a7f-4b0d-ab28-d100e00f7691",
-        "url": "/Graphics/12.jpg",
+        "url": "/Graphics/12.webp",
         "prompt": "12",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -124,7 +124,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "23982e08-43f7-44d8-be0e-ecefeac8db6c",
-        "url": "/Graphics/13.jpg",
+        "url": "/Graphics/13.webp",
         "prompt": "13",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -196,7 +196,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "15c2048f-2e2c-4ca3-be2f-06a40c8c7b39",
-        "url": "/Graphics/2.jpg",
+        "url": "/Graphics/2.webp",
         "prompt": "2",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -295,7 +295,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "fc415840-0246-4252-817f-8aedc0eebfb2",
-        "url": "/Graphics/3.jpg",
+        "url": "/Graphics/3.webp",
         "prompt": "3",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -394,7 +394,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "238339d5-93dd-4295-9ad0-ec4091215936",
-        "url": "/Graphics/4.jpg",
+        "url": "/Graphics/4.webp",
         "prompt": "4",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -493,7 +493,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "3842cbf9-dd2e-4b61-99c7-505751a0058c",
-        "url": "/Graphics/5.jpg",
+        "url": "/Graphics/5.webp",
         "prompt": "5",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -592,7 +592,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "38ae6e0c-0d6d-4122-9d0b-34f4ab6b9d01",
-        "url": "/Graphics/6.jpg",
+        "url": "/Graphics/6.webp",
         "prompt": "6",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -691,7 +691,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "31ba69cd-306d-483a-a011-3dc990a93b10",
-        "url": "/Graphics/7.jpg",
+        "url": "/Graphics/7.webp",
         "prompt": "7",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -709,7 +709,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "d2f4c8d0-a4ea-43c0-9e15-575d77fbe943",
-        "url": "/Graphics/8.jpg",
+        "url": "/Graphics/8.webp",
         "prompt": "8",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -718,7 +718,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "856ed2a0-1a6c-4789-b14b-4701727cbfb1",
-        "url": "/Graphics/9.jpg",
+        "url": "/Graphics/9.webp",
         "prompt": "9",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -727,7 +727,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "e0624020-47d2-4044-9245-da2231f7cb6b",
-        "url": "/Graphics/abstract-geometry.png",
+        "url": "/Graphics/abstract-geometry.webp",
         "prompt": "Abstract Geometry",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -1024,7 +1024,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "33923950-7161-4a3f-96e9-2546de53b92d",
-        "url": "/Graphics/cyber-oasis.png",
+        "url": "/Graphics/cyber-oasis.webp",
         "prompt": "Cyber Oasis",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -1033,7 +1033,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "311e8767-ed29-494d-b6a5-bfad699d00a9",
-        "url": "/Graphics/digital-art-with-recycle-bin.jpg",
+        "url": "/Graphics/digital-art-with-recycle-bin.webp",
         "prompt": "Digital Art With Recycle Bin",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -1042,7 +1042,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "78f7a4a9-df72-4b0e-b85f-9a818fe8409c",
-        "url": "/Graphics/ethereal-queen.png",
+        "url": "/Graphics/ethereal-queen.webp",
         "prompt": "Ethereal Queen",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -1051,7 +1051,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "f9d63686-64c6-4282-95a9-c69c669d8518",
-        "url": "/Graphics/floating-islands.png",
+        "url": "/Graphics/floating-islands.webp",
         "prompt": "Floating Islands",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -1060,7 +1060,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "ea01ee0e-6603-4817-bf4e-8b9c78285fd9",
-        "url": "/Graphics/Greek God.png",
+        "url": "/Graphics/Greek God.webp",
         "prompt": "Greek God",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -1069,7 +1069,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "6a5dec17-67cd-4004-8e24-64e42ada7501",
-        "url": "/Graphics/Illustration.jpg",
+        "url": "/Graphics/Illustration.webp",
         "prompt": "Illustration",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -1078,7 +1078,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "73f009e1-8b5d-4930-9bb8-aade708d5e25",
-        "url": "/Graphics/Mythical Dragon.png",
+        "url": "/Graphics/Mythical Dragon.webp",
         "prompt": "Mythical Dragon",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,
@@ -1105,7 +1105,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     },
     {
         "id": "bbc193f1-b871-41f9-9c9a-dbd47f6a6ae8",
-        "url": "/Graphics/Skyline.png",
+        "url": "/Graphics/Skyline.webp",
         "prompt": "Skyline",
         "aspectRatio": "1:1",
         "timestamp": 1768385834642,

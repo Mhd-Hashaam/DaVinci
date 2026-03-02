@@ -88,7 +88,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-9",
-        "url": "/Graphics/1.jpg",
+        "url": "/Graphics/1.webp",
         "prompt": "1",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -97,7 +97,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-10",
-        "url": "/Graphics/10.jpg",
+        "url": "/Graphics/10.webp",
         "prompt": "10",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -106,7 +106,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-11",
-        "url": "/Graphics/11.jpg",
+        "url": "/Graphics/11.webp",
         "prompt": "11",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -115,7 +115,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-12",
-        "url": "/Graphics/12.jpg",
+        "url": "/Graphics/12.webp",
         "prompt": "12",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -124,7 +124,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-13",
-        "url": "/Graphics/13.jpg",
+        "url": "/Graphics/13.webp",
         "prompt": "13",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -196,7 +196,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-21",
-        "url": "/Graphics/2.jpg",
+        "url": "/Graphics/2.webp",
         "prompt": "2",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -295,7 +295,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-32",
-        "url": "/Graphics/3.jpg",
+        "url": "/Graphics/3.webp",
         "prompt": "3",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -394,7 +394,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-43",
-        "url": "/Graphics/4.jpg",
+        "url": "/Graphics/4.webp",
         "prompt": "4",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -493,7 +493,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-54",
-        "url": "/Graphics/5.jpg",
+        "url": "/Graphics/5.webp",
         "prompt": "5",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -592,7 +592,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-65",
-        "url": "/Graphics/6.jpg",
+        "url": "/Graphics/6.webp",
         "prompt": "6",
         "aspectRatio": "auto",
         "timestamp": 1768375549552,
@@ -691,7 +691,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-76",
-        "url": "/Graphics/7.jpg",
+        "url": "/Graphics/7.webp",
         "prompt": "7",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -709,7 +709,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-78",
-        "url": "/Graphics/8.jpg",
+        "url": "/Graphics/8.webp",
         "prompt": "8",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -718,7 +718,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-79",
-        "url": "/Graphics/9.jpg",
+        "url": "/Graphics/9.webp",
         "prompt": "9",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -727,7 +727,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-80",
-        "url": "/Graphics/abstract-geometry.png",
+        "url": "/Graphics/abstract-geometry.webp",
         "prompt": "abstract geometry",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -1024,7 +1024,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-113",
-        "url": "/Graphics/cyber-oasis.png",
+        "url": "/Graphics/cyber-oasis.webp",
         "prompt": "cyber oasis",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -1033,7 +1033,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-114",
-        "url": "/Graphics/digital-art-with-recycle-bin.jpg",
+        "url": "/Graphics/digital-art-with-recycle-bin.webp",
         "prompt": "digital art with recycle bin",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -1042,7 +1042,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-115",
-        "url": "/Graphics/ethereal-queen.png",
+        "url": "/Graphics/ethereal-queen.webp",
         "prompt": "ethereal queen",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -1051,7 +1051,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-116",
-        "url": "/Graphics/floating-islands.png",
+        "url": "/Graphics/floating-islands.webp",
         "prompt": "floating islands",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -1060,7 +1060,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-117",
-        "url": "/Graphics/Greek God.png",
+        "url": "/Graphics/Greek God.webp",
         "prompt": "Greek God",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -1069,7 +1069,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-118",
-        "url": "/Graphics/Illustration.jpg",
+        "url": "/Graphics/Illustration.webp",
         "prompt": "Illustration",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -1078,7 +1078,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-119",
-        "url": "/Graphics/Mythical Dragon.png",
+        "url": "/Graphics/Mythical Dragon.webp",
         "prompt": "Mythical Dragon",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,
@@ -1105,7 +1105,7 @@ export const GRAPHICS_GALLERY: GalleryImage[] = [
     },
     {
         "id": "local-graphic-122",
-        "url": "/Graphics/Skyline.png",
+        "url": "/Graphics/Skyline.webp",
         "prompt": "Skyline",
         "aspectRatio": "auto",
         "timestamp": 1768375549553,

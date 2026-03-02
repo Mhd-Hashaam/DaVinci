@@ -61,6 +61,11 @@ interface FittingRoomState {
     decalState: DecalState | undefined;
     setDecalState: (state: DecalState) => void;
 
+    // Fitting Room Navigation Trigger
+    shouldOpenFittingRoom: boolean;
+    triggerFittingRoomView: () => void;
+    resetFittingRoomViewRequest: () => void;
+
     // Snapshot / Resume Navigation
     shouldOpenFromProgress: boolean;
     setShouldOpenFromProgress: (val: boolean) => void;
@@ -73,8 +78,12 @@ export const useFittingRoomStore = create<FittingRoomState>()(
         (set, get) => ({
             // Modal state
             isOpen: false,
-            openFittingRoom: () => set({ isOpen: true }),
+            openFittingRoom: () => set({ isOpen: true, shouldOpenFittingRoom: true }),
             closeFittingRoom: () => set({ isOpen: false }),
+
+            shouldOpenFittingRoom: false,
+            triggerFittingRoomView: () => set({ shouldOpenFittingRoom: true }),
+            resetFittingRoomViewRequest: () => set({ shouldOpenFittingRoom: false }),
 
             // TheCloset state
             selectedShirts: [],
@@ -231,7 +240,8 @@ export const useFittingRoomStore = create<FittingRoomState>()(
                     selected3DModelPath: snapshot.mirror.selected3DModelPath,
                     shirtColor: snapshot.mirror.shirtColor,
                     decalState: snapshot.mirror.decalState,
-                    shouldOpenFromProgress: true
+                    shouldOpenFromProgress: true,
+                    shouldOpenFittingRoom: true
                 });
             },
         }),

@@ -32,25 +32,20 @@ export const MyWorks = () => {
             setLoading(true);
             if (!user) return;
 
-            // Add a safety timeout for the fetch
-            const fetchPromise = FittingRoomProgressService.listProgress(user.id);
-            const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Fetch timed out')), 15000)
-            );
-
-            const data = await Promise.race([fetchPromise, timeoutPromise]) as FittingRoomProgressRecord[];
+            const data = await FittingRoomProgressService.listProgress(user.id);
             setSessions(data);
         } catch (error: any) {
-            console.error('Failed to load saved sessions:', error);
-            if (error.message === 'Fetch timed out') {
-                toast.error('Session loading timed out. Please check your connection.');
+            console.error('[MyWorks] Failed to load sessions:', error);
+            if (error.message?.toLowerCase().includes('session') || error.message?.toLowerCase().includes('sign in')) {
+                toast.error('Session expired. Please sign out and sign in again.');
             } else {
-                toast.error('Could not load your saved works');
+                toast.error('Could not load your saved works. Please try again.');
             }
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleOpenSession = (record: FittingRoomProgressRecord) => {
         try {

@@ -22,33 +22,29 @@ export function useAuth() {
     useEffect(() => {
         let mounted = true;
 
-        // Failsafe: Force loading to false after 3s to prevent infinite spinner
+        // Failsafe: never spin forever — force resolve after 5s
         const failsafeTimer = setTimeout(() => {
             if (mounted && useAuthStore.getState().isLoading) {
-                console.warn('Auth loading timed out, forcing complete.');
+                console.warn('[Auth] Loading timed out (5s), forcing complete.');
                 setLoading(false);
             }
-        }, 3000);
+        }, 5000);
 
         const initAuth = async () => {
             try {
-                // Check active session
-                const { data: { session: initialSession } } = await client.auth.getSession();
+                const { data: { session: initialSession }, error } = await client.auth.getSession();
+                if (error) console.error('[Auth] getSession error:', error.message);
 
                 if (mounted) {
                     setSession(initialSession);
                     if (initialSession?.user) {
-                        try {
-                            await fetchProfile(initialSession.user.id);
-                        } catch (err) {
-                            console.error("Profile fetch error in init:", err);
-                        }
+                        await fetchProfile(initialSession.user.id);
                     } else {
                         setProfile(null);
                     }
                 }
             } catch (error) {
-                console.error('Auth initialization error:', error);
+                console.error('[Auth] Initialization error:', error);
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -56,17 +52,16 @@ export function useAuth() {
 
         initAuth();
 
-        const { data: { subscription } } = client.auth.onAuthStateChange(async (_event, session) => {
+        // onAuthStateChange is the authoritative source of truth for session state.
+        // It fires for: sign-in, sign-out, token refresh, tab focus, etc.
+        const { data: { subscription } } = client.auth.onAuthStateChange(async (event, session) => {
+            console.log(`[Auth] State change: ${event}`);
             if (mounted) {
                 setSession(session);
                 if (session?.user) {
-                    // We don't await this to prevent blocking UI updates for too long, 
-                    // but validation might need it. Let's await but catch.
-                    try {
-                        await fetchProfile(session.user.id);
-                    } catch (err) {
-                        console.error("Profile fetch error on change:", err);
-                    }
+                    await fetchProfile(session.user.id).catch(err =>
+                        console.error('[Auth] Profile fetch failed on state change:', err)
+                    );
                 } else {
                     setProfile(null);
                 }
@@ -89,31 +84,31 @@ export function useAuth() {
                 .eq('id', userId)
                 .single();
 
-            if (error) {
-                // Profile might not exist yet for new users
-                return;
-            }
-
-            if (data) {
-                setProfile(data);
-            }
+            if (error) return; // Profile may not exist yet for new users
+            if (data) setProfile(data);
         } catch (error) {
-            console.error('Error fetching profile:', error);
+            console.error('[Auth] Error fetching profile:', error);
         }
     };
 
     const signOut = async () => {
-        await client.auth.signOut();
+        // Clear local state FIRST — UI updates instantly regardless of network
         storeSignOut();
+        // Fire-and-forget the server side signout (5s window)
+        try {
+            await Promise.race([
+                client.auth.signOut(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('SignOut timed out')), 5000))
+            ]);
+        } catch {
+            console.warn('[Auth] Server signOut timed out — local state already cleared.');
+        }
     };
 
     const updateProfile = async (updates: Partial<ProfileRow>) => {
-        if (!user) {
-            throw new Error('Must be authenticated to update profile');
-        }
+        if (!user) throw new Error('Must be authenticated to update profile');
 
         try {
-            // Using 'as any' workaround for Supabase inference issues in this file
             const { data, error } = await (client.from('profiles') as any)
                 .update(updates)
                 .eq('id', user.id)
@@ -121,14 +116,10 @@ export function useAuth() {
                 .single();
 
             if (error) throw error;
-
-            if (data) {
-                setProfile(data as ProfileRow);
-            }
-
+            if (data) setProfile(data as ProfileRow);
             return { success: true, data: data as ProfileRow };
         } catch (error) {
-            console.error('Error updating profile:', error);
+            console.error('[Auth] Error updating profile:', error);
             return { success: false, error };
         }
     };

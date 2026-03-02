@@ -64,20 +64,34 @@ export const SaveProgressButton = ({ mirrorRef }: SaveProgressButtonProps) => {
     };
 
     const handleSaveConfirm = async (title?: string) => {
-        if (!user || !previewBlob) return;
+        console.log('[SaveButton] Save confirm clicked with title:', title);
+        if (!user || !previewBlob) {
+            console.warn('[SaveButton] Missing user or previewBlob:', { hasUser: !!user, hasBlob: !!previewBlob });
+            return;
+        }
 
         const snapshot = getSnapshot();
 
-        await FittingRoomProgressService.saveProgress({
-            userId: user.id,
-            title,
-            previewBlob: previewBlob,
-            state: snapshot
-        });
-
-        toast.success('Session saved to Profile');
-        // Trigger profile tab highlight or other subtle UX here if desired
+        try {
+            await FittingRoomProgressService.saveProgress({
+                userId: user.id,
+                title,
+                previewBlob: previewBlob,
+                state: snapshot
+            });
+            toast.success('Session saved to Profile');
+        } catch (error: any) {
+            console.error('[SaveButton] Save failed:', error);
+            if (error.message?.toLowerCase().includes('session') || error.message?.toLowerCase().includes('sign in')) {
+                toast.error('Session expired. Please sign out and sign in again.');
+            } else if (error.message?.toLowerCase().includes('upload')) {
+                toast.error('Image upload failed. Check your connection and try again.');
+            } else {
+                toast.error('Save failed. Please try again.');
+            }
+        }
     };
+
 
     return (
         <>

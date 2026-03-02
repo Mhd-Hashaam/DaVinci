@@ -12,11 +12,45 @@ import { getSessionManager } from '@/lib/storage/SessionManager';
 // Fallback design texture
 const FALLBACK_TEXTURE = '/assets/design-fallback.png';
 
+// UUID Validation
+const isValidUUID = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
 interface DecalState {
     pos: [number, number, number];
     scale: number;
     rot: number;
 }
+
+// ----------------------------------------------------------------------
+// 0. Model Configurations
+// ----------------------------------------------------------------------
+interface ModelConfig {
+    groupScale: number;
+    groupPosition: [number, number, number];
+    horizontalBias: number;
+    defaultRotation: number;
+}
+
+const MODEL_CONFIGS: Record<string, ModelConfig> = {
+    dress: {
+        groupScale: 0.007,
+        groupPosition: [0, -4.0, 0],
+        horizontalBias: 0.0, // Not used in UV mode but kept for type safety
+        defaultRotation: 0, // UV space rotation is simpler
+    },
+    female: {
+        groupScale: 2.5,
+        groupPosition: [0, -1.2, 0],
+        horizontalBias: 0.0,
+        defaultRotation: 0,
+    },
+    default: {
+        groupScale: 3,
+        groupPosition: [0, 0.2, 0],
+        horizontalBias: 0.0,
+        defaultRotation: 0,
+    }
+};
 
 // ----------------------------------------------------------------------
 // 1. Helper Components (Repeat Button & Number Control)
@@ -377,7 +411,8 @@ const TShirtModel = React.memo(({
     const { shirtColor, selected3DModelPath } = useFittingRoomStore();
     const modelPath = selected3DModelPath || '/Apparel Media/Shirt 3D Models/basic_t-shirt.glb';
 
-    const gltf = useGLTF(modelPath);
+    // Enable Draco Compression (Default CDN)
+    const gltf = useGLTF(modelPath, true);
     const { camera } = useThree();
 
     // MANUAL TEXTURE MANAGEMENT
@@ -434,6 +469,7 @@ const TShirtModel = React.memo(({
     // SURFACE SNAPPING STATE
     const [worldComputedPos, setWorldComputedPos] = useState<THREE.Vector3 | null>(null);
     const [worldComputedQuat, setWorldComputedQuat] = useState<THREE.Quaternion | null>(null);
+    const [hitUV, setHitUV] = useState<THREE.Vector2 | null>(null); // New: UV Anchor Point
 
     // UNIFORMS
     const uniforms = useMemo(() => ({
@@ -441,11 +477,14 @@ const TShirtModel = React.memo(({
         uHitPoint: { value: new THREE.Vector3(0, 0, 0) }
     }), []);
 
-    const isDress = selected3DModelPath?.toLowerCase().includes('dress');
-    const isFemaleTee = selected3DModelPath?.toLowerCase().includes('female') && !isDress;
+    const config = useMemo(() => {
+        const path = selected3DModelPath?.toLowerCase() || '';
+        if (path.includes('dress')) return MODEL_CONFIGS.dress;
+        if (path.includes('female')) return MODEL_CONFIGS.female;
+        return MODEL_CONFIGS.default;
+    }, [selected3DModelPath]);
 
-    const groupScale = isDress ? 0.007 : (isFemaleTee ? 2.5 : 3);
-    const groupPosition: [number, number, number] = isDress ? [0, -4.0, 0] : (isFemaleTee ? [0, -1.2, 0] : [0, 0.2, 0]);
+    const { groupScale, groupPosition, horizontalBias, defaultRotation } = config;
     const groupRotation: [number, number, number] = [0, -Math.PI / 2, 0];
 
 
@@ -531,50 +570,147 @@ const TShirtModel = React.memo(({
     }, [scene]);
 
     // CYLINDRICAL SURFACE SNAPPING
+    // CYLINDRICAL SURFACE SNAPPING (Debounced)
     useEffect(() => {
         if (!targetMesh) return;
 
-        const raycaster = new THREE.Raycaster();
-        const meshWorldPos = new THREE.Vector3();
-        targetMesh.getWorldPosition(meshWorldPos);
+        const runRaycast = () => {
+            const raycaster = new THREE.Raycaster();
+            const meshWorldPos = new THREE.Vector3();
+            targetMesh.getWorldPosition(meshWorldPos);
 
-        const angle = (decalState.pos[0] / 1.5) * Math.PI;
-        const sourceDistance = 10;
+            const angle = (decalState.pos[0] / 1.5) * Math.PI;
+            const sourceDistance = 10;
 
-        const worldX = meshWorldPos.x + Math.sin(angle) * sourceDistance;
-        const worldZ = meshWorldPos.z + Math.cos(angle) * sourceDistance;
-        const worldY = meshWorldPos.y + decalState.pos[1];
+            const worldX = meshWorldPos.x + Math.sin(angle) * sourceDistance;
+            const worldZ = meshWorldPos.z + Math.cos(angle) * sourceDistance;
+            // worldY should be stable
+            const worldY = meshWorldPos.y + decalState.pos[1];
 
-        const worldSource = new THREE.Vector3(worldX, worldY, worldZ);
-        const worldTarget = new THREE.Vector3(meshWorldPos.x, worldY, meshWorldPos.z);
-        const worldDir = worldTarget.clone().sub(worldSource).normalize();
+            const worldSource = new THREE.Vector3(worldX, worldY, worldZ);
+            const worldTarget = new THREE.Vector3(meshWorldPos.x, worldY, meshWorldPos.z);
+            const worldDir = worldTarget.clone().sub(worldSource).normalize();
 
-        raycaster.set(worldSource, worldDir);
-        const intersects = raycaster.intersectObject(targetMesh);
+            raycaster.set(worldSource, worldDir);
+            const intersects = raycaster.intersectObject(targetMesh);
 
-        if (intersects.length > 0) {
-            const hit = intersects[0];
-            if (hit.face) {
-                const meshQuat = new THREE.Quaternion();
-                targetMesh.getWorldQuaternion(meshQuat);
-                const normal = hit.face.normal.clone().applyQuaternion(meshQuat);
+            if (intersects.length > 0) {
+                const hit = intersects[0];
+                if (hit.face) {
+                    const meshQuat = new THREE.Quaternion();
+                    targetMesh.getWorldQuaternion(meshQuat);
+                    // Use a dummy object to calculate rotation if needed, 
+                    // but for UV shader we really just need hit point and UV.
+                    // Calculating full orientation is only needed if we place a Mesh Decal.
+                    // For now, we keep it for status readiness.
 
-                const dummy = new THREE.Object3D();
-                const lookAtPos = hit.point.clone().add(normal);
-                const worldUp = new THREE.Vector3(0, 1, 0);
-                const matrix = new THREE.Matrix4().lookAt(hit.point, lookAtPos, worldUp);
-                dummy.quaternion.setFromRotationMatrix(matrix);
+                    const dummy = new THREE.Object3D();
+                    const normal = hit.face.normal.clone().applyQuaternion(meshQuat);
+                    const lookAtPos = hit.point.clone().add(normal);
+                    const worldUp = new THREE.Vector3(0, 1, 0);
+                    const matrix = new THREE.Matrix4().lookAt(hit.point, lookAtPos, worldUp);
+                    dummy.quaternion.setFromRotationMatrix(matrix);
 
-                setWorldComputedPos(hit.point.clone());
-                setWorldComputedQuat(dummy.quaternion.clone());
-                onStatusChange("Ready");
+                    setWorldComputedPos(hit.point.clone());
+                    setWorldComputedQuat(dummy.quaternion.clone());
+
+                    if (hit.uv) {
+                        setHitUV(hit.uv.clone());
+                    } else {
+                        setHitUV(new THREE.Vector2(0.5, 0.5));
+                    }
+                    onStatusChange("Ready");
+                }
+            } else {
+                setWorldComputedPos(null);
+                setWorldComputedQuat(null);
+                onStatusChange("Out of bounds");
             }
-        } else {
-            setWorldComputedPos(null);
-            setWorldComputedQuat(null);
-            onStatusChange("Searching...");
-        }
+        };
+
+        // Debounce: Only run if no updates for 60ms (approx 4 frames)
+        const timer = setTimeout(runRaycast, 60);
+
+        return () => clearTimeout(timer);
     }, [decalState.pos, targetMesh, onStatusChange]);
+
+    // PRE-DEFINED SHADER MATERIAL (Memoized to prevent memory leaks)
+    const UVMappingShaderMaterial = useMemo(() => {
+        return new THREE.ShaderMaterial({
+            transparent: true,
+            depthWrite: false,
+            polygonOffset: true,
+            polygonOffsetFactor: -4,
+            polygonOffsetUnits: -4,
+            side: THREE.FrontSide,
+            uniforms: {
+                uTexture: { value: null },
+                uHitUV: { value: new THREE.Vector2(0.5, 0.5) },
+                uDecalScale: { value: 0.3 },
+                uAspect: { value: 1.0 },
+                uRotation: { value: 0 },
+                uOffset: { value: new THREE.Vector2(0, 0) },
+                uOpacity: { value: 1.0 }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D uTexture;
+                uniform vec2 uHitUV;
+                uniform float uDecalScale;
+                uniform float uAspect;
+                uniform float uRotation;
+                uniform vec2 uOffset;
+                
+                varying vec2 vUv;
+
+                void main() {
+                    vec2 d = vUv - uHitUV - uOffset;
+                    d.x = fract(d.x + 0.5) - 0.5; 
+                    
+                    float cosR = cos(uRotation);
+                    float sinR = sin(uRotation);
+                    vec2 rd = vec2(d.x * cosR - d.y * sinR, d.x * sinR + d.y * cosR);
+                    
+                    float u = 0.5 + rd.x / (uDecalScale * uAspect);
+                    float v = 0.5 + rd.y / uDecalScale;
+                    
+                    if (u < 0.0 || u > 1.0 || v < 0.0 || v > 1.0) discard;
+                    
+                    vec4 texColor = texture2D(uTexture, vec2(u, v));
+                    if (texColor.a < 0.05) discard;
+                    
+                    gl_FragColor = texColor;
+                    gl_FragColor.rgb *= 1.2; 
+                }
+            `
+        });
+    }, []);
+
+    // Sync Uniforms Efficiently (No material recreation!)
+    useEffect(() => {
+        if (UVMappingShaderMaterial) {
+            UVMappingShaderMaterial.uniforms.uTexture.value = texture;
+            UVMappingShaderMaterial.uniforms.uHitUV.value = hitUV || new THREE.Vector2(0.5, 0.5);
+            UVMappingShaderMaterial.uniforms.uDecalScale.value = decalState.scale;
+            UVMappingShaderMaterial.uniforms.uAspect.value = aspectRatio;
+            UVMappingShaderMaterial.uniforms.uRotation.value = decalState.rot + defaultRotation;
+            // Use set() to avoid garbage collection
+            UVMappingShaderMaterial.uniforms.uOffset.value.set(decalState.pos[0], decalState.pos[1]);
+        }
+    }, [texture, hitUV, decalState, aspectRatio, defaultRotation, UVMappingShaderMaterial]);
+
+    // Explicit Cleanup
+    useEffect(() => {
+        return () => {
+            UVMappingShaderMaterial.dispose();
+        };
+    }, [UVMappingShaderMaterial]);
 
 
     // Decal only shows when texture is loaded AND snapping is successful AND uniforms are ready.
@@ -583,56 +719,14 @@ const TShirtModel = React.memo(({
     return (
         <group scale={groupScale} position={groupPosition} rotation={groupRotation}>
             <primitive object={scene} />
-            {showDecal && allMeshes.map((mesh, i) => {
-                const meshWorldQuat = new THREE.Quaternion();
-                const meshWorldScale = new THREE.Vector3();
-                mesh.getWorldQuaternion(meshWorldQuat);
-                mesh.getWorldScale(meshWorldScale);
-
-                // SCALE-AWARE DEPTH (Capped at 0.5 units to prevent back-bleed)
-                // The depth scales with the decal size to allow larger designs to wrap,
-                // but is capped at 50cm to ensure it never reaches the back of the shirt.
-                const totalDepth = Math.min(0.5, decalState.scale * 0.5);
-
-                const localPos = mesh.worldToLocal(worldComputedPos!.clone());
-                const localQuat = worldComputedQuat!.clone().premultiply(meshWorldQuat.invert());
-                const localRot = new THREE.Euler().setFromQuaternion(localQuat);
-
-                const finalScale: [number, number, number] = [
-                    (decalState.scale * aspectRatio) / meshWorldScale.x,
-                    decalState.scale / meshWorldScale.y,
-                    totalDepth / meshWorldScale.z
-                ];
-
-                return createPortal(
-                    <Decal
-                        key={i}
-                        position={localPos}
-                        rotation={[localRot.x, localRot.y, localRot.z + decalState.rot]}
-                        scale={finalScale}
-                    >
-                        <meshStandardMaterial
-                            map={texture}
-                            transparent
-                            polygonOffset
-                            polygonOffsetFactor={-10}
-                            depthTest={true}
-                            depthWrite={false}
-                            side={THREE.FrontSide}
-                            roughness={0.4}
-                            metalness={0.0}
-                            toneMapped={false}
-                            emissiveMap={texture}
-                            emissiveIntensity={1.2}
-                            emissive={new THREE.Color(0xffffff)}
-                            color={new THREE.Color(0xffffff)}
-                        // Custom shader culling removed for stability. 
-                        // Thin projection depth (20cm) handles back-bleed naturally.
-                        />
-                    </Decal>,
-                    mesh
-                );
-            })}
+            {showDecal && allMeshes.map((mesh, i) => (
+                <React.Fragment key={i}>
+                    {createPortal(
+                        <mesh geometry={mesh.geometry} material={UVMappingShaderMaterial} />,
+                        mesh.parent!
+                    )}
+                </React.Fragment>
+            ))}
         </group>
     );
 });
@@ -649,22 +743,41 @@ const LoadingFallback = () => (
 );
 
 export const Model3DViewer = () => {
-    const { selected3DModelPath, designs, activeDesignId } = useFittingRoomStore();
+    const { selected3DModelPath, designs, activeDesignId, decalState: storeDecalState, shouldOpenFromProgress, setShouldOpenFromProgress, setDecalState: setStoreDecalState } = useFittingRoomStore();
     const controlsRef = useRef<any>(null);
     const activeDesign = designs.find(d => d.id === activeDesignId);
     const designTexture = activeDesign ? (activeDesign.fullImage || activeDesign.thumbnail || FALLBACK_TEXTURE) : FALLBACK_TEXTURE;
 
-    const [decalState, setDecalState] = useState<DecalState>({ pos: [0, 0.25, 0.12], scale: 0.7, rot: 0 });
+    // Initialize from store snapshot if available (e.g. session resume), otherwise use defaults
+    const [decalState, setDecalState] = useState<DecalState>(() => {
+        if (storeDecalState && shouldOpenFromProgress) {
+            return storeDecalState;
+        }
+        return { pos: [0, 0, 0], scale: 0.3, rot: 0 };
+    });
     const [viewerStatus, setViewerStatus] = useState("Initializing...");
     const [isRestoring, setIsRestoring] = useState(true);
     const lastActiveDesignId = useRef<string | null>(null);
 
+    // Clear the snapshot flag after we've consumed it
+    useEffect(() => {
+        if (shouldOpenFromProgress) {
+            setShouldOpenFromProgress(false);
+        }
+    }, [shouldOpenFromProgress, setShouldOpenFromProgress]);
+
+    // Sync local decalState back to store so getSnapshot() captures current coordinates
+    useEffect(() => {
+        setStoreDecalState(decalState);
+    }, [decalState, setStoreDecalState]);
+
     const resetToDefaults = useCallback(() => {
         const isDress = selected3DModelPath?.toLowerCase().includes('dress');
         const isFemaleTee = selected3DModelPath?.toLowerCase().includes('female') && !isDress;
-        if (isDress) setDecalState({ pos: [0, 8, 15], scale: 30, rot: 0 });
-        else if (isFemaleTee) setDecalState({ pos: [0, 0, 0.15], scale: 0.6, rot: 0 });
-        else setDecalState({ pos: [0, 0.05, 0.12], scale: 0.7, rot: 0 });
+        // Defaults are now UV-space values (0-1)
+        if (isDress) setDecalState({ pos: [0, 0.2, 0], scale: 0.4, rot: 0 });
+        else if (isFemaleTee) setDecalState({ pos: [0, 0, 0], scale: 0.3, rot: 0 });
+        else setDecalState({ pos: [0, 0, 0], scale: 0.35, rot: 0 });
     }, [selected3DModelPath]);
 
     const handleViewChange = (view: 'front' | 'back' | 'left' | 'right' | 'reset') => {
@@ -679,7 +792,7 @@ export const Model3DViewer = () => {
         }
     };
 
-    // RESTORE logic
+    // RESTORE logic - fetch per-image placement from DB (or use store snapshot)
     useEffect(() => {
         if (activeDesignId === lastActiveDesignId.current) return;
 
@@ -690,6 +803,16 @@ export const Model3DViewer = () => {
                 lastActiveDesignId.current = null;
                 return;
             }
+
+            // If we just loaded from a snapshot, use the store's decalState directly
+            // (it was already set as initial state, so just mark as ready)
+            if (storeDecalState && lastActiveDesignId.current === null) {
+                setViewerStatus("Restored from session");
+                lastActiveDesignId.current = activeDesignId;
+                setTimeout(() => setIsRestoring(false), 800);
+                return;
+            }
+
             setIsRestoring(true);
             setViewerStatus("Fetching...");
             try {
@@ -700,15 +823,13 @@ export const Model3DViewer = () => {
                     setDecalState(placement);
                     setViewerStatus("Restored");
                 } else {
-                    resetToDefaults();
-                    setViewerStatus("Default View");
+                    setViewerStatus("Ready");
                 }
             } catch (err) {
                 console.error("Restoration failed:", err);
                 resetToDefaults();
             } finally {
                 lastActiveDesignId.current = activeDesignId;
-                // Add a small buffer to prevent auto-save from overriding with restoration defaults
                 setTimeout(() => setIsRestoring(false), 800);
             }
         };
@@ -721,6 +842,8 @@ export const Model3DViewer = () => {
         const timer = setTimeout(async () => {
             try {
                 setViewerStatus("Syncing...");
+                if (!isValidUUID(activeDesignId)) return;
+
                 const manager = getSessionManager();
                 await manager.savePlacement(activeDesignId, {
                     pos: decalState.pos,
@@ -740,10 +863,15 @@ export const Model3DViewer = () => {
         <div className="w-full h-full bg-gradient-to-b from-zinc-900 to-black rounded-xl overflow-hidden relative">
             <div className="absolute top-4 left-4 z-10 bg-white/10 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold border border-white/10">🧊 3D MODEL</div>
             <ViewerControls decalState={decalState} setDecalState={setDecalState} onReset={resetToDefaults} onViewChange={handleViewChange} status={viewerStatus} />
-            <Canvas shadows camera={{ position: [0, 0, 3.5], fov: 50 }} gl={{ preserveDrawingBuffer: true, antialias: true }}>
-                <ambientLight intensity={0.9} />
-                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-                <pointLight position={[-10, -10, -10]} intensity={0.5} />
+            <Canvas
+                dpr={[1, 1.5]} // Cap pixel ratio for performance
+                shadows={false} // Disable expensive shadows
+                camera={{ position: [0, 0, 3.5], fov: 50 }}
+                gl={{ preserveDrawingBuffer: true, antialias: false }} // Disable antialias for more FPS if needed
+            >
+                <ambientLight intensity={0.8} />
+                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={0.8} />
+                <pointLight position={[-10, -10, -10]} intensity={0.4} />
                 <Suspense fallback={<LoadingFallback />}>
                     <Center position={[0, -0.2, 0]}>
                         <TShirtModel
@@ -764,3 +892,4 @@ export const Model3DViewer = () => {
 
 useGLTF.preload('/Apparel Media/Shirt 3D Models/basic_t-shirt.glb');
 useGLTF.preload('/Apparel Media/Shirt 3D Models/t-shirt_for_female.glb');
+

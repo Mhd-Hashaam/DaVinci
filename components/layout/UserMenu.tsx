@@ -69,7 +69,11 @@ export function UserMenu() {
                         <div className="h-px bg-white/5 my-1" />
 
                         <button
-                            onClick={() => { signOut(); setIsOpen(false); }}
+                            onClick={() => { 
+                                console.log('[UserMenu] 🚪 Sign Out clicked');
+                                signOut(); 
+                                setIsOpen(false); 
+                            }}
                             className="w-full px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors cursor-pointer"
                         >
                             <LogOut size={16} />
