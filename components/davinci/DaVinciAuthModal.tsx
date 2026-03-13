@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useDaVinciUIStore } from '@/lib/store/davinciUIStore';
+import { useAuthStore } from '@/lib/store/authStore';
 import { DaVinciSignInForm, DaVinciSignUpForm } from './DaVinciAuthForms';
 import { TheVinciOrb } from './TheVinciOrb';
 import gsap from 'gsap';
@@ -11,7 +12,11 @@ import { useGSAP } from '@gsap/react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 export function DaVinciAuthModal() {
-    const { isAuthModalOpen, closeAuthModal, authView } = useDaVinciUIStore();
+    const { isSessionExpired } = useAuthStore();
+    const isAuthModalOpen = useDaVinciUIStore(state => state.isAuthModalOpen);
+    const closeAuthModal = useDaVinciUIStore(state => state.closeAuthModal);
+    const authView = useDaVinciUIStore(state => state.authView);
+
     const imagePanelRef = useRef<HTMLDivElement>(null);
     const formPanelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -21,11 +26,12 @@ export function DaVinciAuthModal() {
     const router = useRouter();
     const pathname = usePathname();
 
-    // Determine visibility from Store OR URL
+    // Determine visibility from Store OR URL OR Session Expiration
     const isUrlAuth = searchParams.get('modal') === 'auth';
-    const isOpen = isAuthModalOpen || isUrlAuth;
+    const isOpen = isAuthModalOpen || isUrlAuth || isSessionExpired;
 
     const handleClose = () => {
+        if (isSessionExpired) return; // Cannot close if session is dead
         closeAuthModal(); // Close store state
 
         // Remove URL param if present
@@ -86,12 +92,14 @@ export function DaVinciAuthModal() {
                         }}
                     >
                         {/* Close Button */}
-                        <button
-                            onClick={handleClose}
-                            className="absolute top-6 right-6 z-50 p-2 text-zinc-400 hover:text-white transition-colors rounded-full hover:bg-white/10 cursor-pointer bg-black/20"
-                        >
-                            <X size={20} />
-                        </button>
+                        {!isSessionExpired && (
+                            <button
+                                onClick={handleClose}
+                                className="absolute top-6 right-6 z-50 p-2 text-zinc-400 hover:text-white transition-colors rounded-full hover:bg-white/10 cursor-pointer bg-black/20"
+                            >
+                                <X size={20} />
+                            </button>
+                        )}
 
                         {/* --- IMAGE PANEL (60%) --- */}
                         <div
@@ -125,8 +133,17 @@ export function DaVinciAuthModal() {
                             {/* Header with Brain Icon */}
                             <div className="flex flex-col items-center mb-4">
                                 <span className="auth-content-fade text-zinc-100 text-2xl tracking-tighter font-sans mb-4">
-                                    Join <span className="text-purple-400">VinCi</span>
+                                    {isSessionExpired ? (
+                                        <>Session <span className="text-red-400">Expired</span></>
+                                    ) : (
+                                        <>Join <span className="text-purple-400">VinCi</span></>
+                                    )}
                                 </span>
+                                {isSessionExpired && (
+                                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest mb-6 -mt-2 animate-pulse">
+                                        Re-authenticate to preserve changes
+                                    </p>
+                                )}
                                 <div className="relative flex items-center justify-center w-full">
                                     <TheVinciOrb size={128} position={[-0.1, 0.2, 0]} width={280} height={140} debug={true} orbScale={1} />
                                 </div>

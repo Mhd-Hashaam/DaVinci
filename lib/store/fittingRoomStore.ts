@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { ApparelProduct } from '@/lib/apparelProducts';
 import { FittingRoomSnapshot, DecalState } from '@/types/fittingRoomProgress';
 
 // Design item interface for TheArtWall
@@ -12,6 +11,16 @@ export interface DesignItem {
     category?: string;  // Optional grouping
 }
 
+export interface WardrobeShirt {
+    id: string;
+    name: string;
+    thumbnail: string;
+    modelPath: string;
+    brand?: string;
+    price?: number;
+    category?: string;
+}
+
 interface FittingRoomState {
     // Modal
     isOpen: boolean;
@@ -19,15 +28,15 @@ interface FittingRoomState {
     closeFittingRoom: () => void;
 
     // TheCloset - Shirt selection
-    selectedShirts: ApparelProduct[];
-    addShirt: (product: ApparelProduct) => void;
+    selectedShirts: WardrobeShirt[];
+    addShirt: (product: WardrobeShirt) => void;
     removeShirt: (productId: string) => void;
     clearShirts: () => void;
     activeShirtId: string | null;
     setActiveShirt: (id: string | null) => void;
     closetMode: 'stacked' | 'expanded';
     toggleClosetMode: () => void;
-    lastRemovedShirt: ApparelProduct | null;
+    lastRemovedShirt: WardrobeShirt | null;
     undoRemoveShirt: () => void;
 
     // TheArtWall - Design selection
@@ -40,9 +49,6 @@ interface FittingRoomState {
     lastRemovedDesign: DesignItem | null;
     undoRemoveDesign: () => void;
     // Navigation Triggers
-    shouldOpenApparel: boolean;
-    triggerApparelView: () => void;
-    resetApparelViewRequest: () => void;
     // ArtWall Navigation Triggers
     shouldOpenGallery: boolean;
     shouldOpenCreate: boolean;
@@ -51,8 +57,6 @@ interface FittingRoomState {
     resetArtWallNavigation: () => void;
 
     // 3D Mode State
-    viewMode: '2d' | '3d';
-    setViewMode: (mode: '2d' | '3d') => void;
     selected3DModelPath: string | null;
     set3DModel: (path: string | null) => void;
     shirtColor: string;
@@ -164,10 +168,6 @@ export const useFittingRoomStore = create<FittingRoomState>()(
                 }
             },
 
-            // Navigation Triggers
-            shouldOpenApparel: false,
-            triggerApparelView: () => set({ shouldOpenApparel: true }),
-            resetApparelViewRequest: () => set({ shouldOpenApparel: false }),
 
             // ArtWall Navigation Triggers
             shouldOpenGallery: false,
@@ -177,8 +177,6 @@ export const useFittingRoomStore = create<FittingRoomState>()(
             resetArtWallNavigation: () => set({ shouldOpenGallery: false, shouldOpenCreate: false }),
 
             // 3D Mode State
-            viewMode: '2d',
-            setViewMode: (mode) => set({ viewMode: mode }),
             selected3DModelPath: '/Apparel Media/Shirt 3D Models/basic_t-shirt.glb',
             set3DModel: (path) => set({ selected3DModelPath: path }),
             shirtColor: '#ffffff',
@@ -197,8 +195,7 @@ export const useFittingRoomStore = create<FittingRoomState>()(
                     version: 1,
                     closet: {
                         selectedShirts: state.selectedShirts.map(s => ({
-                            id: s.id,
-                            apparelProductId: s.apparelProductId
+                            id: s.id
                         })),
                         activeShirtId: state.activeShirtId,
                         closetMode: 'all'
@@ -208,7 +205,6 @@ export const useFittingRoomStore = create<FittingRoomState>()(
                         activeDesignId: state.activeDesignId
                     },
                     mirror: {
-                        viewMode: state.viewMode,
                         selected3DModelPath: state.selected3DModelPath,
                         shirtColor: state.shirtColor,
                         decalState: state.decalState
@@ -221,14 +217,10 @@ export const useFittingRoomStore = create<FittingRoomState>()(
             },
 
             loadSnapshot: (snapshot: FittingRoomSnapshot) => {
-                // Look up full product objects from registry
-                const { apparelProducts } = require('@/lib/apparelProducts');
-                const restoredShirts = snapshot.closet.selectedShirts
-                    .map(s => apparelProducts.find((p: any) => p.id === s.id))
-                    .filter(Boolean);
-
+                // Since the apparel products registry is removed, we clear the selected shirts
+                // as they cannot be fully restored from the registry anymore.
                 set({
-                    selectedShirts: restoredShirts,
+                    selectedShirts: [],
                     activeShirtId: snapshot.closet.activeShirtId,
                     designs: snapshot.artWall.designs.map(d => ({
                         ...d,
@@ -236,7 +228,6 @@ export const useFittingRoomStore = create<FittingRoomState>()(
                         fullImage: d.fullImage || '/assets/design-fallback.png',
                     })),
                     activeDesignId: snapshot.artWall.activeDesignId,
-                    viewMode: snapshot.mirror.viewMode,
                     selected3DModelPath: snapshot.mirror.selected3DModelPath,
                     shirtColor: snapshot.mirror.shirtColor,
                     decalState: snapshot.mirror.decalState,
@@ -255,7 +246,6 @@ export const useFittingRoomStore = create<FittingRoomState>()(
                 activeDesignId: state.activeDesignId,
                 closetMode: state.closetMode,
                 // 3D Mode persistence
-                viewMode: state.viewMode,
                 selected3DModelPath: state.selected3DModelPath,
                 shirtColor: state.shirtColor,
             }),

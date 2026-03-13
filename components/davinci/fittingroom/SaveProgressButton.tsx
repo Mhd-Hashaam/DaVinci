@@ -97,7 +97,7 @@ export const SaveProgressButton = ({ mirrorRef }: SaveProgressButtonProps) => {
         <>
             <button
                 onClick={handleInitialClick}
-                className="group relative flex items-center justify-center h-10 w-10 bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 z-10"
+                className="group relative flex items-center justify-center h-10 w-10 bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 z-10 cursor-pointer"
                 aria-label="Save Progress"
             >
                 <Save size={18} className="text-white/80 group-hover:text-white transition-colors" />

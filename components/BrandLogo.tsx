@@ -34,38 +34,11 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
                 DaVinci
             </span>
 
-            {/* 2. Neural Orb (WebGL with Error Boundary) */}
-            <div className="relative w-16 h-16 shrink-0">
-                <WebGLErrorBoundary
-                    fallback={
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 blur-sm opacity-80 animate-pulse" />
-                        </div>
-                    }
-                >
-                    <Canvas
-                        camera={{ position: [0, 0, 3.5], fov: 45 }}
-                        gl={{
-                            alpha: true,
-                            antialias: true,
-                            powerPreference: 'default',
-                            failIfMajorPerformanceCaveat: false
-                        }}
-                        dpr={[1, 2]}
-                        style={{ background: 'transparent' }}
-                    >
-                        <ambientLight intensity={0.5} />
-                        <pointLight position={[10, 10, 10]} />
-
-                        <Suspense fallback={null}>
-                            {/* Centered Orb */}
-                            <group position={[0, 0, 0]}>
-                                <NeuralOrb interactive={true} mousePosition={mousePosition} />
-                            </group>
-                        </Suspense>
-                    </Canvas>
-                </WebGLErrorBoundary>
-
+            {/* 2. Brand Orb Fallback (High Fidelity Gradient) */}
+            <div className="relative w-12 h-12 shrink-0">
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 blur-[2px] opacity-80 animate-pulse shadow-[0_0_20px_rgba(99,102,241,0.4)]" />
+                </div>
                 {/* Background glow layer */}
                 <div className="absolute inset-0 bg-indigo-500/10 rounded-full blur-xl -z-10" />
             </div>

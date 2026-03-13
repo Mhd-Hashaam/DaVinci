@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store/authStore';
+import { startTokenHeartbeat, stopTokenHeartbeat } from '@/lib/supabase/tokenHeartbeat';
 import type { ProfileRow, Database } from '@/types/database';
 
 export function useAuth() {
@@ -58,13 +59,20 @@ export function useAuth() {
             console.log(`[Auth] State change: ${event}`);
             if (mounted) {
                 setSession(session);
-                if (session?.user) {
-                    await fetchProfile(session.user.id).catch(err =>
-                        console.error('[Auth] Profile fetch failed on state change:', err)
-                    );
-                } else {
+
+                // Start heartbeat on sign-in or session refresh, stop on sign-out
+                if (session) {
+                    startTokenHeartbeat();
+                } else if (event === 'SIGNED_OUT') {
+                    stopTokenHeartbeat();
                     setProfile(null);
                 }
+
+                // CRITICAL FIX: We DO NOT call `fetchProfile()` here inside the listener.
+                // Research shows making Supabase API calls inside `onAuthStateChange` 
+                // can trigger a bug that causes subsequent queries to hang indefinitely 
+                // due to GoTrue Web Lock contention. We handle profile fetching in a separate effect.
+
                 setLoading(false);
             }
         });
@@ -73,8 +81,20 @@ export function useAuth() {
             mounted = false;
             clearTimeout(failsafeTimer);
             subscription.unsubscribe();
+            stopTokenHeartbeat(); // Cleanup on unmount
         };
     }, []);
+
+    // Dedicated effect for fetching profile safely outside of auth lock
+    useEffect(() => {
+        if (session?.user?.id) {
+            fetchProfile(session.user.id).catch(err =>
+                console.error('[Auth] Profile fetch failed:', err)
+            );
+        } else if (!session) {
+            setProfile(null);
+        }
+    }, [session?.user?.id]);
 
     const fetchProfile = async (userId: string) => {
         try {

@@ -137,13 +137,28 @@ export function DaVinciProfileHero({ profile, user }: DaVinciProfileHeroProps) {
                                 </div>
                             </div>
 
-                            <div className="mt-8">
+                            <div className="mt-8 flex items-center gap-4">
                                 <button
                                     onClick={() => setIsShareOpen(true)}
                                     className="px-6 py-2 bg-white/5 border border-white/10 text-white text-xs font-bold rounded-full hover:bg-white/10 transition-all active:scale-95 cursor-pointer flex items-center gap-2"
                                 >
                                     <Share2 size={14} />
                                     Share Identity
+                                </button>
+                                
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            const { getSupabaseClient } = await import('@/lib/supabase/client');
+                                            await getSupabaseClient().auth.signOut();
+                                            window.location.reload();
+                                        } catch (e) {
+                                            console.error("Logout failed:", e);
+                                        }
+                                    }}
+                                    className="px-4 py-2 bg-transparent text-zinc-500 text-[10px] uppercase font-bold tracking-widest rounded-full hover:bg-white/5 hover:text-red-400 transition-all active:scale-95 cursor-pointer flex items-center gap-2"
+                                >
+                                    Log Out
                                 </button>
                             </div>
                         </motion.div>

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ExternalLink, Maximize2, Share2, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import type { GeneratedImage } from '@/types';
 
 interface DaVinciProfileGalleryProps {
     images: GeneratedImage[];
@@ -24,7 +25,7 @@ export function DaVinciProfileGallery({ images }: DaVinciProfileGalleryProps) {
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {images.map((img, idx) => (
                 <motion.div
                     key={img.id}

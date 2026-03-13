@@ -1,7 +1,6 @@
 export interface NormalizedClosetState {
     selectedShirts: Array<{
         id: string; // The specific wardrobe item ID
-        apparelProductId?: string; // FK to apparelProducts
     }>;
     activeShirtId: string | null;
     closetMode: 'trending' | 'saved' | 'all';
@@ -27,7 +26,6 @@ export interface DecalState {
 }
 
 export interface NormalizedMirrorState {
-    viewMode: '2d' | '3d';
     selected3DModelPath: string | null;
     shirtColor: string;
     decalState?: DecalState; // Only relevant in 3D mode

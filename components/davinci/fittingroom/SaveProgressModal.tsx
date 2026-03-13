@@ -63,7 +63,7 @@ export const SaveProgressModal = ({ isOpen, onClose, onSave, previewImage }: Sav
                             <h2 className="text-sm font-medium text-white">Save Progress</h2>
                             <button
                                 onClick={onClose}
-                                className="p-1 hover:bg-white/10 rounded-md transition-colors"
+                                className="p-1 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
                             >
                                 <X size={16} className="text-zinc-400" />
                             </button>
@@ -109,7 +109,7 @@ export const SaveProgressModal = ({ isOpen, onClose, onSave, previewImage }: Sav
                         <div className="flex gap-2 p-4 pt-0">
                             <button
                                 onClick={onClose}
-                                className="flex-1 py-2 text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                                className="flex-1 py-2 text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                             >
                                 Cancel
                             </button>
@@ -121,7 +121,7 @@ export const SaveProgressModal = ({ isOpen, onClose, onSave, previewImage }: Sav
                                     transition-all duration-200
                                     ${status === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
                                         status === 'error' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                                            'bg-white text-black hover:bg-white/90'}
+                                            'bg-white text-black hover:bg-white/90 cursor-pointer'}
                                 `}
                             >
                                 {status === 'saving' ? (

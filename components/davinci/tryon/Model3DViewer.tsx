@@ -35,8 +35,8 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
     dress: {
         groupScale: 0.007,
         groupPosition: [0, -4.0, 0],
-        horizontalBias: 0.0, // Not used in UV mode but kept for type safety
-        defaultRotation: 0, // UV space rotation is simpler
+        horizontalBias: 0.0,
+        defaultRotation: 0,
     },
     female: {
         groupScale: 2.5,
@@ -78,12 +78,11 @@ const RepeatButton = ({
     }, []);
 
     const start = useCallback((e: React.PointerEvent) => {
-        if (e.button !== 0) return; // Only left click
+        if (e.button !== 0) return;
         e.preventDefault();
         e.stopPropagation();
         onClick();
 
-        // Faster response: 250ms initial wait, then 50ms pulse
         timeoutRef.current = setTimeout(() => {
             intervalRef.current = setInterval(() => {
                 onClick();
@@ -167,9 +166,8 @@ const NumberControl = ({
         }
     };
 
-    // SCRUBBER LOGIC
     const handleScrubDown = (e: React.PointerEvent) => {
-        if (e.button !== 0 || isFocused) return; // Left click and not focused
+        if (e.button !== 0 || isFocused) return;
 
         hasDraggedRef.current = false;
         setIsScrubbing(true);
@@ -201,7 +199,6 @@ const NumberControl = ({
             document.body.style.cursor = '';
             document.body.style.userSelect = '';
 
-            // If we didn't drag, treat as a click to focus
             if (!hasDraggedRef.current) {
                 inputRef.current?.focus();
             }
@@ -278,7 +275,6 @@ const NumberControl = ({
                     )}
                 />
 
-                {/* Reset Hint on hover */}
                 {!isScrubbing && !isFocused && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                         <span className="text-[7px] text-cyan-500 font-bold uppercase tracking-tighter bg-cyan-500/10 px-1 rounded">Double Click to Reset</span>
@@ -323,33 +319,32 @@ const ViewerControls = ({
                     <span className="text-[8px] text-zinc-600 font-mono tracking-tighter">{status}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <button onClick={onReset} className="p-1.5 hover:bg-white/10 rounded-md transition-colors group" title="Reset Design">
+                    <button onClick={onReset} className="p-1.5 hover:bg-white/10 rounded-md transition-colors group cursor-pointer" title="Reset Design">
                         <RotateCcw size={14} className="text-zinc-500 group-hover:text-white transition-colors" />
                     </button>
                 </div>
             </div>
 
-            {/* View Presets */}
             <div className="flex flex-col gap-2">
                 <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Camera Views</span>
                 <div className="grid grid-cols-5 gap-1.5">
-                    <button onClick={() => onViewChange('front')} className="p-2 rounded bg-white/5 hover:bg-white/10 text-[9px] font-bold flex flex-col items-center gap-1" title="Front">
+                    <button onClick={() => onViewChange('front')} className="p-2 rounded bg-white/5 hover:bg-white/10 text-[9px] font-bold flex flex-col items-center gap-1 cursor-pointer" title="Front">
                         <ArrowDown size={12} className="rotate-180" />
                         <span>FRT</span>
                     </button>
-                    <button onClick={() => onViewChange('back')} className="p-2 rounded bg-white/5 hover:bg-white/10 text-[9px] font-bold flex flex-col items-center gap-1" title="Back">
+                    <button onClick={() => onViewChange('back')} className="p-2 rounded bg-white/5 hover:bg-white/10 text-[9px] font-bold flex flex-col items-center gap-1 cursor-pointer" title="Back">
                         <ArrowUp size={12} className="rotate-180" />
                         <span>BCK</span>
                     </button>
-                    <button onClick={() => onViewChange('left')} className="p-2 rounded bg-white/5 hover:bg-white/10 text-[9px] font-bold flex flex-col items-center gap-1" title="Left">
+                    <button onClick={() => onViewChange('left')} className="p-2 rounded bg-white/5 hover:bg-white/10 text-[9px] font-bold flex flex-col items-center gap-1 cursor-pointer" title="Left">
                         <ArrowLeft size={12} />
                         <span>LFT</span>
                     </button>
-                    <button onClick={() => onViewChange('right')} className="p-2 rounded bg-white/5 hover:bg-white/10 text-[9px] font-bold flex flex-col items-center gap-1" title="Right">
+                    <button onClick={() => onViewChange('right')} className="p-2 rounded bg-white/5 hover:bg-white/10 text-[9px] font-bold flex flex-col items-center gap-1 cursor-pointer" title="Right">
                         <ArrowRight size={12} />
                         <span>RGT</span>
                     </button>
-                    <button onClick={() => onViewChange('reset')} className="p-2 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[9px] font-bold flex flex-col items-center gap-1" title="Reset View">
+                    <button onClick={() => onViewChange('reset')} className="p-2 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[9px] font-bold flex flex-col items-center gap-1 cursor-pointer" title="Reset View">
                         <RotateCcw size={12} />
                         <span>RST</span>
                     </button>
@@ -398,24 +393,24 @@ const ViewerControls = ({
 // 3. T-Shirt Model Component
 // ----------------------------------------------------------------------
 const TShirtModel = React.memo(({
+    modelPath,
+    shirtColor,
     designTexture,
     decalState,
     setDecalState,
     onStatusChange
 }: {
+    modelPath: string,
+    shirtColor: string,
     designTexture: string,
     decalState: DecalState,
     setDecalState: (s: DecalState) => void,
     onStatusChange: (s: string) => void
 }) => {
-    const { shirtColor, selected3DModelPath } = useFittingRoomStore();
-    const modelPath = selected3DModelPath || '/Apparel Media/Shirt 3D Models/basic_t-shirt.glb';
-
-    // Enable Draco Compression (Default CDN)
+    console.log("[TShirtModel] Rendering for path:", modelPath);
     const gltf = useGLTF(modelPath, true);
     const { camera } = useThree();
 
-    // MANUAL TEXTURE MANAGEMENT
     const [texture, setTexture] = useState<THREE.Texture | null>(null);
     const [aspectRatio, setAspectRatio] = useState(1);
 
@@ -447,7 +442,9 @@ const TShirtModel = React.memo(({
                 if (prev) prev.dispose();
                 return newTex;
             });
-            console.log("3D Texture Loaded & Optimized");
+            console.log("[TShirtModel] Design Texture Loaded");
+        }, undefined, (err) => {
+            console.error("[TShirtModel] Texture load failed:", err);
         });
 
         return () => {
@@ -455,57 +452,47 @@ const TShirtModel = React.memo(({
         };
     }, [designTexture]);
 
-    // Cleanup on unmount
     useEffect(() => {
         return () => {
             if (texture) texture.dispose();
         };
     }, []);
 
-    const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
+    const scene = useMemo(() => {
+        console.log("[TShirtModel] Cloning new scene for:", modelPath);
+        return gltf.scene.clone();
+    }, [gltf.scene, modelPath]);
+
     const [allMeshes, setAllMeshes] = useState<THREE.Mesh[]>([]);
     const [targetMesh, setTargetMesh] = useState<THREE.Mesh | null>(null);
 
-    // SURFACE SNAPPING STATE
     const [worldComputedPos, setWorldComputedPos] = useState<THREE.Vector3 | null>(null);
     const [worldComputedQuat, setWorldComputedQuat] = useState<THREE.Quaternion | null>(null);
-    const [hitUV, setHitUV] = useState<THREE.Vector2 | null>(null); // New: UV Anchor Point
+    const [hitUV, setHitUV] = useState<THREE.Vector2 | null>(null);
 
-    // UNIFORMS
     const uniforms = useMemo(() => ({
         uProjectorDir: { value: new THREE.Vector3(0, 0, 1) },
         uHitPoint: { value: new THREE.Vector3(0, 0, 0) }
     }), []);
 
     const config = useMemo(() => {
-        const path = selected3DModelPath?.toLowerCase() || '';
+        const path = modelPath.toLowerCase();
         if (path.includes('dress')) return MODEL_CONFIGS.dress;
         if (path.includes('female')) return MODEL_CONFIGS.female;
         return MODEL_CONFIGS.default;
-    }, [selected3DModelPath]);
+    }, [modelPath]);
 
     const { groupScale, groupPosition, horizontalBias, defaultRotation } = config;
     const groupRotation: [number, number, number] = [0, -Math.PI / 2, 0];
 
-
-    // Update uniforms when snapping changes
-    const [uniformsReady, setUniformsReady] = useState(false);
-
     useEffect(() => {
         if (worldComputedPos && worldComputedQuat) {
-            // Projector direction = outward surface normal at hit point
             const dir = new THREE.Vector3(0, 0, 1).applyQuaternion(worldComputedQuat).normalize();
             uniforms.uProjectorDir.value.copy(dir);
             uniforms.uHitPoint.value.copy(worldComputedPos);
-
-            // Just being ready is enough if we have coords
-            setUniformsReady(true);
-        } else {
-            setUniformsReady(false);
         }
     }, [worldComputedPos, worldComputedQuat, uniforms]);
 
-    // Mesh Color Update (Lightweight)
     useEffect(() => {
         if (!scene) return;
         scene.traverse((child: any) => {
@@ -518,7 +505,6 @@ const TShirtModel = React.memo(({
         });
     }, [scene, shirtColor]);
 
-    // Mesh Extraction & Disposal (Heavyweight)
     useEffect(() => {
         if (!scene) return;
         const meshes: THREE.Mesh[] = [];
@@ -550,47 +536,22 @@ const TShirtModel = React.memo(({
         });
         setAllMeshes(meshes);
         setTargetMesh(largest);
-
-        return () => {
-            // We only dispose of the scene children if we are actually switching models or unmounting.
-            // This Effect ONLY fires when 'scene' (the clone) changes.
-            scene.traverse((child: any) => {
-                if (child.isMesh) {
-                    if (child.geometry) child.geometry.dispose();
-                    if (child.material) {
-                        if (Array.isArray(child.material)) {
-                            child.material.forEach((m: any) => m.dispose());
-                        } else {
-                            child.material.dispose();
-                        }
-                    }
-                }
-            });
-        };
     }, [scene]);
 
-    // CYLINDRICAL SURFACE SNAPPING
-    // CYLINDRICAL SURFACE SNAPPING (Debounced)
     useEffect(() => {
         if (!targetMesh) return;
-
         const runRaycast = () => {
             const raycaster = new THREE.Raycaster();
             const meshWorldPos = new THREE.Vector3();
             targetMesh.getWorldPosition(meshWorldPos);
-
             const angle = (decalState.pos[0] / 1.5) * Math.PI;
             const sourceDistance = 10;
-
             const worldX = meshWorldPos.x + Math.sin(angle) * sourceDistance;
             const worldZ = meshWorldPos.z + Math.cos(angle) * sourceDistance;
-            // worldY should be stable
             const worldY = meshWorldPos.y + decalState.pos[1];
-
             const worldSource = new THREE.Vector3(worldX, worldY, worldZ);
             const worldTarget = new THREE.Vector3(meshWorldPos.x, worldY, meshWorldPos.z);
             const worldDir = worldTarget.clone().sub(worldSource).normalize();
-
             raycaster.set(worldSource, worldDir);
             const intersects = raycaster.intersectObject(targetMesh);
 
@@ -599,26 +560,15 @@ const TShirtModel = React.memo(({
                 if (hit.face) {
                     const meshQuat = new THREE.Quaternion();
                     targetMesh.getWorldQuaternion(meshQuat);
-                    // Use a dummy object to calculate rotation if needed, 
-                    // but for UV shader we really just need hit point and UV.
-                    // Calculating full orientation is only needed if we place a Mesh Decal.
-                    // For now, we keep it for status readiness.
-
                     const dummy = new THREE.Object3D();
                     const normal = hit.face.normal.clone().applyQuaternion(meshQuat);
                     const lookAtPos = hit.point.clone().add(normal);
                     const worldUp = new THREE.Vector3(0, 1, 0);
                     const matrix = new THREE.Matrix4().lookAt(hit.point, lookAtPos, worldUp);
                     dummy.quaternion.setFromRotationMatrix(matrix);
-
                     setWorldComputedPos(hit.point.clone());
                     setWorldComputedQuat(dummy.quaternion.clone());
-
-                    if (hit.uv) {
-                        setHitUV(hit.uv.clone());
-                    } else {
-                        setHitUV(new THREE.Vector2(0.5, 0.5));
-                    }
+                    if (hit.uv) setHitUV(hit.uv.clone());
                     onStatusChange("Ready");
                 }
             } else {
@@ -627,14 +577,10 @@ const TShirtModel = React.memo(({
                 onStatusChange("Out of bounds");
             }
         };
-
-        // Debounce: Only run if no updates for 60ms (approx 4 frames)
         const timer = setTimeout(runRaycast, 60);
-
         return () => clearTimeout(timer);
     }, [decalState.pos, targetMesh, onStatusChange]);
 
-    // PRE-DEFINED SHADER MATERIAL (Memoized to prevent memory leaks)
     const UVMappingShaderMaterial = useMemo(() => {
         return new THREE.ShaderMaterial({
             transparent: true,
@@ -666,25 +612,18 @@ const TShirtModel = React.memo(({
                 uniform float uAspect;
                 uniform float uRotation;
                 uniform vec2 uOffset;
-                
                 varying vec2 vUv;
-
                 void main() {
                     vec2 d = vUv - uHitUV - uOffset;
                     d.x = fract(d.x + 0.5) - 0.5; 
-                    
                     float cosR = cos(uRotation);
                     float sinR = sin(uRotation);
                     vec2 rd = vec2(d.x * cosR - d.y * sinR, d.x * sinR + d.y * cosR);
-                    
                     float u = 0.5 + rd.x / (uDecalScale * uAspect);
                     float v = 0.5 + rd.y / uDecalScale;
-                    
                     if (u < 0.0 || u > 1.0 || v < 0.0 || v > 1.0) discard;
-                    
                     vec4 texColor = texture2D(uTexture, vec2(u, v));
                     if (texColor.a < 0.05) discard;
-                    
                     gl_FragColor = texColor;
                     gl_FragColor.rgb *= 1.2; 
                 }
@@ -692,7 +631,6 @@ const TShirtModel = React.memo(({
         });
     }, []);
 
-    // Sync Uniforms Efficiently (No material recreation!)
     useEffect(() => {
         if (UVMappingShaderMaterial) {
             UVMappingShaderMaterial.uniforms.uTexture.value = texture;
@@ -700,34 +638,30 @@ const TShirtModel = React.memo(({
             UVMappingShaderMaterial.uniforms.uDecalScale.value = decalState.scale;
             UVMappingShaderMaterial.uniforms.uAspect.value = aspectRatio;
             UVMappingShaderMaterial.uniforms.uRotation.value = decalState.rot + defaultRotation;
-            // Use set() to avoid garbage collection
             UVMappingShaderMaterial.uniforms.uOffset.value.set(decalState.pos[0], decalState.pos[1]);
         }
     }, [texture, hitUV, decalState, aspectRatio, defaultRotation, UVMappingShaderMaterial]);
 
-    // Explicit Cleanup
     useEffect(() => {
-        return () => {
-            UVMappingShaderMaterial.dispose();
-        };
+        return () => { UVMappingShaderMaterial.dispose(); };
     }, [UVMappingShaderMaterial]);
 
-
-    // Decal only shows when texture is loaded AND snapping is successful AND uniforms are ready.
-    const showDecal = texture && targetMesh && worldComputedPos && worldComputedQuat && uniformsReady;
+    const showDecal = texture && targetMesh && worldComputedPos && worldComputedQuat;
 
     return (
-        <group scale={groupScale} position={groupPosition} rotation={groupRotation}>
-            <primitive object={scene} />
-            {showDecal && allMeshes.map((mesh, i) => (
-                <React.Fragment key={i}>
-                    {createPortal(
-                        <mesh geometry={mesh.geometry} material={UVMappingShaderMaterial} />,
-                        mesh.parent!
-                    )}
-                </React.Fragment>
-            ))}
-        </group>
+        <Center position={[0, -0.2, 0]} onCentered={() => console.log("[TShirtModel] Center Re-calculated")}>
+            <group scale={groupScale} position={groupPosition} rotation={groupRotation}>
+                <primitive object={scene} />
+                {showDecal && allMeshes.map((mesh, i) => (
+                    <React.Fragment key={i}>
+                        {createPortal(
+                            <mesh geometry={mesh.geometry} material={UVMappingShaderMaterial} />,
+                            mesh.parent!
+                        )}
+                    </React.Fragment>
+                ))}
+            </group>
+        </Center>
     );
 });
 
@@ -743,38 +677,32 @@ const LoadingFallback = () => (
 );
 
 export const Model3DViewer = () => {
-    const { selected3DModelPath, designs, activeDesignId, decalState: storeDecalState, shouldOpenFromProgress, setShouldOpenFromProgress, setDecalState: setStoreDecalState } = useFittingRoomStore();
+    const { selected3DModelPath, designs, activeDesignId, decalState: storeDecalState, shouldOpenFromProgress, setShouldOpenFromProgress, setDecalState: setStoreDecalState, shirtColor } = useFittingRoomStore();
     const controlsRef = useRef<any>(null);
     const activeDesign = designs.find(d => d.id === activeDesignId);
     const designTexture = activeDesign ? (activeDesign.fullImage || activeDesign.thumbnail || FALLBACK_TEXTURE) : FALLBACK_TEXTURE;
 
-    // Initialize from store snapshot if available (e.g. session resume), otherwise use defaults
     const [decalState, setDecalState] = useState<DecalState>(() => {
-        if (storeDecalState && shouldOpenFromProgress) {
-            return storeDecalState;
-        }
+        if (storeDecalState && shouldOpenFromProgress) return storeDecalState;
         return { pos: [0, 0, 0], scale: 0.3, rot: 0 };
     });
+
     const [viewerStatus, setViewerStatus] = useState("Initializing...");
     const [isRestoring, setIsRestoring] = useState(true);
     const lastActiveDesignId = useRef<string | null>(null);
 
-    // Clear the snapshot flag after we've consumed it
     useEffect(() => {
-        if (shouldOpenFromProgress) {
-            setShouldOpenFromProgress(false);
-        }
+        if (shouldOpenFromProgress) setShouldOpenFromProgress(false);
     }, [shouldOpenFromProgress, setShouldOpenFromProgress]);
 
-    // Sync local decalState back to store so getSnapshot() captures current coordinates
     useEffect(() => {
         setStoreDecalState(decalState);
     }, [decalState, setStoreDecalState]);
 
     const resetToDefaults = useCallback(() => {
+        console.log("[Model3DViewer] Resetting to defaults for path:", selected3DModelPath);
         const isDress = selected3DModelPath?.toLowerCase().includes('dress');
         const isFemaleTee = selected3DModelPath?.toLowerCase().includes('female') && !isDress;
-        // Defaults are now UV-space values (0-1)
         if (isDress) setDecalState({ pos: [0, 0.2, 0], scale: 0.4, rot: 0 });
         else if (isFemaleTee) setDecalState({ pos: [0, 0, 0], scale: 0.3, rot: 0 });
         else setDecalState({ pos: [0, 0, 0], scale: 0.35, rot: 0 });
@@ -792,11 +720,9 @@ export const Model3DViewer = () => {
         }
     };
 
-    // RESTORE logic - fetch per-image placement from DB (or use store snapshot)
     useEffect(() => {
-        if (activeDesignId === lastActiveDesignId.current) return;
-
         const syncPlacement = async () => {
+            console.log("[Model3DViewer] Syncing placement for design:", activeDesignId, "Model:", selected3DModelPath);
             if (!activeDesignId) {
                 resetToDefaults();
                 setIsRestoring(false);
@@ -804,10 +730,8 @@ export const Model3DViewer = () => {
                 return;
             }
 
-            // If we just loaded from a snapshot, use the store's decalState directly
-            // (it was already set as initial state, so just mark as ready)
             if (storeDecalState && lastActiveDesignId.current === null) {
-                setViewerStatus("Restored from session");
+                setViewerStatus("Restored");
                 lastActiveDesignId.current = activeDesignId;
                 setTimeout(() => setIsRestoring(false), 800);
                 return;
@@ -834,16 +758,14 @@ export const Model3DViewer = () => {
             }
         };
         syncPlacement();
-    }, [activeDesignId, resetToDefaults]);
+    }, [activeDesignId, selected3DModelPath, resetToDefaults]);
 
-    // AUTO-SAVE logic
     useEffect(() => {
         if (isRestoring || !activeDesignId) return;
         const timer = setTimeout(async () => {
             try {
                 setViewerStatus("Syncing...");
                 if (!isValidUUID(activeDesignId)) return;
-
                 const manager = getSessionManager();
                 await manager.savePlacement(activeDesignId, {
                     pos: decalState.pos,
@@ -864,24 +786,25 @@ export const Model3DViewer = () => {
             <div className="absolute top-4 left-4 z-10 bg-white/10 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold border border-white/10">🧊 3D MODEL</div>
             <ViewerControls decalState={decalState} setDecalState={setDecalState} onReset={resetToDefaults} onViewChange={handleViewChange} status={viewerStatus} />
             <Canvas
-                dpr={[1, 1.5]} // Cap pixel ratio for performance
-                shadows={false} // Disable expensive shadows
+                key={selected3DModelPath}
+                dpr={[1, 1.5]}
+                shadows={false}
                 camera={{ position: [0, 0, 3.5], fov: 50 }}
-                gl={{ preserveDrawingBuffer: true, antialias: false }} // Disable antialias for more FPS if needed
+                gl={{ preserveDrawingBuffer: true, antialias: false }}
             >
                 <ambientLight intensity={0.8} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={0.8} />
                 <pointLight position={[-10, -10, -10]} intensity={0.4} />
                 <Suspense fallback={<LoadingFallback />}>
-                    <Center position={[0, -0.2, 0]}>
-                        <TShirtModel
-                            key={selected3DModelPath}
-                            designTexture={designTexture}
-                            decalState={decalState}
-                            setDecalState={setDecalState}
-                            onStatusChange={setViewerStatus}
-                        />
-                    </Center>
+                    <TShirtModel
+                        key={selected3DModelPath}
+                        modelPath={selected3DModelPath || '/Apparel Media/Shirt 3D Models/basic_t-shirt.glb'}
+                        shirtColor={shirtColor}
+                        designTexture={designTexture}
+                        decalState={decalState}
+                        setDecalState={setDecalState}
+                        onStatusChange={setViewerStatus}
+                    />
                     <Environment preset="city" />
                 </Suspense>
                 <OrbitControls ref={controlsRef} enablePan={false} enableZoom={true} minDistance={2} maxDistance={10} makeDefault />
@@ -890,6 +813,5 @@ export const Model3DViewer = () => {
     );
 };
 
-useGLTF.preload('/Apparel Media/Shirt 3D Models/basic_t-shirt.glb');
-useGLTF.preload('/Apparel Media/Shirt 3D Models/t-shirt_for_female.glb');
-
+useGLTF.preload('/Apparel Media/Shirt 3D Models/basic_t-shirt.glb', true);
+useGLTF.preload('/Apparel Media/Shirt 3D Models/t-shirt_for_female.glb', true);

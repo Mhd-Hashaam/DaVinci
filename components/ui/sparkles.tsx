@@ -222,8 +222,8 @@ export const SparklesCore = (props: ParticlesProps) => {
                                 random: false,
                                 size: false,
                                 speed: {
-                                    min: 0.1,
-                                    max: 1,
+                                    min: 0.02,
+                                    max: 0.25,
                                 },
                                 spin: {
                                     acceleration: 0,

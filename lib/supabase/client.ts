@@ -40,31 +40,45 @@ export function isSupabaseConfigured(): boolean {
     return Boolean(supabaseUrl && supabaseAnonKey);
 }
 
+import { useAuthStore } from '../store/authStore';
+
 /**
  * Ensures the current session is valid before running a critical operation.
- * If the access token is expired or nearly expired, forces a refresh first.
- * This is the correct industry-standard pattern vs. intercepting fetch.
+ * 
+ * IMPORTANT: We stopped calling supabase.auth.refreshSession() manually. 
+ * Doing so in an inactive tab that just woke up causes a race condition with 
+ * Supabase's internal auto-refresh timer, leading to "Refresh Token Reuse Detection" 
+ * and session revocation.
+ * 
+ * Instead, we rely on getUser() to safely and internally queue a refresh if needed.
  */
 export async function ensureValidSession(): Promise<boolean> {
     try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error || !session) return false;
+        const { data: { session } } = await supabase.auth.getSession();
 
-        // If token expires in less than 60 seconds, proactively refresh it
+        // If no session at all, just return false
+        if (!session) return false;
+
         const expiresAt = session.expires_at ?? 0;
         const nowSec = Math.floor(Date.now() / 1000);
+
+        // If expired or near expiry (within 60s), use getUser() to trigger a safe internal refresh
         if (expiresAt - nowSec < 60) {
-            console.log('[Auth] Token near expiry, refreshing proactively...');
-            const { error: refreshError } = await supabase.auth.refreshSession();
-            if (refreshError) {
-                console.error('[Auth] Proactive refresh failed:', refreshError.message);
+            console.log('[Auth] Session near expiry or expired, validating with getUser()...');
+            const { data: { user }, error } = await supabase.auth.getUser();
+
+            if (error || !user) {
+                console.error('[Auth] Terminal session failure:', error?.message);
+                useAuthStore.getState().setSessionExpired(true);
                 return false;
             }
-            console.log('[Auth] Session refreshed successfully.');
+
+            console.log('[Auth] Session successfully recovered/refreshed via getUser().');
         }
+
         return true;
     } catch (err) {
-        console.error('[Auth] ensureValidSession error:', err);
+        console.error('[Auth] ensureValidSession unexpected error:', err);
         return false;
     }
 }

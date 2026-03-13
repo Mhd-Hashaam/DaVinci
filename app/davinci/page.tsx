@@ -11,16 +11,13 @@ import { useTheme } from '@/components/ThemeProvider';
 import { SparklesCore } from '@/components/ui/sparkles';
 import { LampContainer } from '@/components/ui/lamp';
 import ImageModal from '@/components/ImageModal';
-import { ApparelModal } from '@/components/davinci/apparel/ApparelModal';
 import { TheFittingRoomModal } from '@/components/davinci/fittingroom/TheFittingRoomModal';
 import { PerformanceOverlay } from '@/components/davinci/PerformanceOverlay';
 import { DaVinciAuthModal } from '@/components/davinci/DaVinciAuthModal';
 import { MyWorks } from '@/components/davinci/profile/MyWorks';
 import { ProfileGallerySkeleton, ProfileSectionHeaderSkeleton } from '@/components/davinci/profile/DaVinciProfileSkeleton';
 import { DaVinciProfileHero } from '@/components/davinci/profile/DaVinciProfileHero';
-import { DaVinciProfileStats } from '@/components/davinci/profile/DaVinciProfileStats';
 import { DaVinciProfileGallery } from '@/components/davinci/profile/DaVinciProfileGallery';
-import { DaVinciProfileTimeline } from '@/components/davinci/profile/DaVinciProfileTimeline';
 import { api } from '@/lib/api/client';
 import { AspectRatio } from '@/types';
 import type { GeneratedImage } from '@/types';
@@ -55,7 +52,6 @@ function DaVinciStudioContent() {
     }, [searchParams]);
 
     const activeTab = viewState;
-    const isApparelModalOpen = modalState === 'apparel';
     const isFittingRoomModalOpen = modalState === 'fittingroom';
 
     // Helper to update URL state silently
@@ -94,10 +90,6 @@ function DaVinciStudioContent() {
         updateUrlState({ view: tab, modal: null });
     };
 
-    const openApparelModal = () => {
-        updateUrlState({ view: 'apparel', modal: 'apparel' });
-    };
-
     const openFittingRoomModal = () => {
         updateUrlState({ modal: 'fittingroom' });
     };
@@ -106,12 +98,7 @@ function DaVinciStudioContent() {
         const params = new URLSearchParams(window.location.search);
         params.delete('modal');
 
-        // Logic: if in apparel view & closing modal, maybe reset view? 
-        // For now, keeping current view but just closing modal.
-        if (activeTab === 'apparel' && isApparelModalOpen) {
-            params.set('view', 'create');
-            setViewState('create');
-        }
+        // Logic: keep current view but just closing modal.
 
         setModalState(null);
         window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
@@ -193,10 +180,7 @@ function DaVinciStudioContent() {
                 />
             )}
             {/* Sparkles Background */}
-            <div className={cn(
-                "absolute inset-0 w-full h-full transition-opacity duration-500",
-                activeTab === 'apparel' && "opacity-30"
-            )}>
+            <div className="absolute inset-0 w-full h-full transition-opacity duration-500">
                 <SparklesCore
                     id="tsparticlesfullpage"
                     background="transparent"
@@ -226,13 +210,8 @@ function DaVinciStudioContent() {
             <DaVinciFloatingDock
                 activeTab={activeTab}
                 setActiveTab={(tab) => {
-                    if (tab === 'apparel') {
-                        openApparelModal();
-                    } else {
-                        setActiveTab(tab);
-                    }
+                    setActiveTab(tab);
                 }}
-                isApparelModalOpen={isApparelModalOpen}
                 isFittingRoomModalOpen={isFittingRoomModalOpen}
                 onOpenFittingRoom={() => {
                     openFittingRoomModal();
@@ -245,8 +224,6 @@ function DaVinciStudioContent() {
             {/* Store Navigation Listener */}
             {(() => {
                 const {
-                    shouldOpenApparel,
-                    resetApparelViewRequest,
                     shouldOpenGallery,
                     shouldOpenCreate,
                     resetArtWallNavigation,
@@ -255,10 +232,6 @@ function DaVinciStudioContent() {
                 } = useFittingRoomStore();
 
                 React.useEffect(() => {
-                    if (shouldOpenApparel) {
-                        openApparelModal();
-                        resetApparelViewRequest();
-                    }
                     if (shouldOpenGallery) {
                         setActiveTab('gallery');
                         resetArtWallNavigation();
@@ -272,10 +245,8 @@ function DaVinciStudioContent() {
                         resetFittingRoomViewRequest();
                     }
                 }, [
-                    shouldOpenApparel,
                     shouldOpenGallery,
                     shouldOpenCreate,
-                    resetApparelViewRequest,
                     resetArtWallNavigation,
                     shouldOpenFittingRoom,
                     resetFittingRoomViewRequest,
@@ -284,18 +255,13 @@ function DaVinciStudioContent() {
                 return null;
             })()}
 
-            {/* TheVinci Orb - Top Left, Above Sidebar - Hidden in Apparel */}
-            {activeTab !== 'apparel' && (
-                <div className="fixed top-0 left-0 z-50 pointer-events-none">
-                    <TheVinciOrb size={160} />
-                </div>
-            )}
+            {/* TheVinci Orb - Top Left, Above Sidebar */}
+            <div className="fixed top-0 left-0 z-50 pointer-events-none">
+                <TheVinciOrb size={160} />
+            </div>
 
             {/* Main Content Area */}
-            <main className={cn(
-                "relative z-10 flex-1 flex flex-col min-h-screen transition-all duration-500 pr-6",
-                activeTab === 'apparel' ? "pl-20" : "pl-28"
-            )}>
+            <main className="relative z-10 flex-1 flex flex-col min-h-screen transition-all duration-500 pr-6 pl-28">
 
                 {/* Top Section: Prompt + User - Only visible in Create mode */}
                 {activeTab === 'create' && (
@@ -337,23 +303,22 @@ function DaVinciStudioContent() {
                                 {/* 1. Holographic Hero */}
                                 <DaVinciProfileHero profile={profile} user={user} />
 
-                                {/* 2. Glass Stats Row */}
-                                <DaVinciProfileStats />
-
-                                {/* 3. Split Feed: Gallery + Timeline */}
-                                <div className="flex flex-col lg:flex-row gap-8">
-                                    {/* Main Gallery Column (8/12) */}
-                                    <div className="lg:w-8/12">
-
-                                        {/* SESSION RESUMPTION SECTION */}
-                                        <div className="mb-12">
-                                            <div className="flex items-center gap-4 mb-4">
-                                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                {/* 3. Full Width Feed: Gallery + Bookmarks */}
+                                <div className="flex flex-col gap-12">
+                                    {/* Main Gallery Column - Now Full Width */}
+                                    <div className="w-full">
+                                        <div className="flex items-center mb-8">
+                                            <div className="flex items-center gap-4 w-full">
+                                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3 shrink-0">
                                                     <div className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)] animate-pulse" />
                                                     Session_Resumption_Workstreams
                                                 </h3>
                                                 <div className="flex-1 h-px bg-white/5" />
                                             </div>
+                                        </div>
+
+                                        {/* SESSION RESUMPTION SECTION */}
+                                        <div className="mb-12">
                                             <MyWorks />
                                         </div>
 
@@ -367,11 +332,11 @@ function DaVinciStudioContent() {
                                                 <div className="flex-1 h-px bg-white/5" />
                                             </div>
                                             {isSessionLoading ? (
-                                                <ProfileGallerySkeleton count={3} />
+                                                <ProfileGallerySkeleton count={4} />
                                             ) : bookmarks.length > 0 ? (
                                                 <DaVinciProfileGallery images={bookmarks} />
                                             ) : (
-                                                <div className="w-full h-130 flex flex-col items-center justify-center border border-dashed border-white/10 rounded-2xl bg-white/5">
+                                                <div className="w-full h-80 flex flex-col items-center justify-center border border-dashed border-white/10 rounded-2xl bg-white/5">
                                                     <Bookmark className="w-10 h-10 text-white/10 mb-4" />
                                                     <div className="text-zinc-500 text-xs font-medium uppercase tracking-widest">No Bookmarks Detected</div>
                                                     <div className="text-zinc-600 text-[10px] mt-2">Save generations to access them here</div>
@@ -388,42 +353,18 @@ function DaVinciStudioContent() {
                                                 </h3>
                                                 <div className="flex-1 h-px bg-white/5" />
                                                 <div className="flex gap-2">
-                                                    <button className="px-4 py-1.5 rounded-full bg-white text-black text-[10px] font-bold uppercase tracking-tighter">Photos</button>
-                                                    <button className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-500 text-[10px] font-bold uppercase tracking-tighter hover:text-white transition-colors">Digital Art</button>
+                                                    <button className="px-4 py-1.5 rounded-full bg-white text-black text-[10px] font-bold uppercase tracking-tighter cursor-pointer">Photos</button>
+                                                    <button className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-500 text-[10px] font-bold uppercase tracking-tighter hover:text-white transition-colors cursor-pointer">Digital Art</button>
                                                 </div>
                                             </div>
 
                                             {isSessionLoading ? (
-                                                <ProfileGallerySkeleton count={6} />
+                                                <ProfileGallerySkeleton count={8} />
                                             ) : (
                                                 <DaVinciProfileGallery images={[...localImages, ...sessionImages]} />
                                             )}
                                         </div>
                                     </div>
-
-                                    {/* Activity Timeline Sidebar (4/12) */}
-                                    <aside className="lg:w-4/12 h-fit sticky top-24">
-                                        <DaVinciProfileTimeline />
-
-                                        {/* Optional Session Logout / Account Control in Sidebar Area */}
-                                        <div className="mt-8 p-6 rounded-[2rem] border border-white/5 bg-gradient-to-br from-red-500/5 to-transparent">
-                                            <h4 className="text-[10px] font-bold text-zinc-500 uppercase mb-4 tracking-widest">Session Control</h4>
-                                            <button
-                                                onClick={async () => {
-                                                    try {
-                                                        await signOut();
-                                                    } catch (e) {
-                                                        console.error("Logout failed:", e);
-                                                    } finally {
-                                                        setActiveTab('explore');
-                                                    }
-                                                }}
-                                                className="w-full py-3 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer"
-                                            >
-                                                Terminate Protocol (Log Out)
-                                            </button>
-                                        </div>
-                                    </aside>
                                 </div>
                             </section>
 
@@ -442,12 +383,6 @@ function DaVinciStudioContent() {
             {/* Modals */}
             <ImageModal image={selectedImage} onClose={() => setSelectedImage(null)} />
             <DaVinciAuthModal />
-            <ApparelModal
-                isOpen={isApparelModalOpen}
-                onClose={() => {
-                    closeModals();
-                }}
-            />
             <TheFittingRoomModal
                 isOpen={isFittingRoomModalOpen}
                 onClose={() => {
