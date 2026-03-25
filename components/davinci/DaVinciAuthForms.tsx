@@ -81,7 +81,7 @@ export function DaVinciSignInForm() {
                         icon={<img src="https://authjs.dev/img/providers/google.svg" className="w-5 h-5" alt="Google" />}
                         color="bg-white"
                         textColor="text-black"
-                        onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback?returnTo=/davinci` } })}
+                        onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback?returnTo=/davinci`, queryParams: { prompt: 'select_account' } } })}
                     />
                     <SocialButton
                         icon={<IconBrandApple size={22} />}
@@ -234,7 +234,7 @@ export function DaVinciSignUpForm() {
                         icon={<img src="https://authjs.dev/img/providers/google.svg" className="w-5 h-5" alt="Google" />}
                         color="bg-white"
                         textColor="text-black"
-                        onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback?returnTo=/davinci` } })}
+                        onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback?returnTo=/davinci`, queryParams: { prompt: 'select_account' } } })}
                     />
                     <SocialButton
                         icon={<IconBrandApple size={22} />}

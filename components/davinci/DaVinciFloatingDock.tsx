@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Compass, Brush, LayoutGrid, FolderHeart, Settings, Bookmark, Sparkles, X, Palette, Magnet, Activity } from 'lucide-react';
+import { Compass, Brush, LayoutGrid, FolderHeart, Settings, Users, Sparkles, X, Palette, Magnet, Activity } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +11,7 @@ import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
 import { useTheme, Theme } from '@/components/ThemeProvider';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { useScrollbar, ScrollbarType } from '@/components/scrollbar/CustomScrollbar';
 
 interface FloatingDockProps {
     activeTab: string;
@@ -35,7 +36,7 @@ const navItems: NavItem[] = [
     { id: 'fittingroom', icon: 'custom-fittingroom', label: 'FittingRoom' },
     { id: 'gallery', icon: LayoutGrid, label: 'Gallery' },
     { id: 'myworks', icon: FolderHeart, label: 'Profile' },
-    { id: 'bookmarks', icon: Bookmark, label: 'Bookmarks' },
+    { id: 'community', icon: Users, label: 'Community' },
     { id: 'vibes', icon: Palette, label: 'Vibes' },
 ];
 
@@ -49,6 +50,17 @@ const themes: { id: Theme; color: string; label: string }[] = [
     { id: 'rose', color: '#f472b6', label: 'Rose' },
     { id: 'forest', color: '#34d399', label: 'Forest' },
 ];
+
+const THEME_SCROLLBAR_COLORS: Record<Theme, { lit: string; dim: string }> = {
+    mauve:     { lit: "#af8d99", dim: "rgba(175, 141, 153, 0.18)" },
+    aurora:    { lit: "#7c3aed", dim: "rgba(124, 58, 237, 0.18)" },
+    crimson:   { lit: "#ef4444", dim: "rgba(239, 68, 68, 0.18)"  },
+    silver:    { lit: "#94a3b8", dim: "rgba(148, 163, 184, 0.18)"},
+    ember:     { lit: "#f97316", dim: "rgba(249, 115, 22, 0.18)" },
+    champagne: { lit: "#fbbf24", dim: "rgba(251, 191, 36, 0.18)" },
+    rose:      { lit: "#f472b6", dim: "rgba(244, 114, 182, 0.18)"},
+    forest:    { lit: "#34d399", dim: "rgba(52, 211, 153, 0.18)" },
+};
 
 // --- DOCK CONFIGURATION ---
 const DOCK_CONFIG = {
@@ -70,7 +82,7 @@ const DOCK_CONFIG = {
     },
     drawer: {
         leftOffset: "115px", // Space from dock to drawer
-        top: "59%",          // Match sidebar.top for alignment
+        top: "5%",          // Match sidebar.top for alignment
         minWidth: "320px",
     },
     // --- ANIMATION PARAMETERS ---
@@ -103,7 +115,13 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
 }) => {
     const { user, profile } = useAuth();
     const { openAuthModal, isAuthModalOpen, postLoginTab, setPostLoginTab } = useDaVinciUIStore();
-    const { theme, setTheme, sparkleMode, toggleSparkleMode, hoverEffect, toggleHoverEffect } = useTheme();
+    const { 
+        theme, setTheme, 
+        sparkleMode, toggleSparkleMode, 
+        hoverEffect, toggleHoverEffect,
+        backgroundMode, setBackgroundMode 
+    } = useTheme();
+    const { type: scrollType, setType: setScrollType, setThreadConfig, setNeuralConfig } = useScrollbar();
     const [activeDrawer, setActiveDrawer] = useState<'vibes' | null>(null);
 
     // Active theme
@@ -118,6 +136,21 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
             setPostLoginTab(null);
         }
     }, [isAuthModalOpen, user, postLoginTab, setActiveTab, setPostLoginTab]);
+
+    // Sync scrollbar colors with theme
+    useEffect(() => {
+        const colors = THEME_SCROLLBAR_COLORS[theme];
+        if (!colors) return;
+        
+        const config = { 
+            colorLit: colors.lit, 
+            colorDim: colors.dim, 
+            colorThumb: colors.lit 
+        };
+        
+        setThreadConfig(config);
+        setNeuralConfig(config);
+    }, [theme, setThreadConfig, setNeuralConfig]);
 
     // Animation Variants
     const dockVariants = {
@@ -178,16 +211,20 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                     isFittingRoomModalOpen ? "rounded-[3.5rem]" : "rounded-r-[3.5rem] rounded-l-none"
                 )} />
 
-                {/* Check Background Pattern */}
+                {/* Custom Background Image */}
                 <div className={cn(
                     "absolute inset-0 opacity-100 pointer-events-none overflow-hidden transition-all duration-500",
                     isFittingRoomModalOpen ? "rounded-[3.5rem]" : "rounded-r-[3.5rem] rounded-l-none"
                 )}
                     style={{
-                        backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
-                        backgroundSize: '20px 20px'
+                        backgroundImage: 'url("/Mockups/Background.webp")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center center',
                     }}
-                />
+                >
+                    {/* Subtle Dark Overlay to ensure readability */}
+                    <div className="absolute inset-0 bg-black/40" />
+                </div>
 
                 {navItems.map((item) => {
                     const Icon = item.icon;
@@ -202,8 +239,7 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
 
                             <button
                                 onClick={() => {
-                                    if (item.id === 'bookmarks') setActiveTab('myworks');
-                                    else if (item.id === 'fittingroom') {
+                                    if (item.id === 'fittingroom') {
                                         // Open FittingRoom modal
                                         if (onOpenFittingRoom) onOpenFittingRoom();
                                     }
@@ -313,14 +349,20 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10 }}
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        className="fixed flex flex-col p-6 rounded-[2rem] bg-black/80 backdrop-blur-2xl border border-white/10 shadow-2xl z-[65]"
+                        className="fixed flex flex-col p-6 rounded-[2rem] border border-white/10 shadow-2xl z-[65] overflow-hidden"
                         style={{ 
                             left: DOCK_CONFIG.drawer.leftOffset,
                             top: DOCK_CONFIG.drawer.top,
                             transform: "translateY(-50%)",
-                            minWidth: DOCK_CONFIG.drawer.minWidth
+                            minWidth: DOCK_CONFIG.drawer.minWidth,
+                            backgroundImage: 'url("/Mockups/Background.webp")',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center center',
+                            backgroundColor: '#000000'
                         }}
                     >
+                        {/* Subtle Dark Overlay */}
+                        <div className="absolute inset-0 bg-black/80 backdrop-blur-2xl -z-10" />
                         {/* Header: APPEARANCE */}
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-white font-black text-sm tracking-[0.2em] flex items-center gap-2">
@@ -379,23 +421,50 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                             </div>
                         </div>
 
-                        {/* Ambiance Section */}
-                        <div className="space-y-4">
-                            <h3 className="text-white font-black text-sm tracking-[0.2em] flex items-center gap-2 mb-4">
-                                <Sparkles size={16} className="text-zinc-400" />
-                                PARTICLE EFFECTS
-                            </h3>
+                            {/* Ambiance Section */}
+                            <div className="space-y-4">
+                                <h3 className="text-white font-black text-sm tracking-[0.2em] flex items-center gap-2 mb-4">
+                                    <Sparkles size={16} className="text-zinc-400" />
+                                    PARTICLE EFFECTS
+                                </h3>
 
-                            {/* Sparkles Card */}
-                            <button
-                                onClick={toggleSparkleMode}
-                                className={cn(
-                                    "w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-300 group cursor-pointer",
-                                    sparkleMode === 'theme'
-                                        ? "bg-white/10 border-white/20"
-                                        : "bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5"
-                                )}
-                            >
+                                {/* Atmosphere (Background) Card */}
+                                <div className="space-y-3 mb-6">
+                                    <div className="flex items-center justify-between px-1">
+                                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Atmosphere Style</span>
+                                        <div className="flex gap-1.5">
+                                            <button
+                                                onClick={() => setBackgroundMode('stars')}
+                                                className={cn(
+                                                    "px-2.5 py-1 rounded-lg text-[9px] font-bold tracking-widest uppercase transition-all",
+                                                    backgroundMode === 'stars' ? "bg-white text-black shadow-lg" : "bg-white/5 text-zinc-500 hover:text-white"
+                                                )}
+                                            >
+                                                Stars
+                                            </button>
+                                            <button
+                                                onClick={() => setBackgroundMode('smoke')}
+                                                className={cn(
+                                                    "px-2.5 py-1 rounded-lg text-[9px] font-bold tracking-widest uppercase transition-all",
+                                                    backgroundMode === 'smoke' ? "bg-white text-black shadow-lg" : "bg-white/5 text-zinc-500 hover:text-white"
+                                                )}
+                                            >
+                                                Smoke
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Sparkles Card */}
+                                <button
+                                    onClick={toggleSparkleMode}
+                                    className={cn(
+                                        "w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-300 group cursor-pointer",
+                                        sparkleMode === 'theme'
+                                            ? "bg-white/10 border-white/20"
+                                            : "bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5"
+                                    )}
+                                >
                                 <div className="flex items-center gap-3">
                                     <div className={cn(
                                         "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
@@ -407,8 +476,8 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                                         <span className={cn(
                                             "text-[10px] font-bold uppercase transition-colors",
                                             sparkleMode === 'theme' ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"
-                                        )}>Ambient Particles</span>
-                                        <span className="text-[9px] text-zinc-600">Background stardust effect</span>
+                                        )}>Sync Starfield</span>
+                                        <span className="text-[9px] text-zinc-600">Match stars with theme color</span>
                                     </div>
                                 </div>
                                 <div className={cn(
@@ -462,7 +531,7 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                             <button
                                 onClick={() => hoverEffect !== 'repulse' && toggleHoverEffect()}
                                 className={cn(
-                                    "w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 group cursor-pointer",
+                                    "w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 group cursor-pointer mb-2",
                                     hoverEffect === 'repulse'
                                         ? "bg-white/10 border-white/20"
                                         : "bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5"
@@ -493,6 +562,45 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                                     )} />
                                 </div>
                             </button>
+
+                            {/* Scrollbar Style Section */}
+                            <div className="pt-2">
+                                <h3 className="text-white font-black text-sm tracking-[0.2em] flex items-center gap-2 mb-4">
+                                    <LayoutGrid size={16} className="text-zinc-400" />
+                                    SCROLLBAR STYLE
+                                </h3>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {[
+                                        { id: 'thread', label: 'Thread', desc: 'Silk unraveling' },
+                                        { id: 'neural', label: 'Neural', desc: 'Synapses firing' }
+                                    ].map((opt) => (
+                                        <button
+                                            key={opt.id}
+                                            onClick={() => setScrollType(opt.id as ScrollbarType)}
+                                            className={cn(
+                                                "flex flex-col items-start gap-1 p-3 rounded-xl border transition-all duration-300 group text-left cursor-pointer",
+                                                scrollType === opt.id
+                                                    ? "bg-white/10 border-white/20"
+                                                    : "bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5"
+                                            )}
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <div 
+                                                    className="w-2 h-2 rounded-full" 
+                                                    style={{ backgroundColor: activeTheme.color, boxShadow: `0 0 8px ${activeTheme.color}` }}
+                                                />
+                                                <span className={cn(
+                                                    "text-[10px] font-bold uppercase",
+                                                    scrollType === opt.id ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"
+                                                )}>
+                                                    {opt.label}
+                                                </span>
+                                            </div>
+                                            <span className="text-[9px] text-zinc-600 line-clamp-1">{opt.desc}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
                 )}

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Cormorant_Garamond, Outfit } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ScrollbarProvider } from "@/components/scrollbar/CustomScrollbar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -11,6 +12,17 @@ const inter = Inter({
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
+  subsets: ["latin"],
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
@@ -32,7 +44,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&family=Comic+Relief:wght@400;700&family=Delius&family=Delius+Swash+Caps&family=Delius+Unicase:wght@400;700&family=Emilys+Candy&family=Fascinate&family=Pacifico&family=Quintessential&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
       </head>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${cormorant.variable} ${outfit.variable} font-sans antialiased bg-[#000000] text-white min-h-screen`}
         suppressHydrationWarning
       >
         <script
@@ -50,7 +62,9 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider>
-          {children}
+          <ScrollbarProvider defaultType="thread">
+            {children}
+          </ScrollbarProvider>
         </ThemeProvider>
       </body>
     </html>

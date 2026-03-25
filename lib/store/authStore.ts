@@ -10,6 +10,7 @@ interface AuthState {
     isLoading: boolean;
     isAuthenticated: boolean;
     isSessionExpired: boolean;
+    isAdmin: boolean;
     setSession: (session: Session | null) => void;
     setProfile: (profile: ProfileRow | null) => void;
     setLoading: (loading: boolean) => void;
@@ -26,13 +27,17 @@ export const useAuthStore = create<AuthState>()(
             isLoading: true,
             isAuthenticated: false,
             isSessionExpired: false,
+            isAdmin: false,
             setSession: (session) => set({
                 session,
                 user: session?.user ?? null,
                 isAuthenticated: !!session,
                 isSessionExpired: false // Clear expiry if session is set
             }),
-            setProfile: (profile) => set({ profile }),
+            setProfile: (profile) => set({
+                profile,
+                isAdmin: profile?.role === 'admin',
+            }),
             setLoading: (isLoading) => set({ isLoading }),
             setSessionExpired: (isSessionExpired) => set({ isSessionExpired }),
             signOut: () => set({
@@ -40,7 +45,8 @@ export const useAuthStore = create<AuthState>()(
                 session: null,
                 profile: null,
                 isAuthenticated: false,
-                isSessionExpired: false
+                isSessionExpired: false,
+                isAdmin: false,
             }),
         }),
         {

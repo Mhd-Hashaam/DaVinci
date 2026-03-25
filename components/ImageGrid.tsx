@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { GeneratedImage } from '../types';
-import { Shirt, Share2, Download, Maximize2, Wand2, Image as ImageIcon, MoreVertical, Repeat } from 'lucide-react';
+import { Shirt, Share2, Download, Maximize2, Wand2, Image as ImageIcon, MoreVertical, Repeat, CheckCircle2 } from 'lucide-react';
 import ImageContextMenu from './ImageContextMenu';
+import { cn } from '@/lib/utils';
+import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
+import { IconCheck } from '@tabler/icons-react';
 
 interface ImageGridProps {
   images: GeneratedImage[];
@@ -12,6 +15,9 @@ interface ImageGridProps {
   selectionMode?: boolean;
   isSelected?: (image: GeneratedImage) => boolean;
   onSelect?: (image: GeneratedImage) => void;
+  showArtWall?: boolean;
+  layout?: 'masonry' | 'grid';
+  columns?: { mobile?: number, sm?: number, lg?: number, xl?: number };
 }
 
 const ImageGrid: React.FC<ImageGridProps> = ({
@@ -22,11 +28,15 @@ const ImageGrid: React.FC<ImageGridProps> = ({
   onEditClick,
   selectionMode = false,
   isSelected,
-  onSelect
+  onSelect,
+  showArtWall = true,
+  layout = 'masonry',
+  columns
 }) => {
+  const { designs, addDesign, removeDesign } = useFittingRoomStore();
   const [selectedForMockup, setSelectedForMockup] = useState<Set<string>>(new Set());
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+   
   const menuButtonRefs = React.useRef<Map<string, React.RefObject<HTMLButtonElement | null>>>(new Map());
 
   const toggleMockupSelection = (image: GeneratedImage) => {
@@ -51,18 +61,29 @@ const ImageGrid: React.FC<ImageGridProps> = ({
     return menuButtonRefs.current.get(imageId)! as React.RefObject<HTMLButtonElement>;
   };
 
+  // Dynamic class for masonry columns
+  const containerClass = cn(
+    "gap-4 pb-20",
+    columns?.mobile ? `columns-${columns.mobile}` : "columns-1",
+    columns?.sm ? `sm:columns-${columns.sm}` : "sm:columns-2",
+    columns?.lg ? `lg:columns-${columns.lg}` : "lg:columns-3",
+    columns?.xl ? `xl:columns-${columns.xl}` : "xl:columns-4"
+  );
+
   return (
-    <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4 pb-20">
+    <div className={containerClass}>
       {images.map((image) => {
         const isSelectedForComparison = isSelected ? isSelected(image) : false;
 
         return (
           <div
             key={image.id}
-            className={`group relative break-inside-avoid rounded-2xl overflow-hidden bg-white/5 border transition-all duration-300 ${isSelectedForComparison
-              ? 'border-indigo-500 ring-2 ring-indigo-500/50 scale-[0.98]'
-              : 'border-white/5 hover:border-white/20'
-              } ${selectionMode ? 'cursor-pointer' : ''}`}
+            className={cn(
+              "group relative break-inside-avoid rounded-2xl overflow-hidden bg-white/5 border transition-all duration-300 mb-4",
+              isSelectedForComparison
+                ? "border-indigo-500 ring-2 ring-indigo-500/50 scale-[0.98]"
+                : "border-white/5 hover:border-white/20"
+            )}
             onClick={() => {
               if (selectionMode && onSelect) {
                 onSelect(image);
@@ -73,12 +94,16 @@ const ImageGrid: React.FC<ImageGridProps> = ({
           >
             {/* Selection Overlay */}
             {selectionMode && (
-              <div className={`absolute inset-0 z-20 transition-colors ${isSelectedForComparison ? 'bg-indigo-500/20' : 'bg-transparent hover:bg-white/5'
-                }`}>
-                <div className={`absolute top-3 right-3 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelectedForComparison
-                  ? 'bg-indigo-500 border-indigo-500 scale-110'
-                  : 'border-white/50 bg-black/20'
-                  }`}>
+              <div className={cn(
+                "absolute inset-0 z-20 transition-colors",
+                isSelectedForComparison ? "bg-indigo-500/20" : "bg-transparent hover:bg-white/5"
+              )}>
+                <div className={cn(
+                  "absolute top-3 right-3 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
+                  isSelectedForComparison 
+                    ? "bg-indigo-500 border-indigo-500 scale-110" 
+                    : "border-white/50 bg-black/20"
+                )}>
                   {isSelectedForComparison && (
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="10 3 4.5 9 2 6.5" />
@@ -91,8 +116,8 @@ const ImageGrid: React.FC<ImageGridProps> = ({
             <img
               src={image.url}
               alt={image.prompt}
-              className="w-full object-cover"
-              style={{ aspectRatio: image.aspectRatio.replace(':', '/') }}
+              className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+              style={{ aspectRatio: image.aspectRatio === '1:1' ? undefined : image.aspectRatio.replace(':', '/') }}
               loading="lazy"
             />
 
@@ -113,6 +138,47 @@ const ImageGrid: React.FC<ImageGridProps> = ({
                     <Shirt size={20} strokeWidth={2} />
                   </button>
                 </div>
+
+                {/* ArtWall Toggle Badge - Top Right (similar to ExploreMasonry) */}
+                {showArtWall && (
+                  <div className="absolute top-3 right-12 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30 pointer-events-auto">
+                    {(() => {
+                      const isOnArtWall = designs.some(d => d.id === image.id);
+                      return (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            if (isOnArtWall) {
+                              removeDesign(image.id);
+                            } else {
+                              addDesign({
+                                id: image.id,
+                                name: image.prompt,
+                                thumbnail: image.url,
+                                fullImage: image.url,
+                                category: 'home-feed'
+                              });
+                            }
+                          }}
+                          className={cn(
+                            "h-9 px-3 rounded-full backdrop-blur-md flex items-center gap-2 transition-all shadow-lg border",
+                            isOnArtWall 
+                              ? "bg-white text-black border-white" 
+                              : "bg-black/60 text-white border-white/10 hover:bg-black/80"
+                          )}
+                          title={isOnArtWall ? "Remove from ArtWall" : "Add to ArtWall"}
+                        >
+                          <img src="/Icons/ArtWall.png" alt="ArtWall" className={cn("w-4 h-4", isOnArtWall && "invert")} />
+                          <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">
+                            {isOnArtWall ? 'ON ARTWALL' : 'ADD TO ARTWALL'}
+                          </span>
+                          {isOnArtWall && <IconCheck size={10} stroke={4} />}
+                        </button>
+                      );
+                    })()}
+                  </div>
+                )}
 
                 {/* Hover Overlay with Icon Buttons */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">

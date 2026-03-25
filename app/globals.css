@@ -4,9 +4,9 @@
   --background: #000000;
   --foreground: #f4f4f5;
   --surface: #0a0a0f;
-  --primary: #6366f1;
+  --primary: #C5A572; /* Luxury Gold */
   --secondary: #a1a1aa;
-  --accent: #8b5cf6;
+  --accent: #ffffff;
 
   /* Layout */
   --prompt-height: 80px;
@@ -63,19 +63,19 @@
   --lamp-glow: rgba(var(--lamp-color-rgb), 0.2);
 }
 
-/* Global scrollbar / grabber colors */
+/* Global scrollbar / grabber colors - Neutral by default to prevent flashes */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--lamp-glow);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 10px;
-  transition: var(--theme-transition);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--lamp-color);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 * {
@@ -88,6 +88,100 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter), 'Space Grotesk', sans-serif;
+  --font-cormorant: var(--font-cormorant), serif;
+  --font-outfit: var(--font-outfit), sans-serif;
+}
+
+/* Typography utilities */
+.font-cormorant {
+  font-family: var(--font-cormorant);
+}
+
+.font-outfit {
+  font-family: var(--font-outfit);
+}
+
+/* Luxury Admin Background */
+.admin-bg {
+  background-image: url('/Mockups/Background.webp');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-color: #0c0b0a;
+}
+
+/* Admin card panel — Refined for Golden Obsidian look */
+/* Admin card panel — Masking technique for precise border glow */
+.admin-panel {
+  position: relative;
+  background: rgba(12, 11, 10, 0.9);
+  border: 1px solid rgba(197, 165, 114, 0.08); /* Faint base border */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+}
+
+.admin-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px; /* Thicker light border */
+  background: radial-gradient(
+    600px circle at var(--local-mx, 50%) var(--local-my, 50%),
+    rgba(197, 165, 114, 0.95),
+    rgba(197, 165, 114, 0.1) 40%,
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.25; /* Visible even without hover */
+  transition: opacity 0.6s ease;
+  z-index: 10;
+  border-radius: inherit;
+}
+
+.admin-panel:hover::after {
+  opacity: 1; /* Lush ambient light on hover */
+}
+
+/* Horizontal Divider Line (Precise 1px Golden) */
+.admin-divider {
+  height: 1px;
+  background: linear-gradient(90deg, 
+    rgba(197, 165, 114, 0.2) 0%, 
+    rgba(197, 165, 114, 0.1) 50%, 
+    rgba(197, 165, 114, 0.05) 100%
+  );
+  width: 100%;
+}
+
+/* Border Glow Utility */
+.border-glow {
+  position: relative;
+  border: 1px solid var(--border-glow-color, rgba(197, 165, 114, 0.1));
+  overflow: hidden;
+}
+
+.border-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(
+    400px circle at var(--mouse-x) var(--mouse-y),
+    var(--border-glow-highlight, rgba(197, 165, 114, 0.3)),
+    transparent 40%
+  );
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.border-glow:hover::before {
+  opacity: 1;
 }
 
 body {
@@ -176,8 +270,8 @@ input:-webkit-autofill:active {
 
 /* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -185,12 +279,13 @@ input:-webkit-autofill:active {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 3px;
+  background: rgba(197, 165, 114, 0.25);
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: rgba(197, 165, 114, 0.6);
 }
 
 /* Hide Scrollbar util */
@@ -205,20 +300,62 @@ input:-webkit-autofill:active {
 
 /* Container Scroll - Thin scrollbar for Closet/ArtWall panels */
 .container-scroll::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 .container-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.01);
 }
 
 .container-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(197, 165, 114, 0.3);
   border-radius: 9999px;
 }
 
 .container-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(197, 165, 114, 0.5);
+}
+
+/* Global Admin Scrollbar Utility - Forced visibility to override ScrollbarProvider */
+.admin-scrollbar::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  display: block !important;
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.admin-scrollbar::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(197, 165, 114, 0.6) !important;
+  border-radius: 10px !important;
+  background-clip: padding-box !important;
+  border: 1px solid transparent !important;
+  transition: none !important;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 165, 114, 1) !important;
+  background-clip: padding-box !important;
+}
+
+/* Container Scroll - Used in dash/closet panels */
+.container-scroll::-webkit-scrollbar {
+  display: block !important;
+  width: 5px !important;
+  height: 5px !important;
+}
+
+.container-scroll::-webkit-scrollbar-thumb {
+  background: rgba(197, 165, 114, 0.4) !important;
+  border-radius: 9999px !important;
+  transition: none !important;
 }
 
 /* Masonry Grid */

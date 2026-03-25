@@ -1,50 +1,35 @@
 'use client';
 
-import { OrbitControls as DreiOrbitControls } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 
 interface ControlsProps {
-    enableZoom?: boolean;
-    enablePan?: boolean;
-    enableRotate?: boolean;
     autoRotate?: boolean;
-    autoRotateSpeed?: number;
-    minDistance?: number;
-    maxDistance?: number;
-    minPolarAngle?: number;
-    maxPolarAngle?: number;
+    enableZoom?: boolean;
+    enableRotate?: boolean;
 }
 
 /**
- * Camera controls for 3D mockup interaction
- * Provides orbit, zoom, and optional auto-rotation
+ * Optimized OrbitControls for the DaVinci 3D Mockup Viewer
+ * Handles camera movement, damping, and auto-rotation
  */
-export function Controls({
-    enableZoom = true,
-    enablePan = false,
-    enableRotate = true,
-    autoRotate = false,
-    autoRotateSpeed = 2,
-    minDistance = 1.5,
-    maxDistance = 6,
-    minPolarAngle = Math.PI * 0.25, // 45 degrees from top
-    maxPolarAngle = Math.PI * 0.75, // 135 degrees from top
+export function Controls({ 
+    autoRotate = true, 
+    enableZoom = true, 
+    enableRotate = true 
 }: ControlsProps) {
     return (
-        <DreiOrbitControls
-            enableZoom={enableZoom}
-            enablePan={enablePan}
-            enableRotate={enableRotate}
-            autoRotate={autoRotate}
-            autoRotateSpeed={autoRotateSpeed}
-            minDistance={minDistance}
-            maxDistance={maxDistance}
-            minPolarAngle={minPolarAngle}
-            maxPolarAngle={maxPolarAngle}
+        <OrbitControls
             enableDamping
             dampingFactor={0.05}
             rotateSpeed={0.5}
-            zoomSpeed={0.8}
+            zoomSpeed={0.5}
+            autoRotate={autoRotate}
+            autoRotateSpeed={1.0}
+            enableZoom={enableZoom}
+            enableRotate={enableRotate}
+            minDistance={2}
+            maxDistance={8}
+            makeDefault
         />
     );
 }
-

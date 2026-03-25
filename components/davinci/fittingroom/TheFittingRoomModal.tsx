@@ -4,7 +4,6 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { X } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { SparklesCore } from '@/components/ui/sparkles';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/components/ThemeProvider';
 import { TheCloset } from './TheCloset';
@@ -40,7 +39,7 @@ export const TheFittingRoomModal: React.FC<TheFittingRoomModalProps> = ({ isOpen
     }, [isOpen, onClose]);
 
     // Modal Height Resize Logic (from bottom edge)
-    const [modalHeight, setModalHeight] = useState(98); // Default 98vh
+    const [modalHeight, setModalHeight] = useState(100); // Default 100vh
     const isResizingHeight = useRef(false);
 
     const handleHeightResizeStart = useCallback((e: React.MouseEvent) => {
@@ -52,7 +51,7 @@ export const TheFittingRoomModal: React.FC<TheFittingRoomModalProps> = ({ isOpen
             if (!isResizingHeight.current) return;
             // FittingRoom: Resize from BOTTOM edge
             const vh = (ev.clientY / window.innerHeight) * 100;
-            const clamped = Math.min(Math.max(vh, 50), 99);
+            const clamped = Math.min(Math.max(vh, 50), 100);
             setModalHeight(clamped);
         };
 
@@ -237,8 +236,17 @@ export const TheFittingRoomModal: React.FC<TheFittingRoomModalProps> = ({ isOpen
             {/* Modal Container - Slides from TOP */}
             <div
                 ref={modalRef}
-                style={{ height: `${modalHeight}vh` }}
-                className="relative w-full bg-[#09090b] rounded-b-[2rem] border-b border-white/10 shadow-2xl overflow-hidden -translate-y-full transition-[height] duration-75 ease-linear"
+                className={cn(
+                    "relative w-full shadow-2xl overflow-hidden -translate-y-full transition-[height] duration-75 ease-linear",
+                    modalHeight < 100 ? "rounded-b-[2rem] border-b border-white/10" : ""
+                )}
+                style={{ 
+                    height: `${modalHeight}vh`,
+                    backgroundImage: 'url("/Mockups/Background.webp")',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundColor: '#09090b'
+                }}
                 role="dialog"
                 aria-modal="true"
                 aria-label="The Fitting Room"
@@ -251,18 +259,8 @@ export const TheFittingRoomModal: React.FC<TheFittingRoomModalProps> = ({ isOpen
 
                 {/* Background Effects */}
                 <div className="absolute inset-0 z-0 pointer-events-none">
-                    <div className="w-full h-full opacity-15">
-                        <SparklesCore
-                            id="fittingroom-modal-sparkles"
-                            background="transparent"
-                            minSize={0.4}
-                            maxSize={1.0}
-                            particleDensity={50}
-                            className="w-full h-full"
-                            particleColor="#FFFFFF"
-                            hoverEffect="none"
-                        />
-                    </div>
+                    {/* Dark Overlay for visibility */}
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-[1]" />
 
                     {/* Top Lamp Glow (from top, since modal comes from top) */}
                     <div
@@ -296,7 +294,7 @@ export const TheFittingRoomModal: React.FC<TheFittingRoomModalProps> = ({ isOpen
                                 }}
                             >
                                 {/* TheCloset - Left Panel (Resizable) */}
-                                <div className="relative h-full rounded-l-2xl border border-white/5 bg-black/20 backdrop-blur-sm overflow-hidden group/closet">
+                                <div className="relative h-full rounded-l-2xl border border-white/5 bg-transparent backdrop-blur-sm overflow-hidden group/closet">
                                     <TheCloset />
                                     {/* Resize Handle (Right Edge) */}
                                     <div
@@ -306,12 +304,12 @@ export const TheFittingRoomModal: React.FC<TheFittingRoomModalProps> = ({ isOpen
                                 </div>
 
                                 {/* TheMirror - Center Panel (Flexible) */}
-                                <div className="relative h-full border-y border-white/5 bg-black/10 overflow-hidden">
+                                <div className="relative h-full border-y border-white/5 bg-transparent overflow-hidden">
                                     <TheMirror />
                                 </div>
 
                                 {/* TheArtWall - Right Panel (Resizable) */}
-                                <div className="relative h-full rounded-r-2xl border border-white/5 bg-black/20 backdrop-blur-sm overflow-hidden group/artwall">
+                                <div className="relative h-full rounded-r-2xl border border-white/5 bg-transparent backdrop-blur-sm overflow-hidden group/artwall">
                                     {/* Resize Handle */}
                                     <div
                                         onMouseDown={handleArtWallResizeStart}

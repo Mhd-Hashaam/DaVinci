@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, RefreshCw, Check, Sparkles, Crop, Scissors, Undo2, Redo2, Loader2 } from 'lucide-react';
 import { GeneratedImage } from '../types';
 import { api } from '@/lib/api/client';
+import { ScrollablePanel } from './scrollbar/CustomScrollbar';
 
 interface EditModalProps {
     image: GeneratedImage | null;
@@ -359,13 +360,13 @@ const EditModal: React.FC<EditModalProps> = ({ image, onClose, onSave, onApplyTo
                     <div className={`flex-1 bg-[#0a0a0a] flex flex-col transition-all ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
                         style={{ transitionDelay: '100ms', transitionDuration: '500ms' }}
                     >
-                        <div className="flex-1 overflow-y-auto custom-scrollbar">
+                        <ScrollablePanel className="flex-1">
                             <div className="flex items-center justify-center p-8 min-h-full">
                                 <div className="relative w-full flex justify-center" style={getCropContainerStyle()}>
                                     <img src={image.url} alt={image.prompt} style={imageStyle} className="rounded-lg shadow-2xl" />
                                 </div>
                             </div>
-                        </div>
+                        </ScrollablePanel>
 
                         <div className="shrink-0 border-t border-white/10 bg-[#0a0a0a] p-6">
                             <div className="max-w-3xl mx-auto w-full">
@@ -429,7 +430,7 @@ const EditModal: React.FC<EditModalProps> = ({ image, onClose, onSave, onApplyTo
                     <div className={`w-80 bg-[#09090b] border-l border-white/5 flex flex-col transition-all ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}
                         style={{ transitionDelay: '200ms', transitionDuration: '500ms' }}
                     >
-                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+                        <ScrollablePanel className="flex-1 p-6 space-y-6">
                             <div className="space-y-3">
                                 <div className="flex justify-between items-center">
                                     <label className="text-sm font-medium text-zinc-300">Scale</label>
@@ -503,7 +504,7 @@ const EditModal: React.FC<EditModalProps> = ({ image, onClose, onSave, onApplyTo
                                     ))}
                                 </div>
                             </div>
-                        </div>
+                        </ScrollablePanel>
                     </div>
                 </div>
             </div>

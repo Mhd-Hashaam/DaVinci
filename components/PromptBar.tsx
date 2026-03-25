@@ -2,7 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Image as ImageIcon, ChevronDown, Zap, Sparkles, Palette, Crop, Wand2, Film, Aperture, Box, Heart, Brush, Check, RectangleHorizontal } from 'lucide-react';
 import { AspectRatio } from '../types';
 import { AIModel, StylePreset } from '../types/settings';
-import { ASPECT_RATIOS } from '../constants';
+
+const ASPECT_RATIOS: { value: AspectRatio; label: string; width: number; height: number }[] = [
+  { value: '3:4', label: 'Standard Front', width: 15, height: 20 },
+  { value: '4:5', label: 'Art Print', width: 16, height: 20 },
+  { value: '1:1', label: 'Square', width: 18, height: 18 },
+  { value: '2:3', label: 'Poster', width: 14, height: 21 },
+  { value: '5:7', label: 'Photo', width: 15, height: 21 },
+  { value: '16:9', label: 'Landscape', width: 24, height: 14 },
+];
 
 interface PromptBarProps {
     onGenerate: (prompt: string, aspectRatio: AspectRatio | AspectRatio[]) => void;

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Sidebar from '@/components/Sidebar';
 import PromptBar from '@/components/PromptBar';
+import { ScrollablePanel, useScrollbar } from '@/components/scrollbar/CustomScrollbar';
 import ImageGrid from '@/components/ImageGrid';
 import ImageModal from '@/components/ImageModal';
 import MockupModal from '@/components/MockupModal';
@@ -15,7 +16,7 @@ import { api } from '@/lib/api/client';
 import { AspectRatio } from '@/types';
 import type { GeneratedImage } from '@/types';
 import { AIModel, ImageDimension, ImageSize, PromptEnhance, StylePreset } from '@/types/settings';
-import { MOCK_IMAGES, EXPLORE_IMAGES } from '@/constants';
+import { useCMSData } from '@/lib/hooks/useCMSData';
 import { Sparkles, Layers, Search, Archive, HelpCircle } from 'lucide-react';
 
 import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
@@ -25,6 +26,23 @@ import { useSession } from '@/lib/hooks/useSession';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AuthModal } from '@/components/auth/AuthModal';
 import gsap from 'gsap';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+
+const SectionHeader = ({ title, viewMoreHref, viewMoreText = "View More" }: { title: string; viewMoreHref: string; viewMoreText?: string }) => (
+  <div className="flex items-center justify-between mb-8">
+    <div className="flex items-center gap-4">
+      <h2 className="text-2xl font-bold text-white tracking-tight">{title}</h2>
+      <Link 
+        href={viewMoreHref}
+        className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-white transition-colors group"
+      >
+        {viewMoreText}
+        <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+      </Link>
+    </div>
+  </div>
+);
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -86,6 +104,14 @@ export default function Home() {
   const [isComparisonMode, setIsComparisonMode] = useState(false);
   const [selectedForComparison, setSelectedForComparison] = useState<GeneratedImage[]>([]);
   const [showComparisonView, setShowComparisonView] = useState(false);
+  const { setVisible: setScrollbarVisible } = useScrollbar();
+
+  // Any open modal should hide the global scrollbar
+  const isAnyModalOpen = !!selectedImage || !!mockupImage || !!editImage || showComparisonView || showTutorial;
+
+  useEffect(() => {
+    setScrollbarVisible(!isAnyModalOpen);
+  }, [isAnyModalOpen, setScrollbarVisible]);
 
   // Load session data (images, bookmarks, settings)
   const {
@@ -97,16 +123,32 @@ export default function Home() {
     saveImage: saveToSession
   } = useSession();
 
-  // Local images state (combines session + newly generated)
+  // CMS Integration for Explore and Fallbacks
+  const { data: cmsImages, isLoading: isCMSLoading } = useCMSData<GeneratedImage>(
+    'cms_gallery',
+    [],
+    (row: any) => ({
+      id: row.id,
+      url: row.storage_url,
+      prompt: row.title || row.alt_text || 'Untitled Design',
+      aspectRatio: row.aspect_ratio || '1:1',
+      timestamp: new Date(row.created_at).getTime(),
+      model: 'DaVinci Core'
+    })
+  );
+
+  // Local images state
   const [localImages, setLocalImages] = useState<GeneratedImage[]>([]);
   const combinedImages = [...localImages, ...generatedImages];
-  const images = (!isSessionLoading && combinedImages.length > 0) ? combinedImages : MOCK_IMAGES;
+  const images = (!isSessionLoading && combinedImages.length > 0) ? combinedImages : cmsImages;
 
   // Explore State
-  const [exploreImages, setExploreImages] = useState<GeneratedImage[]>([]);
   const [exploreFilter, setExploreFilter] = useState('trending');
   const [exploreTimeframe, setExploreTimeframe] = useState('This Week');
   const [explorePage, setExplorePage] = useState(1);
+  const [visibleExploreCount, setVisibleExploreCount] = useState(20);
+
+  const exploreImages = useMemo(() => cmsImages, [cmsImages]);
 
   // Generation Settings State (Lifted from Sidebar)
   const [imageDimension, setImageDimension] = useState<AspectRatio | AspectRatio[]>('1:1');
@@ -117,11 +159,6 @@ export default function Home() {
   // Layout State
   const [sidebarOpen, setSidebarOpen] = useState(true); // Renamed from isSidebarCollapsed for clarity
   const [sidebarWidth, setSidebarWidth] = useState(210);
-
-  // Load explore images (mock data)
-  useEffect(() => {
-    setExploreImages(EXPLORE_IMAGES);
-  }, []);
 
   const handleGenerate = async (prompt: string, aspectRatio: AspectRatio | AspectRatio[]) => {
     setIsGenerating(true);
@@ -192,20 +229,14 @@ export default function Home() {
   };
 
   const loadMoreExplore = () => {
-    // Simulate loading more images
-    const moreImages = EXPLORE_IMAGES.map(img => ({
-      ...img,
-      id: crypto.randomUUID(), // New IDs to avoid key conflicts
-      timestamp: Date.now() - Math.random() * 10000000
-    }));
-    setExploreImages(prev => [...prev, ...moreImages]);
+    setVisibleExploreCount(prev => prev + 12);
     setExplorePage(prev => prev + 1);
   };
 
   const displayedImages = (() => {
     switch (activeTab) {
       case 'create': return images;
-      case 'explore': return [...MOCK_IMAGES].reverse();
+      case 'explore': return [...cmsImages].reverse().slice(0, visibleExploreCount);
       case 'bookmarks': return bookmarkedImages;
       default: return images;
     }
@@ -253,7 +284,7 @@ export default function Home() {
         />
       }
     >
-      <div ref={containerRef} className="min-h-screen bg-background text-white selection:bg-indigo-500/30 font-sans pb-24 lg:pb-0"> {/* Padding bottom for mobile prompt input */}
+      <ScrollablePanel innerRef={containerRef} className="h-screen bg-background text-white selection:bg-indigo-500/30 font-sans pb-24 lg:pb-0"> {/* Padding bottom for mobile prompt input */}
 
         {/* Prompt Input Area - Adaptive */}
         <PromptInputLayout>
@@ -348,7 +379,7 @@ export default function Home() {
                 timeframe={exploreTimeframe}
                 onTimeframeChange={setExploreTimeframe}
               />
-              <div className="animate-grid w-full"> {/* Wrapper opacity-0 */}
+              <div className="animate-grid w-full max-w-[2400px] mx-auto">
                 <ExploreGrid
                   images={exploreImages}
                   onImageClick={setSelectedImage}
@@ -358,17 +389,57 @@ export default function Home() {
               </div>
             </>
           ) : (
-            <div className="animate-grid w-full">
-              <ImageGrid
-                images={displayedImages}
-                onImageClick={setSelectedImage}
-                onMockupClick={handleMockup}
-                onBookmarkClick={handleBookmark}
-                onEditClick={setEditImage}
-                selectionMode={isComparisonMode}
-                isSelected={(img) => selectedForComparison.some(i => i.id === img.id)}
-                onSelect={(img) => toggleSelection(img)}
-              />
+            <div className="space-y-32 max-w-[2400px] mx-auto pb-20">
+              {/* Top Picks Section (2 rows) */}
+              <section className="animate-grid">
+                <SectionHeader 
+                  title="Top Picks" 
+                  viewMoreHref="/davinci?view=gallery" 
+                />
+                <ImageGrid
+                  images={cmsImages.slice(0, 10)}
+                  onImageClick={setSelectedImage}
+                  onMockupClick={handleMockup}
+                  onBookmarkClick={handleBookmark}
+                  onEditClick={setEditImage}
+                />
+              </section>
+
+              {/* Your Creations (Only if present) */}
+              {combinedImages.length > 0 && (
+                <section className="animate-grid">
+                  <div className="mb-10 text-center sm:text-left">
+                    <h2 className="text-3xl font-bold text-white tracking-tight">Your Creations</h2>
+                    <p className="text-zinc-500 text-sm mt-2 flex items-center justify-center sm:justify-start gap-2">
+                       <Sparkles size={14} className="text-indigo-400" /> Recently generated masterpieces
+                    </p>
+                  </div>
+                  <ImageGrid
+                    images={displayedImages}
+                    onImageClick={setSelectedImage}
+                    onMockupClick={handleMockup}
+                    onBookmarkClick={handleBookmark}
+                    onEditClick={setEditImage}
+                    selectionMode={isComparisonMode}
+                    isSelected={(img) => selectedForComparison.some(i => i.id === img.id)}
+                    onSelect={(img) => toggleSelection(img)}
+                  />
+                </section>
+              )}
+
+              {/* Community's Creation Section (5 rows) */}
+              <section className="animate-grid">
+                <SectionHeader 
+                  title="Community's Creation" 
+                  viewMoreHref="/davinci?view=community"
+                />
+                <ExploreGrid
+                  images={cmsImages.slice(10, 35)}
+                  onImageClick={setSelectedImage}
+                  onLoadMore={() => setActiveTab('explore')}
+                  hasMore={false}
+                />
+              </section>
             </div>
           )}
 
@@ -442,7 +513,7 @@ export default function Home() {
 
         {showTutorial && <InteractiveTutorial onClose={() => setShowTutorial(false)} />}
         <AuthModal />
-      </div>
+      </ScrollablePanel>
     </ResponsiveShell>
   );
 }

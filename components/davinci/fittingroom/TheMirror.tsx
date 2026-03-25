@@ -40,17 +40,7 @@ const SHIRT_COLORS = [
 ];
 
 export const TheMirror: React.FC = () => {
-    const {
-        selectedShirts, activeShirtId, designs, activeDesignId,
-        shirtColor, setShirtColor
-    } = useFittingRoomStore();
-
-    const [isColorExpanded, setIsColorExpanded] = React.useState(false);
     const mirrorContainerRef = React.useRef<HTMLDivElement>(null);
-
-    const activeShirt = selectedShirts.find(s => s.id === activeShirtId);
-    const activeDesign = designs.find(d => d.id === activeDesignId);
-    const hasSelection = activeShirt || activeDesign;
 
     return (
         <div className="relative h-full flex flex-col overflow-hidden">
@@ -70,68 +60,8 @@ export const TheMirror: React.FC = () => {
                 <div className="w-10" />
             </div>
 
-            {/* Preview Area with Vertical Color Selector */}
-            <div className="flex-1 relative flex items-center justify-center p-0 overflow-hidden bg-zinc-900/50">
-                {/* Vertical Color Selector - Minimalist & Animated */}
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
-                    {/* Always visible Top 5 Colors */}
-                    {SHIRT_COLORS.slice(0, 5).map((color) => (
-                        <button
-                            key={color.hex}
-                            onClick={() => setShirtColor(color.hex)}
-                            title={color.name}
-                            className={cn(
-                                "w-8 h-5 rounded-full transition-all duration-300 shadow-md backdrop-blur-sm",
-                                shirtColor === color.hex
-                                    ? "ring-2 ring-white scale-110 opacity-100"
-                                    : "opacity-60 hover:opacity-100 hover:scale-105 cursor-pointer"
-                            )}
-                            style={{ backgroundColor: color.hex }}
-                        />
-                    ))}
-
-                    {/* Expandable Colors with Smooth Animation */}
-                    <AnimatePresence>
-                        {isColorExpanded && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, height: 'auto', scale: 1 }}
-                                exit={{ opacity: 0, height: 0, scale: 0.8 }}
-                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                                className="flex flex-col gap-2 overflow-hidden items-center"
-                            >
-                                {SHIRT_COLORS.slice(5).map((color) => (
-                                    <button
-                                        key={color.hex}
-                                        onClick={() => setShirtColor(color.hex)}
-                                        title={color.name}
-                                        className={cn(
-                                            "w-8 h-5 rounded-full transition-all duration-300 shadow-md backdrop-blur-sm",
-                                            shirtColor === color.hex
-                                                ? "ring-2 ring-white scale-110 opacity-100"
-                                                : "opacity-60 hover:opacity-100 hover:scale-105 cursor-pointer"
-                                        )}
-                                        style={{ backgroundColor: color.hex }}
-                                    />
-                                ))}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Minimalist Expand Button */}
-                    <button
-                        onClick={() => setIsColorExpanded(!isColorExpanded)}
-                        className="w-8 h-5 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all duration-300 cursor-pointer"
-                    >
-                        <motion.div
-                            animate={{ rotate: isColorExpanded ? 180 : 0 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <ChevronDown size={12} />
-                        </motion.div>
-                    </button>
-                </div>
-
+            {/* Preview Area */}
+            <div className="flex-1 relative flex items-center justify-center p-0 overflow-hidden bg-transparent">
                 {/* 3D Viewer Area */}
                 <div ref={mirrorContainerRef} className="relative w-full h-full flex justify-center">
                     <div className="relative w-full h-full">

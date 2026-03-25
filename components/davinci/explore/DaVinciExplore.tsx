@@ -1,38 +1,142 @@
-import React, { useState, useMemo } from 'react';
+'use client';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import { ExploreFilterBar } from './ExploreFilterBar';
 import { ExploreMasonry } from './ExploreMasonry';
-import { GALLERY_IMAGES } from '@/lib/galleryData';
+import { ExplorePagination } from './ExplorePagination';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+import type { GeneratedImage } from '@/types';
+import type { CMSGalleryRow, CMSCategoryRow } from '@/types/cms';
+
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+function rowToImage(row: CMSGalleryRow): GeneratedImage & { categories: any[] } {
+    return {
+        id: row.id,
+        url: row.storage_url ?? '',
+        prompt: row.title || row.alt_text || 'Untitled Design',
+        aspectRatio: (row.aspect_ratio || '1:1') as any,
+        timestamp: new Date(row.created_at).getTime(),
+        model: 'DaVinci Core',
+        categories: (row as any).categories || [],
+    };
+}
 
 export const DaVinciExplore = () => {
     const [activeFilter, setActiveFilter] = useState('All');
     const [activeSort, setActiveSort] = useState('popular');
-    const [visibleCount, setVisibleCount] = useState(40); // 10 rows * 4 cols approx
+    const [searchQuery, setSearchQuery] = useState('');
+    
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 60; // 15 rows * 4 columns
+
+    const [galleryItems, setGalleryItems] = useState<(GeneratedImage & { categories: any[] })[]>([]);
+    const [categories, setCategories] = useState<CMSCategoryRow[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // URL Category Sync
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const params = new URLSearchParams(window.location.search);
+        const categorySlug = params.get('category');
+        if (categorySlug && categories.length > 0) {
+            const cat = categories.find(c => c.slug === categorySlug);
+            if (cat) setActiveFilter(cat.id);
+        }
+    }, [categories]);
+
+
+    // Scroll to top on page change
+    useEffect(() => {
+        const scrollHost = document.querySelector('.csb-host');
+        if (scrollHost) {
+            scrollHost.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [currentPage]);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function load() {
+            setIsLoading(true);
+            try {
+                // Fetch gallery items with their category links
+                const [galleryRes, catRes] = await Promise.all([
+                    supabase
+                        .from('cms_gallery')
+                        .select(`*, category_links:cms_gallery_categories(category:cms_categories(*))`)
+                        .eq('is_published', true)
+                        .order('display_order', { ascending: true }),
+                    supabase
+                        .from('cms_categories')
+                        .select('*')
+                        .order('display_order', { ascending: true }),
+                ]);
+
+                if (!isMounted) return;
+
+                if (galleryRes.data) {
+                    const mapped = galleryRes.data.map((row: any) => {
+                        const withCats = {
+                            ...row,
+                            categories: row.category_links?.map((l: any) => l.category).filter(Boolean) || [],
+                        };
+                        return rowToImage(withCats);
+                    });
+                    setGalleryItems(mapped);
+                }
+                if (catRes.data) setCategories(catRes.data);
+            } catch (err) {
+                console.error('DaVinciExplore: failed to load data', err);
+            } finally {
+                if (isMounted) setIsLoading(false);
+            }
+        }
+
+        load();
+        return () => { isMounted = false; };
+    }, []);
 
     // Filter Logic
     const filteredImages = useMemo(() => {
-        if (activeFilter === 'All') {
-            return GALLERY_IMAGES;
+        let results = galleryItems;
+
+        // 1. Category Filter
+        if (activeFilter !== 'All') {
+            results = results.filter((img) =>
+                img.categories?.some((c: any) => c?.id === activeFilter)
+            );
         }
-        return GALLERY_IMAGES.filter(img => img.category === activeFilter);
-    }, [activeFilter]);
 
-    // Pagination Logic
-    const displayedImages = useMemo(() => {
-        return filteredImages.slice(0, visibleCount);
-    }, [filteredImages, visibleCount]);
+        // 2. Search Filter
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            results = results.filter((img) =>
+                img.prompt?.toLowerCase().includes(q) ||
+                img.categories?.some((c: any) => c?.name?.toLowerCase().includes(q))
+            );
+        }
 
-    const hasMore = displayedImages.length < filteredImages.length;
+        return results;
+    }, [activeFilter, searchQuery, galleryItems]);
 
-    const handleLoadMore = () => {
-        // Add 6 rows (approx 24 images)
-        setVisibleCount(prev => prev + 24);
-    };
+    // Pagination
+    const totalPages = Math.ceil(filteredImages.length / ITEMS_PER_PAGE);
+    const displayedImages = useMemo(() => 
+        filteredImages.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
+    [filteredImages, currentPage, ITEMS_PER_PAGE]);
 
-    const handleFilterChange = (filter: string) => {
-        setActiveFilter(filter);
-        setVisibleCount(40); // Reset pagination on filter change
+    const handleFilterChange = (filter: string) => { 
+        setActiveFilter(filter); 
+        setCurrentPage(1); 
     };
 
     return (
@@ -44,36 +148,36 @@ export const DaVinciExplore = () => {
                     <ExploreFilterBar
                         onFilterChange={handleFilterChange}
                         onSortChange={setActiveSort}
+                        onSearchChange={(q) => { setSearchQuery(q); setCurrentPage(1); }}
+                        totalResults={filteredImages.length}
+                        categories={categories}
                     />
                 </section>
 
-                {/* 2. Masonry Grid */}
-                <section className="mt-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
-                    <ExploreMasonry images={displayedImages} />
+                {/* 2. Gallery Masonry */}
+                <section className="px-4 sm:px-8 lg:px-12 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    {isLoading ? (
+                        <div className="flex flex-col items-center justify-center py-40 gap-4">
+                            <Loader2 size={32} className="animate-spin text-white/30" />
+                            <p className="text-zinc-600 text-[11px] uppercase tracking-widest font-outfit">Loading gallery...</p>
+                        </div>
+                    ) : galleryItems.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-40 gap-4">
+                            <p className="text-zinc-500 text-sm font-outfit">No published gallery items yet.</p>
+                            <p className="text-zinc-700 text-xs font-outfit">Upload images in the admin panel and set them to Published.</p>
+                        </div>
+                    ) : (
+                        <>
+                            <ExploreMasonry images={displayedImages} />
+                            
+                            <ExplorePagination 
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setCurrentPage}
+                            />
+                        </>
+                    )}
                 </section>
-
-                {/* 3. Load More Button */}
-                {hasMore && (
-                    <div className="flex justify-center py-10 animate-in fade-in">
-                        <button
-                            onClick={handleLoadMore}
-                            className="group relative px-8 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
-                        >
-                            <span className="relative z-10 flex items-center gap-2">
-                                Load More Designs
-                                <Loader2 size={14} className="group-hover:animate-spin" />
-                            </span>
-                            {/* Button Glow */}
-                            <div className="absolute inset-0 rounded-full bg-[var(--lamp-color)] opacity-0 group-hover:opacity-20 blur-lg transition-opacity" />
-                        </button>
-                    </div>
-                )}
-
-                {!hasMore && filteredImages.length > 0 && (
-                    <div className="text-center py-10 text-zinc-600 text-[10px] font-mono uppercase tracking-widest">
-                        End of Gallery
-                    </div>
-                )}
             </div>
         </div>
     );

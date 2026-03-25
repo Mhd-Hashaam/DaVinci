@@ -3,12 +3,17 @@
 import React, { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { DaVinciFloatingDock } from '@/components/davinci/DaVinciFloatingDock';
-import { CustomScrollbar } from '@/components/CustomScrollbar';
+import { ScrollablePanel, useScrollbar } from '@/components/scrollbar/CustomScrollbar';
 import PromptCapsule from '@/components/PromptCapsule';
+import { LeVinCiBranding } from '@/components/branding/LeVinCiBranding';
 import { DaVinciExplore } from '@/components/davinci/explore/DaVinciExplore';
+import { DaVinciCommunity } from '@/components/davinci/community/DaVinciCommunity';
 import BentoGrid from '@/components/BentoGrid';
+import { SectionHeader } from '@/components/layout/SectionHeader';
+import ImageGrid from '@/components/ImageGrid';
 import { useTheme } from '@/components/ThemeProvider';
-import { SparklesCore } from '@/components/ui/sparkles';
+import { SpaceDust } from '@/components/ui/SpaceDust';
+import { SmokeBackground } from '@/components/ui/SmokeBackground';
 import { LampContainer } from '@/components/ui/lamp';
 import ImageModal from '@/components/ImageModal';
 import { TheFittingRoomModal } from '@/components/davinci/fittingroom/TheFittingRoomModal';
@@ -18,11 +23,12 @@ import { MyWorks } from '@/components/davinci/profile/MyWorks';
 import { ProfileGallerySkeleton, ProfileSectionHeaderSkeleton } from '@/components/davinci/profile/DaVinciProfileSkeleton';
 import { DaVinciProfileHero } from '@/components/davinci/profile/DaVinciProfileHero';
 import { DaVinciProfileGallery } from '@/components/davinci/profile/DaVinciProfileGallery';
+import { FeedSkeleton } from '@/components/layout/FeedSkeleton';
 import { api } from '@/lib/api/client';
 import { AspectRatio } from '@/types';
 import type { GeneratedImage } from '@/types';
 import { AIModel } from '@/types/settings';
-import { EXPLORE_IMAGES } from '@/constants';
+import { useCMSData } from '@/lib/hooks/useCMSData';
 import { useSession } from '@/lib/hooks/useSession';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { Footer } from '@/components/layout/Footer';
@@ -30,6 +36,44 @@ import { HelpCircle, Bookmark } from 'lucide-react';
 import { TheVinciOrb } from '@/components/davinci/TheVinciOrb';
 import { cn } from '@/lib/utils';
 import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
+
+// Extracted from IIFE to fix react-hooks/rules-of-hooks
+function StoreNavigationListener({ setActiveTab, openFittingRoomModal }: {
+    setActiveTab: (tab: string) => void;
+    openFittingRoomModal: () => void;
+}) {
+    const {
+        shouldOpenGallery,
+        shouldOpenCreate,
+        resetArtWallNavigation,
+        shouldOpenFittingRoom,
+        resetFittingRoomViewRequest
+    } = useFittingRoomStore();
+
+    React.useEffect(() => {
+        if (shouldOpenGallery) {
+            setActiveTab('gallery');
+            resetArtWallNavigation();
+        }
+        if (shouldOpenCreate) {
+            setActiveTab('create');
+            resetArtWallNavigation();
+        }
+        if (shouldOpenFittingRoom) {
+            openFittingRoomModal();
+            resetFittingRoomViewRequest();
+        }
+    }, [
+        shouldOpenGallery,
+        shouldOpenCreate,
+        resetArtWallNavigation,
+        shouldOpenFittingRoom,
+        resetFittingRoomViewRequest,
+        setActiveTab,
+        openFittingRoomModal,
+    ]);
+    return null;
+}
 
 function DaVinciStudioContent() {
     const router = useRouter();
@@ -42,6 +86,13 @@ function DaVinciStudioContent() {
 
     const [viewState, setViewState] = useState(searchParams.get('view') || 'create');
     const [modalState, setModalState] = useState<string | null>(searchParams.get('modal'));
+    const { theme, lampColor, sparkleMode, backgroundMode, setBackgroundMode, hoverEffect } = useTheme();
+    const { setVisible: setScrollbarVisible } = useScrollbar();
+
+    // Sync scrollbar visibility with modal state
+    useEffect(() => {
+        setScrollbarVisible(!modalState);
+    }, [modalState, setScrollbarVisible]);
 
     // Sync with URL when Browser Back/Forward is used
     useEffect(() => {
@@ -126,12 +177,33 @@ function DaVinciStudioContent() {
 
     const { user, profile, signOut } = useAuth();
 
-    // Local images state
+    // CMS Integration for Explore and Fallbacks
+    const { data: allCmsImages, isLoading: isCMSLoading } = useCMSData<GeneratedImage & { categories: any[] }>(
+        'cms_gallery',
+        [],
+        (row: any) => ({
+            id: row.id,
+            url: row.storage_url,
+            prompt: row.title || row.alt_text || 'Untitled Design',
+            aspectRatio: row.aspect_ratio || '1:1',
+            timestamp: new Date(row.created_at).getTime(),
+            model: 'DaVinci Core',
+            categories: row.category_links?.map((link: any) => link.category) || []
+        }),
+        '*, category_links:cms_gallery_categories(category:cms_categories(*))'
+    );
+
+    const topPicks = allCmsImages.filter(img => 
+        img.categories?.some((cat: any) => cat.slug === 'top-picks')
+    );
+
+    const communityImages = allCmsImages.filter(img => 
+        img.categories?.some((cat: any) => cat.slug === 'community')
+    ).slice(0, 20);
+
     const [localImages, setLocalImages] = useState<GeneratedImage[]>([]);
     const combinedImages = [...localImages, ...sessionImages];
-    const displayImages = combinedImages.length > 0 ? combinedImages : EXPLORE_IMAGES;
-
-    const { theme, lampColor, sparkleMode, hoverEffect } = useTheme();
+    const displayImages = combinedImages.length > 0 ? combinedImages : allCmsImages;
 
     const handleGenerate = async (prompt: string) => {
         setIsGenerating(true);
@@ -172,25 +244,21 @@ function DaVinciStudioContent() {
 
     return (
         <div className="relative w-full min-h-screen bg-black selection:bg-purple-500/30">
-            {/* Scrollbar - Only visible when NO modal is open */}
-            {!modalState && (
-                <CustomScrollbar
-                    rightOffset={activeTab === 'myworks' ? '10px' : undefined}
-                    mode={activeTab === 'gallery' ? 'continuous' : 'points'}
-                />
-            )}
-            {/* Sparkles Background */}
-            <div className="absolute inset-0 w-full h-full transition-opacity duration-500">
-                <SparklesCore
-                    id="tsparticlesfullpage"
-                    background="transparent"
-                    minSize={0.6}
-                    maxSize={1.4}
-                    particleDensity={100}
-                    className="w-full h-full"
-                    particleColor={sparkleMode === 'theme' ? lampColor : '#FFFFFF'}
-                    hoverEffect={hoverEffect}
-                />
+            {/* Starfield Background */}
+            <div className="absolute inset-0 w-full h-full">
+                {backgroundMode === 'stars' ? (
+                    <SpaceDust
+                        starColor={sparkleMode === 'theme' ? lampColor : '#ffffff'}
+                        shootColor={sparkleMode === 'theme' ? lampColor : '#ffffff'}
+                        className="w-full h-full"
+                    />
+                ) : (
+                    <SmokeBackground
+                        color={sparkleMode === 'theme' ? lampColor : '#ffffff'}
+                        className="w-full h-full"
+                        opacity={0.6}
+                    />
+                )}
             </div>
 
             {/* Aurora Gradient Overlay (Subtle) */}
@@ -222,38 +290,10 @@ function DaVinciStudioContent() {
             />
 
             {/* Store Navigation Listener */}
-            {(() => {
-                const {
-                    shouldOpenGallery,
-                    shouldOpenCreate,
-                    resetArtWallNavigation,
-                    shouldOpenFittingRoom,
-                    resetFittingRoomViewRequest
-                } = useFittingRoomStore();
-
-                React.useEffect(() => {
-                    if (shouldOpenGallery) {
-                        setActiveTab('gallery');
-                        resetArtWallNavigation();
-                    }
-                    if (shouldOpenCreate) {
-                        setActiveTab('create');
-                        resetArtWallNavigation();
-                    }
-                    if (shouldOpenFittingRoom) {
-                        openFittingRoomModal();
-                        resetFittingRoomViewRequest();
-                    }
-                }, [
-                    shouldOpenGallery,
-                    shouldOpenCreate,
-                    resetArtWallNavigation,
-                    shouldOpenFittingRoom,
-                    resetFittingRoomViewRequest,
-                    // eslint-disable-next-line react-hooks/exhaustive-deps
-                ]);
-                return null;
-            })()}
+            <StoreNavigationListener
+                setActiveTab={setActiveTab}
+                openFittingRoomModal={openFittingRoomModal}
+            />
 
             {/* TheVinci Orb - Top Left, Above Sidebar */}
             <div className="fixed top-0 left-0 z-50 pointer-events-none">
@@ -261,13 +301,28 @@ function DaVinciStudioContent() {
             </div>
 
             {/* Main Content Area */}
-            <main className="relative z-10 flex-1 flex flex-col min-h-screen transition-all duration-500 pr-6 pl-28">
+            <ScrollablePanel 
+              className="relative z-[1] flex-1 flex flex-col h-screen transition-all duration-500 pl-28 pr-0"
+              config={
+                activeTab === 'create' 
+                  ? { waviness: 5, padding: 160, right: 60 } // Dramatic waves for Landing/Create
+                  : { waviness: 1, padding: 40, right: 12 }   // Compact for Gallery
+              }
+            >
 
-                {/* Top Section: Prompt + User - Only visible in Create mode */}
+                {/* Very Top Sticky Header (Auxiliary Items) */}
+                <header className="sticky top-0 z-40 flex items-center justify-end px-8 pt-6 pb-2">
+                    <button className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all flex items-center justify-center cursor-pointer backdrop-blur-md">
+                        <HelpCircle size={18} />
+                    </button>
+                </header>
+
+                {/* Hero Layout for Create Tab */}
                 {activeTab === 'create' && (
-                    <header className="sticky top-0 z-40 flex items-center justify-center gap-6 pt-6 pb-4 transition-all duration-300">
-                        {/* Prompt Capsule (Centered) */}
-                        <div className="flex-1 max-w-2xl mx-auto">
+                    <div className="w-full flex flex-col items-center justify-center pb-20 pt-4 z-30">
+                        <LeVinCiBranding />
+                        
+                        <div className="w-full mt-4">
                             <PromptCapsule
                                 onGenerate={handleGenerate}
                                 isGenerating={isGenerating}
@@ -280,20 +335,49 @@ function DaVinciStudioContent() {
                             />
                         </div>
 
-                        {/* Right: Theme + Help + User Menu - Absolutely Positioned to avoid push */}
-                        <div className="absolute right-0 flex items-center gap-4 flex-shrink-0 pr-6">
-                            <div className="flex items-center gap-3">
-                                <button className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all flex items-center justify-center cursor-pointer">
-                                    <HelpCircle size={18} />
-                                </button>
-                            </div>
+                        {/* Top Picks Section (2 rows) */}
+                        <div className="w-full max-w-6xl mx-auto mt-24 space-y-32 px-4 sm:px-8">
+                            <section className="animate-grid">
+                                <SectionHeader 
+                                    title="Top Picks" 
+                                    viewMoreHref="/davinci?view=gallery&category=top-picks" 
+                                />
+                                {isCMSLoading ? (
+                                    <FeedSkeleton count={5} />
+                                ) : (
+                                    <ImageGrid
+                                        images={topPicks}
+                                        columns={{ mobile: 1, sm: 2, lg: 3, xl: 4 }}
+                                        onImageClick={setSelectedImage}
+                                        onMockupClick={openFittingRoomModal}
+                                        onBookmarkClick={(img) => toggleBookmark(img.id, img)}
+                                    />
+                                )}
+                            </section>
+
+                            <section className="animate-grid">
+                                <SectionHeader 
+                                    title="Community's Creation" 
+                                    viewMoreHref="/davinci?view=community"
+                                />
+                                {isCMSLoading ? (
+                                    <FeedSkeleton count={8} />
+                                ) : (
+                                    <ImageGrid
+                                        images={communityImages}
+                                        columns={{ mobile: 1, sm: 2, lg: 4, xl: 4 }}
+                                        onImageClick={setSelectedImage}
+                                        onMockupClick={openFittingRoomModal}
+                                        onBookmarkClick={(img) => toggleBookmark(img.id, img)}
+                                    />
+                                )}
+                            </section>
                         </div>
-                    </header>
+                    </div>
                 )}
 
-
-                {/* Bento Grid (Compact, window scroll) */}
-                <div id="generated-image-section" className="flex-1 py-10">
+                {/* Main Content Sections (Bento Grid, Gallery, Profile) */}
+                <div id="generated-image-section" className={cn("flex-1", activeTab === 'create' ? "py-4" : "py-10")}>
                     {activeTab === 'myworks' ? (
                         <div className="w-full max-w-[1400px] mx-auto px-4">
 
@@ -371,14 +455,17 @@ function DaVinciStudioContent() {
                         </div>
                     ) : activeTab === 'gallery' ? (
                         <DaVinciExplore />
+                    ) : activeTab === 'community' ? (
+                        <DaVinciCommunity />
                     ) : (
-                        <BentoGrid />
+                        null // BentoGrid hidden as requested
                     )}
                 </div>
 
                 {/* Footer Component */}
-                <Footer />
-            </main>
+                {/* Footer hidden as requested */}
+                {/* <Footer /> */}
+            </ScrollablePanel>
 
             {/* Modals */}
             <ImageModal image={selectedImage} onClose={() => setSelectedImage(null)} />

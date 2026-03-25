@@ -5,6 +5,7 @@ import PromptEnhanceDropdown from './PromptEnhanceDropdown';
 import { PromptEnhance, AIModel } from '../types/settings';
 
 import BrandLogo from './BrandLogo';
+import { ScrollablePanel } from './scrollbar/CustomScrollbar';
 
 interface SidebarProps {
     activeTab: string;
@@ -313,7 +314,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-[#09090b]">
+                <ScrollablePanel className="flex-1 bg-[#09090b]">
                     {/* Navigation */}
                     <nav className="p-3 space-y-1">
                         {menuItems.map((item, index) => (
@@ -419,7 +420,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                             </div>
                         </div>
                     )}
-                </div>
+                </ScrollablePanel>
 
                 {/* Footer */}
                 <div ref={footerRef} className="p-4 border-t border-white/5 bg-[#09090b]">

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 import type { Database } from '@/types/database';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -11,24 +11,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
 /**
  * Supabase client for browser-side operations.
  *
- * IMPORTANT: We do NOT use a custom fetch wrapper here.
- * Wrapping Supabase's fetch with AbortController-based timeouts is a known
- * bug pattern — it kills GoTrueClient's internal token-refresh calls, which
- * causes ALL subsequent requests to silently fail with expired JWTs.
- *
- * Reliability strategy lives in the service layer (session-aware retries)
- * rather than here at the transport level.
+ * Uses @supabase/ssr to natively synchronize user sessions into secure Next.js cookies
+ * which makes them accessible on the server during proxy/middleware execution and Server Actions.
  */
-export const supabase = createClient<Database>(
+export const supabase = createBrowserClient<Database>(
     supabaseUrl || '',
-    supabaseAnonKey || '',
-    {
-        auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            storageKey: 'davinci-auth',
-        },
-    }
+    supabaseAnonKey || ''
 );
 
 export const getSupabaseClient = () => supabase;

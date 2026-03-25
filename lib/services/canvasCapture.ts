@@ -44,7 +44,11 @@ export class CanvasCaptureService {
         return new Promise((resolve, reject) => {
             const img = new Image();
             const url = URL.createObjectURL(blob);
-            let timer: NodeJS.Timeout;
+            const timer: NodeJS.Timeout = setTimeout(() => {
+                URL.revokeObjectURL(url);
+                reject(new Error('Compress WebP timed out'));
+            }, 10000);
+
 
             img.onload = () => {
                 clearTimeout(timer);
@@ -70,11 +74,6 @@ export class CanvasCaptureService {
                 reject(err);
             };
 
-            // Failsafe timeout 10s
-            timer = setTimeout(() => {
-                URL.revokeObjectURL(url);
-                reject(new Error('Compress WebP timed out'));
-            }, 10000);
 
             img.src = url;
         });
@@ -87,7 +86,11 @@ export class CanvasCaptureService {
         return new Promise((resolve, reject) => {
             const img = new Image();
             const url = URL.createObjectURL(blob);
-            let timer: NodeJS.Timeout;
+            const timer: NodeJS.Timeout = setTimeout(() => {
+                URL.revokeObjectURL(url);
+                reject(new Error('Resize Image timed out'));
+            }, 10000);
+
 
             img.onload = () => {
                 clearTimeout(timer);
@@ -120,11 +123,6 @@ export class CanvasCaptureService {
                 reject(err);
             };
 
-            // Failsafe timeout 10s
-            timer = setTimeout(() => {
-                URL.revokeObjectURL(url);
-                reject(new Error('Resize Image timed out'));
-            }, 10000);
 
             img.src = url;
         });

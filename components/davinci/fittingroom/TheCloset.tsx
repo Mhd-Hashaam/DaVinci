@@ -7,6 +7,8 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useCMSData } from '@/lib/hooks/useCMSData';
+import type { CMSWardrobeRow } from '@/types/cms';
 
 import { Shirt, Scissors, PersonStanding, Sparkles } from 'lucide-react';
 const AVAILABLE_3D_MODELS = [
@@ -36,6 +38,21 @@ export const TheCloset: React.FC = () => {
         selected3DModelPath,
         set3DModel
     } = useFittingRoomStore();
+
+    const scrollRef = React.useRef<HTMLDivElement>(null);
+
+    // CMS Integration for 3D Models
+    const { data: models } = useCMSData(
+        'cms_wardrobe',
+        [],
+        (row: CMSWardrobeRow) => ({
+            name: row.name,
+            path: row.model_path,
+            snapshot: row.thumbnail_url,
+            // Fallback icons based on basic name matching
+            icon: row.name.toLowerCase().includes('female') ? <PersonStanding size={24} /> : <Shirt size={24} />
+        })
+    );
 
     const [hoveredIdx, setHoveredIdx] = React.useState<number | null>(null);
 
@@ -77,10 +94,11 @@ export const TheCloset: React.FC = () => {
             {/* Cards Container */}
             <div className="flex-1 relative overflow-hidden">
                 <div
+                    ref={scrollRef}
                     className={cn(
-                        "absolute top-0 bottom-0 left-0 right-3 p-4 transition-all duration-500",
+                        "absolute top-0 bottom-0 left-0 right-0 p-4 transition-all duration-500",
                         closetMode === 'expanded'
-                            ? "overflow-y-auto container-scroll"
+                            ? "overflow-y-auto"
                             : "flex items-center justify-center overflow-hidden"
                     )}
                 >
@@ -90,14 +108,14 @@ export const TheCloset: React.FC = () => {
                     )}>
                         <AnimatePresence mode="popLayout">
                             {/* UNIFIED LIST: 3D Models Only */}
-                            {AVAILABLE_3D_MODELS.map((model, i) => {
+                            {models.map((model, i) => {
                                 const isActive = selected3DModelPath === model.path;
                                 const isHovered = hoveredIdx === i;
 
                                 // Stack Logic for 3D Models
                                 const boxIndex = i;
-                                const totalItems = AVAILABLE_3D_MODELS.length;
-                                var stackIndex = i;
+                                const totalItems = models.length;
+                                const stackIndex = i;
 
                                 const yPos = (stackIndex * 45) - (totalItems * 20); // Adjust to center
                                 const effectiveScale = 1 - (totalItems - 1 - stackIndex) * 0.02;

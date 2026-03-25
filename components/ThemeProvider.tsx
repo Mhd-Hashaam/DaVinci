@@ -5,6 +5,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 export type Theme = 'aurora' | 'crimson' | 'silver' | 'ember' | 'champagne' | 'rose' | 'forest' | 'mauve';
 export type SparkleMode = 'theme' | 'original';
 export type HoverEffect = 'grab' | 'repulse';
+export type BackgroundMode = 'stars' | 'smoke';
 
 interface ThemeContextType {
     theme: Theme;
@@ -14,6 +15,8 @@ interface ThemeContextType {
     toggleSparkleMode: () => void;
     hoverEffect: HoverEffect;
     toggleHoverEffect: () => void;
+    backgroundMode: BackgroundMode;
+    setBackgroundMode: (mode: BackgroundMode) => void;
 }
 
 const THEME_COLORS: Record<Theme, string> = {
@@ -31,13 +34,14 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [theme, setThemeState] = useState<Theme>('aurora');
-    const [sparkleMode, setSparkleMode] = useState<SparkleMode>('theme');
+    // Default to 'original' (unsynced) as requested — user can toggle to 'theme' in Vibes drawer
+    const [sparkleMode, setSparkleMode] = useState<SparkleMode>('original');
     const [hoverEffect, setHoverEffect] = useState<HoverEffect>('grab');
+    const [backgroundMode, setBackgroundModeState] = useState<BackgroundMode>('stars');
 
     useEffect(() => {
         const savedTheme = localStorage.getItem('davinci-theme') as Theme;
         if (savedTheme && Object.keys(THEME_COLORS).includes(savedTheme)) {
-            setThemeState(savedTheme);
             setThemeState(savedTheme);
             document.body.setAttribute('data-theme', savedTheme);
         }
@@ -51,12 +55,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         if (savedHoverEffect && (savedHoverEffect === 'grab' || savedHoverEffect === 'repulse')) {
             setHoverEffect(savedHoverEffect);
         }
+
+        const savedBackgroundMode = localStorage.getItem('davinci-background-mode') as BackgroundMode;
+        if (savedBackgroundMode && (savedBackgroundMode === 'stars' || savedBackgroundMode === 'smoke')) {
+            setBackgroundModeState(savedBackgroundMode);
+        }
     }, []);
 
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);
         localStorage.setItem('davinci-theme', newTheme);
-        document.body.setAttribute('data-theme', newTheme);
         document.body.setAttribute('data-theme', newTheme);
     };
 
@@ -72,6 +80,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('davinci-hover-effect', newEffect);
     };
 
+    const setBackgroundMode = (mode: BackgroundMode) => {
+        setBackgroundModeState(mode);
+        localStorage.setItem('davinci-background-mode', mode);
+    };
+
     return (
         <ThemeContext.Provider value={{
             theme,
@@ -80,7 +93,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             sparkleMode,
             toggleSparkleMode,
             hoverEffect,
-            toggleHoverEffect
+            toggleHoverEffect,
+            backgroundMode,
+            setBackgroundMode
         }}>
             {children}
         </ThemeContext.Provider>

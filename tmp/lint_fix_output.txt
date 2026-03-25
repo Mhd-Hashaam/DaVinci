@@ -1,0 +1,910 @@
+﻿
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\Google\App.tsx
+   5:21  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  74:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\admin\actions.ts
+    9:23  warning  'CMSGalleryRow' is defined but never used      @typescript-eslint/no-unused-vars
+   10:24  warning  'CMSGraphicsRow' is defined but never used     @typescript-eslint/no-unused-vars
+   12:27  warning  'CMSSiteContentRow' is defined but never used  @typescript-eslint/no-unused-vars
+   25:28  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   30:22  warning  'err' is defined but never used                @typescript-eslint/no-unused-vars
+   44:20  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   44:34  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  135:68  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  168:76  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  210:69  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\admin\community\page.tsx
+  29:28   warning  'cookiesToSet' is defined but never used                         @typescript-eslint/no-unused-vars
+  48:60   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  48:80   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  48:112  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  56:53   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  57:35   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\admin\page.tsx
+    3:8   warning  'Link' is defined but never used          @typescript-eslint/no-unused-vars
+  126:68  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\admin\top-picks\page.tsx
+  29:28   warning  'cookiesToSet' is defined but never used                         @typescript-eslint/no-unused-vars
+  48:60   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  48:70   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  48:112  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  56:53   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  57:35   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\api\revalidate\route.ts
+  28:12  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\api\upload\route.ts
+  52:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\davinci\page.tsx
+   11:8    warning  'BentoGrid' is defined but never used                                                                                                                          @typescript-eslint/no-unused-vars
+   23:34   warning  'ProfileSectionHeaderSkeleton' is defined but never used                                                                                                       @typescript-eslint/no-unused-vars
+   34:10   warning  'Footer' is defined but never used                                                                                                                             @typescript-eslint/no-unused-vars
+   41:11   warning  'router' is assigned a value but never used                                                                                                                    @typescript-eslint/no-unused-vars
+   42:11   warning  'pathname' is assigned a value but never used                                                                                                                  @typescript-eslint/no-unused-vars
+   51:13   warning  'theme' is assigned a value but never used                                                                                                                     @typescript-eslint/no-unused-vars
+   51:60   warning  'setBackgroundMode' is assigned a value but never used                                                                                                         @typescript-eslint/no-unused-vars
+   51:79   warning  'hoverEffect' is assigned a value but never used                                                                                                               @typescript-eslint/no-unused-vars
+   78:13   warning  'newModalState' is assigned a value but never used                                                                                                             @typescript-eslint/no-unused-vars
+  120:12   warning  'prompt' is assigned a value but never used                                                                                                                    @typescript-eslint/no-unused-vars
+  120:20   warning  'setPrompt' is assigned a value but never used                                                                                                                 @typescript-eslint/no-unused-vars
+  121:12   warning  'negativePrompt' is assigned a value but never used                                                                                                            @typescript-eslint/no-unused-vars
+  121:28   warning  'setNegativePrompt' is assigned a value but never used                                                                                                         @typescript-eslint/no-unused-vars
+  140:28   warning  'signOut' is assigned a value but never used                                                                                                                   @typescript-eslint/no-unused-vars
+  143:103  error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+  146:15   error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+  153:56   error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+  159:36   error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+  163:36   error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+  168:11   warning  'displayImages' is assigned a value but never used                                                                                                             @typescript-eslint/no-unused-vars
+  262:21   error    React Hook "useFittingRoomStore" cannot be called inside a callback. React Hooks must be called in a React function component or a custom React Hook function  react-hooks/rules-of-hooks
+  264:17   error    React Hook "React.useEffect" cannot be called inside a callback. React Hooks must be called in a React function component or a custom React Hook function      react-hooks/rules-of-hooks
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\layout.tsx
+  44:9  warning  Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\app\page.tsx
+   18:19   warning  'ImageDimension' is defined but never used                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+   49:11   warning  'isAuthenticated' is assigned a value but never used                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  121:5    warning  'isBookmarked' is assigned a value but never used                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  127:39   warning  'isCMSLoading' is assigned a value but never used                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  130:11   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  148:10   warning  'explorePage' is assigned a value but never used                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  155:10   warning  'imageSize' is assigned a value but never used                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  155:21   warning  'setImageSize' is assigned a value but never used                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  156:10   warning  'promptEnhance' is assigned a value but never used                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+  156:25   warning  'setPromptEnhance' is assigned a value but never used                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  211:21   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  261:9    warning  'deleteImage' is assigned a value but never used                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  299:41   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  369:91   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  369:107  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  469:21   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  469:21   warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\3d\NeuralOrb.tsx
+  148:32  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  206:14  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\BentoGrid.tsx
+  113:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  133:30  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\BrandLogo.tsx
+   3:17  warning  'Suspense' is defined but never used                @typescript-eslint/no-unused-vars
+   4:10  warning  'Canvas' is defined but never used                  @typescript-eslint/no-unused-vars
+   5:10  warning  'Html' is defined but never used                    @typescript-eslint/no-unused-vars
+   6:8   warning  'NeuralOrb' is defined but never used               @typescript-eslint/no-unused-vars
+   7:10  warning  'WebGLErrorBoundary' is defined but never used      @typescript-eslint/no-unused-vars
+  17:12  warning  'mousePosition' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ComparisonView.tsx
+   12:5   warning  'Trash2' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   14:5   warning  'Link2' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   36:5   warning  'onDelete' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   37:5   warning  'onMockup' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  179:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  224:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  237:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\EditModal.tsx
+  110:8   warning  React Hook useEffect has missing dependencies: 'handleRedo' and 'handleUndo'. Either include them or remove the dependency array                                                                                                                                                         react-hooks/exhaustive-deps
+  171:8   warning  React Hook useEffect has missing dependencies: 'history' and 'historyIndex'. Either include them or remove the dependency array. You can also replace multiple useState variables with useReducer if 'setHistory' needs the current value of 'historyIndex'                              react-hooks/exhaustive-deps
+  178:11  warning  'getCurrentState' is assigned a value but never used                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  366:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ExploreGrid.tsx
+   2:32  warning  'Share2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  23:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @next/next/no-img-element
+  58:57  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ExploreGrid.tsx:58:57
+  56 |                                         <span className="flex items-center gap-1">
+  57 |                                             <Heart size={12} className="text-rose-500 fill-rose-500" />
+> 58 |                                             {Math.floor(Math.random() * 1000) + 50}
+     |                                                         ^^^^^^^^^^^^^ Cannot call impure function
+  59 |                                         </span>
+  60 |                                         <span className="flex items-center gap-1">
+  61 |                                             <Eye size={12} />  react-hooks/purity
+  62:47  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ExploreGrid.tsx:62:47
+  60 |                                         <span className="flex items-center gap-1">
+  61 |                                             <Eye size={12} />
+> 62 |                                             {(Math.random() * 10 + 1).toFixed(1)}k
+     |                                               ^^^^^^^^^^^^^ Cannot call impure function
+  63 |                                         </span>
+  64 |                                     </div>
+  65 |                                 </div>                                                                                                                      react-hooks/purity
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\FloatingDock.tsx
+   4:61  warning  'Sparkles' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  24:7   warning  'generationOptions' is assigned a value but never used                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  73:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ImageContextMenu.tsx
+  100:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ImageContextMenu.tsx:100:13
+   98 |
+   99 |         if (isOpen) {
+> 100 |             setIsPositioned(false);
+      |             ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  101 |             // Set initial position offscreen but visible in DOM for measurement
+  102 |             setPosition({ top: 0, left: 0 });
+  103 |             // Wait for menu to render, then calculate position  react-hooks/set-state-in-effect
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ImageGrid.tsx
+    3:62  warning  'ImageIcon' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+    3:95  warning  'CheckCircle2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   33:3   warning  'layout' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   37:10  warning  'selectedForMockup' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   42:9   warning  'toggleMockupSelection' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+   75:19  error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ImageGrid.tsx:75:19
+   73 |   return (
+   74 |     <div className={containerClass}>
+>  75 |       {images.map((image) => {
+      |                   ^^^^^^^^^^^^
+>  76 |         const isSelectedForComparison = isSelected ? isSelected(image) : false;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  77 |
+      ΓÇª
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 292 |         );
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 293 |       })}
+      | ^^^^^^^^ Cannot access ref value during render
+  294 |     </div>
+  295 |   );
+  296 | };  react-hooks/refs
+  116:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @next/next/no-img-element
+  172:27  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ImageModal.tsx
+   2:29  warning  'ExternalLink' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   2:43  warning  'Maximize2' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  40:12  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\MockupModal.tsx
+    2:34   warning  'ChevronDown' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    2:47   warning  'Check' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    2:54   warning  'MousePointer2' is defined but never used                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+    2:69   warning  'Settings2' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   29:11   warning  'isClosing' is assigned a value but never used                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  152:31   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  160:34   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  326:71   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  326:140  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\PromptBar.tsx
+    2:25   warning  'ImageIcon' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+    2:54   warning  'Sparkles' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+    2:64   warning  'Palette' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+    2:73   warning  'Crop' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+    2:79   warning  'Wand2' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    2:86   warning  'Film' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+    2:92   warning  'Aperture' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+    2:102  warning  'Box' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+    2:107  warning  'Heart' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    2:114  warning  'Brush' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    2:128  warning  'RectangleHorizontal' is defined but never used                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   60:56   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  164:24   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  178:24   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  239:65   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  261:37   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  361:57   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\PromptCapsule.tsx
+   4:31  warning  'ChevronDown' is defined but never used                @typescript-eslint/no-unused-vars
+   4:44  warning  'Check' is defined but never used                      @typescript-eslint/no-unused-vars
+   4:51  warning  'Zap' is defined but never used                        @typescript-eslint/no-unused-vars
+   4:56  warning  'Layers' is defined but never used                     @typescript-eslint/no-unused-vars
+  37:52  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  45:7   warning  'generationCounts' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  51:5   warning  'setModel' is defined but never used                   @typescript-eslint/no-unused-vars
+  54:5   warning  'generationCount' is defined but never used            @typescript-eslint/no-unused-vars
+  55:5   warning  'setGenerationCount' is defined but never used         @typescript-eslint/no-unused-vars
+  98:11  warning  'currentModel' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\Sidebar.tsx
+  5:25  warning  'AIModel' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\StyleDropdown.tsx
+  16:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ThemeProvider.tsx
+  45:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ThemeProvider.tsx:45:13
+  43 |         const savedTheme = localStorage.getItem('davinci-theme') as Theme;
+  44 |         if (savedTheme && Object.keys(THEME_COLORS).includes(savedTheme)) {
+> 45 |             setThemeState(savedTheme);
+     |             ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  46 |             document.body.setAttribute('data-theme', savedTheme);
+  47 |         }
+  48 |  react-hooks/set-state-in-effect
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\Tutorial.tsx
+    2:13  warning  'ArrowDown' is defined but never used                                                                                                                                @typescript-eslint/no-unused-vars
+    2:24  warning  'ArrowRight' is defined but never used                                                                                                                               @typescript-eslint/no-unused-vars
+    2:51  warning  'Sparkles' is defined but never used                                                                                                                                 @typescript-eslint/no-unused-vars
+    2:61  warning  'Eye' is defined but never used                                                                                                                                      @typescript-eslint/no-unused-vars
+  214:8   warning  React Hook useEffect has missing dependencies: 'step.forceShowIcons', 'step.position', and 'step.targetElement'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\WebGLErrorBoundary.tsx
+  20:37  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  20:44  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:30  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:35  warning  'errorInfo' is defined but never used     @typescript-eslint/no-unused-vars
+  25:46  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\activity\ActivityTimeline.tsx
+   4:54  warning  'Eye' is defined but never used                      @typescript-eslint/no-unused-vars
+   6:15  warning  'CMSAuditLogRow' is defined but never used           @typescript-eslint/no-unused-vars
+   8:74  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  25:11  warning  'getActionColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  34:36  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\artwall\ArtWallManager.tsx
+    4:31  warning  'GripVertical' is defined but never used  @typescript-eslint/no-unused-vars
+    4:52  warning  'Check' is defined but never used         @typescript-eslint/no-unused-vars
+  101:74  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  148:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\categories\CategoryManager.tsx
+   10:10  warning  'cn' is defined but never used                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  112:27  warning  'storagePath' is assigned a value but never used                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  142:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  181:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  210:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  224:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  238:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  315:31  warning  'isUploading' is assigned a value but never used                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  328:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  414:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  491:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\categories\ImagePickerModal.tsx
+    5:37  warning  'ChevronLeft' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    5:50  warning  'ChevronRight' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  110:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  184:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\closet\ClosetManager.tsx
+   13:58   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   83:109  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  104:90   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  117:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  138:70   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  144:58   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  148:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  193:58   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  198:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  212:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  307:45   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  499:53   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\content\ContentManager.tsx
+    4:41   warning  'Check' is defined but never used         @typescript-eslint/no-unused-vars
+   93:25   error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:25   error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  218:142  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\curation\CuratedGalleryManager.tsx
+   3:27  warning  'useEffect' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   4:10  warning  'cn' is defined but never used                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   5:56  warning  'RefreshCcw' is defined but never used                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   7:30  warning  'CMSCategoryRow' is defined but never used                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  33:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  92:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\dashboard\DashboardGalleryCard.tsx
+  28:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\dashboard\DashboardRecentActivity.tsx
+   4:10  warning  'cn' is defined but never used            @typescript-eslint/no-unused-vars
+  12:14  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\gallery\GalleryManager.tsx
+    5:106  warning  'ChevronLeft' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    5:119  warning  'ChevronRight' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   41:58   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   44:12   warning  'uploadingFiles' is assigned a value but never used                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  141:40   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  201:29   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  275:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  290:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  319:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  341:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  366:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  460:84   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  500:78   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  657:37   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\layout\AdminSidebar.tsx
+  9:5  warning  'FolderClosed' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\media\MediaManager.tsx
+  34:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  69:18  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  69:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  88:58  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  92:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\admin\ui\AdminModal.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\auth\AuthForms.tsx
+    7:10  warning  'motion' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+    8:49  warning  'Github' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   13:10  warning  'IconBrandGithub' is defined but never used                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   13:27  warning  'IconBrandX' is defined but never used                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   45:27  warning  'authData' is assigned a value but never used                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+   59:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   81:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  116:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  195:20  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  235:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\auth\AuthModal.tsx
+  92:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\canvas\MockupModel.tsx
+  52:9  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\canvas\MockupModel.tsx:52:9
+  50 |     const material = useMemo(() => {
+  51 |         const mat = createFabricMaterial(texture);
+> 52 |         materialRef.current = mat;
+     |         ^^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  53 |         return mat;
+  54 |     }, [texture]);
+  55 |  react-hooks/refs
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\DaVinciAuthForms.tsx
+    7:19  warning  'Mail' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+    7:25  warning  'Lock' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+    7:31  warning  'User' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   10:10  warning  'IconBrandGoogle' is defined but never used                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   54:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   81:31  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  207:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  234:31  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\DaVinciAuthModal.tsx
+  114:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\DaVinciFloatingDock.tsx
+    3:27   warning  'useRef' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+    4:10   warning  'Compass' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+    4:51   warning  'Settings' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   10:10   warning  'useFittingRoomStore' is defined but never used                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   12:10   warning  'useGSAP' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   13:8    warning  'gsap' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  114:5    warning  'onCloseFittingRoom' is defined but never used                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  251:154  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  262:45   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\PerformanceOverlay.tsx
+   5:23  warning  'Cpu' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   5:56  warning  'ImageIcon' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+   5:67  warning  'Monitor' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  44:35  error    Error: Cannot call impure function during render
+
+`performance.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\PerformanceOverlay.tsx:44:35
+  42 |     // FPS Counter
+  43 |     const frameCountRef = useRef(0);
+> 44 |     const lastFpsTimeRef = useRef(performance.now());
+     |                                   ^^^^^^^^^^^^^^^^^ Cannot call impure function
+  45 |     const rafRef = useRef<number>(0);
+  46 |
+  47 |     const updateFps = useCallback(() => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              react-hooks/purity
+  58:48  error    Error: Cannot access variable before it is declared
+
+`updateFps` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\PerformanceOverlay.tsx:58:48
+  56 |         }
+  57 |
+> 58 |         rafRef.current = requestAnimationFrame(updateFps);
+     |                                                ^^^^^^^^^ `updateFps` accessed before it is declared
+  59 |     }, []);
+  60 |
+  61 |     // Keyboard shortcut: Shift + M
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\PerformanceOverlay.tsx:47:5
+  45 |     const rafRef = useRef<number>(0);
+  46 |
+> 47 |     const updateFps = useCallback(() => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 48 |         frameCountRef.current++;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 49 |         const now = performance.now();
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 58 |         rafRef.current = requestAnimationFrame(updateFps);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 59 |     }, []);
+     | ^^^^^^^^^^^^ `updateFps` is declared here
+  60 |
+  61 |     // Keyboard shortcut: Shift + M
+  62 |     useEffect(() => {  react-hooks/immutability
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\TheVinciOrb.tsx
+  160:32  error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  232:14  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  254:5   warning  'size' is assigned a value but never used                                                                            @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\TheVinciOrbCanvas.tsx
+  160:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  232:14  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/ban-ts-comment
+  254:5   warning  'size' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  260:5   warning  'debug' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  270:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\TheVinciOrbCanvas.tsx:270:13
+  268 |             const canvas = document.createElement('canvas');
+  269 |             const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+> 270 |             setWebglSupported(!!gl);
+      |             ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  271 |         } catch (e) {
+  272 |             setWebglSupported(false);
+  273 |         }  react-hooks/set-state-in-effect
+  271:18  warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\community\DaVinciCommunity.tsx
+   17:73  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   22:53  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   25:29  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   30:12  warning  'activeSort' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   37:86  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   67:57  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   70:69  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  103:42  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\explore\CreatorsRail.tsx
+  51:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\explore\DaVinciExplore.tsx
+    7:10  warning  'cn' is defined but never used                   @typescript-eslint/no-unused-vars
+   18:73  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   23:53  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   26:29  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   32:12  warning  'activeSort' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   39:86  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   87:62  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   90:69  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  115:42  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  124:42  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\explore\ExploreMasonry.tsx
+   3:17  warning  'Eye' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   3:22  warning  'ArrowUpRight' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  53:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\fittingroom\SaveProgressButton.tsx
+  31:13  error    Error: Cannot access variable before it is declared
+
+`handleInitialClick` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\fittingroom\SaveProgressButton.tsx:31:13
+  29 |     React.useEffect(() => {
+  30 |         if (user && pendingSaveFromMirror) {
+> 31 |             handleInitialClick();
+     |             ^^^^^^^^^^^^^^^^^^ `handleInitialClick` accessed before it is declared
+  32 |             setPendingSaveFromMirror(false);
+  33 |         }
+  34 |     }, [user, pendingSaveFromMirror]);
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\fittingroom\SaveProgressButton.tsx:36:5
+  34 |     }, [user, pendingSaveFromMirror]);
+  35 |
+> 36 |     const handleInitialClick = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |         // 1. Capture snapshot immediately (needed for auth flow backup or authentic save)
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 38 |         if (!mirrorRef.current) return;
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 63 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |     };
+     | ^^^^^^^ `handleInitialClick` is declared here
+  65 |
+  66 |     const handleSaveConfirm = async (title?: string) => {
+  67 |         console.log('[SaveButton] Save confirm clicked with title:', title);  react-hooks/immutability
+  34:8   warning  React Hook React.useEffect has missing dependencies: 'handleInitialClick' and 'setPendingSaveFromMirror'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    react-hooks/exhaustive-deps
+  83:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\fittingroom\SaveProgressModal.tsx
+   4:8   warning  'Image' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  77:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\fittingroom\TheArtWall.tsx
+  16:9  warning  'clearDesigns' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\fittingroom\TheCloset.tsx
+    6:23  warning  'Trash2' is defined but never used                        @typescript-eslint/no-unused-vars
+   13:17  warning  'Scissors' is defined but never used                      @typescript-eslint/no-unused-vars
+   13:43  warning  'Sparkles' is defined but never used                      @typescript-eslint/no-unused-vars
+   14:7   warning  'AVAILABLE_3D_MODELS' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   32:9   warning  'activeShirtId' is assigned a value but never used        @typescript-eslint/no-unused-vars
+   33:9   warning  'setActiveShirt' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   34:9   warning  'removeShirt' is assigned a value but never used          @typescript-eslint/no-unused-vars
+   62:11  warning  'emptyCount' is assigned a value but never used           @typescript-eslint/no-unused-vars
+  116:39  warning  'boxIndex' is assigned a value but never used             @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\fittingroom\TheMirror.tsx
+   4:10  warning  'useFittingRoomStore' is defined but never used    @typescript-eslint/no-unused-vars
+   5:8   warning  'Image' is defined but never used                  @typescript-eslint/no-unused-vars
+   6:10  warning  'cn' is defined but never used                     @typescript-eslint/no-unused-vars
+   8:10  warning  'ChevronDown' is defined but never used            @typescript-eslint/no-unused-vars
+   8:23  warning  'ChevronUp' is defined but never used              @typescript-eslint/no-unused-vars
+  21:10  warning  'motion' is defined but never used                 @typescript-eslint/no-unused-vars
+  21:18  warning  'AnimatePresence' is defined but never used        @typescript-eslint/no-unused-vars
+  25:7   warning  'SHIRT_COLORS' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\ChangeAvatarModal.tsx
+  168:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  197:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  222:37  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                              jsx-a11y/alt-text
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\DaVinciProfileGallery.tsx
+   6:10  warning  'cn' is defined but never used                                   @typescript-eslint/no-unused-vars
+  62:29  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  62:42  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\DaVinciProfileHero.tsx
+   5:10  warning  'cn' is defined but never used                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   6:10  warning  'Sparkles' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   6:20  warning  'Zap' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  12:14  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  13:11  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  72:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\DaVinciProfileSkeleton.tsx
+  4:10  warning  'motion' is defined but never used         @typescript-eslint/no-unused-vars
+  5:10  warning  'cn' is defined but never used             @typescript-eslint/no-unused-vars
+  7:11  warning  'SkeletonProps' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\DaVinciProfileStats.tsx
+   5:10  warning  'LayoutGrid' is defined but never used    @typescript-eslint/no-unused-vars
+  62:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\DaVinciProfileTimeline.tsx
+  6:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\EditNameModal.tsx
+  5:13  warning  'Sparkles' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\EditProfileModal.tsx
+    5:27  warning  'Globe' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    5:34  warning  'FileText' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   30:12  warning  'uploadProgress' is assigned a value but never used                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   30:28  warning  'setUploadProgress' is assigned a value but never used                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  238:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  282:53  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\MyWorks.tsx
+   8:27  warning  'Edit2' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+  22:11  warning  'setPostLoginTab' is assigned a value but never used                                                              @typescript-eslint/no-unused-vars
+  30:8   warning  React Hook useEffect has a missing dependency: 'fetchSessions'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  40:25  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  74:18  warning  'error' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\profile\ShareIdentityModal.tsx
+  5:13  warning  'Share2' is defined but never used    @typescript-eslint/no-unused-vars
+  5:29  warning  'LinkIcon' is defined but never used  @typescript-eslint/no-unused-vars
+  5:39  warning  'Check' is defined but never used     @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\tryon\BasicTeeModel.tsx
+    5:24  warning  'useThree' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  118:8   warning  React Hook useEffect has a missing dependency: 'texture'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    react-hooks/exhaustive-deps
+  177:35  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  202:35  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  252:30  warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  252:33  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  267:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  294:31  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  296:37  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  438:13  error    Error: This value cannot be modified
+
+Modifying a value previously passed as an argument to a hook is not allowed. Consider moving the modification before calling the hook.
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\tryon\BasicTeeModel.tsx:438:13
+  436 |     useEffect(() => {
+  437 |         if (UVMappingShaderMaterial) {
+> 438 |             UVMappingShaderMaterial.uniforms.uTexture.value = texture;
+      |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `UVMappingShaderMaterial` cannot be modified
+  439 |             UVMappingShaderMaterial.uniforms.uHitUV.value = hitUV || new THREE.Vector2(0.5, 0.5);
+  440 |             UVMappingShaderMaterial.uniforms.uDecalScale.value = decalState.scale;
+  441 |             UVMappingShaderMaterial.uniforms.uAspect.value = aspectRatio;  react-hooks/immutability
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\tryon\FemaleTeeModel.tsx
+    6:24  warning  'useThree' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  109:8   warning  React Hook useEffect has a missing dependency: 'texture'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react-hooks/exhaustive-deps
+  166:35  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  190:35  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  239:30  warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  239:33  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  251:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  265:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  399:13  error    Error: This value cannot be modified
+
+Modifying a value previously passed as an argument to a hook is not allowed. Consider moving the modification before calling the hook.
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\tryon\FemaleTeeModel.tsx:399:13
+  397 |     useEffect(() => {
+  398 |         if (UVMappingShaderMaterial) {
+> 399 |             UVMappingShaderMaterial.uniforms.uTexture.value = texture;
+      |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `UVMappingShaderMaterial` cannot be modified
+  400 |             UVMappingShaderMaterial.uniforms.uHitUV.value = hitUV || new THREE.Vector2(0.5, 0.5);
+  401 |             UVMappingShaderMaterial.uniforms.uDecalScale.value = decalState.scale;
+  402 |             UVMappingShaderMaterial.uniforms.uAspect.value = aspectRatio;  react-hooks/immutability
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\davinci\tryon\Model3DViewer.tsx
+    3:46  warning  'useMemo' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+    4:18  warning  'createPortal' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+    4:32  warning  'useThree' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+    4:42  warning  'useFrame' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+    5:34  warning  'Center' is defined but never used                                                                                  @typescript-eslint/no-unused-vars
+    5:42  warning  'Decal' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+    5:49  warning  'useTexture' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+    6:13  warning  'THREE' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+    8:41  warning  'Minus' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+    8:48  warning  'Plus' is defined but never used                                                                                    @typescript-eslint/no-unused-vars
+   54:7   warning  'MODEL_CONFIGS' is assigned a value but never used                                                                  @typescript-eslint/no-unused-vars
+  144:42  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+  218:53  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+  295:69  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+  366:32  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+  438:53  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+  439:54  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+  455:8   warning  React Hook useEffect has a missing dependency: 'storeDecalState'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\layout\UserMenu.tsx
+  36:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\mockup\MockupViewer.tsx
+   9:5  warning  'ZoomIn' is defined but never used   @typescript-eslint/no-unused-vars
+  10:5  warning  'ZoomOut' is defined but never used  @typescript-eslint/no-unused-vars
+  13:5  warning  'Palette' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\profile\EditProfileModal.tsx
+   8:45  warning  'Camera' is defined but never used        @typescript-eslint/no-unused-vars
+  70:81  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  81:18  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  84:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\profile\ProfileHero.tsx
+  40:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\scrollbar\CustomScrollbar.tsx
+   76:27  warning  'DEFAULT_THREAD_CONFIG' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   77:27  warning  'DEFAULT_NEURAL_CONFIG' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  163:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\scrollbar\CustomScrollbar.tsx:163:9
+  161 |       const saved = localStorage.getItem("davinci-scrollbar-type") as ScrollbarType;
+  162 |       if (saved && (saved === "thread" || saved === "neural")) {
+> 163 |         setTypeState(saved);
+      |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  164 |       }
+  165 |     } catch (e) {}
+  166 |   }, []);  react-hooks/set-state-in-effect
+  165:14  warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  172:14  warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  265:11  warning  'type' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  265:17  warning  'threadConfig' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  265:31  warning  'neuralConfig' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  265:45  warning  'isVisible' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\scrollbar\NeuralScrollbar.tsx
+   20:18  warning  'useState' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  117:10  warning  'buildSVG' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  206:9   warning  The 'cfg' object makes the dependencies of useCallback Hook (at line 339) change on every render. To fix this, wrap the initialization of 'cfg' in its own useMemo() Hook                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react-hooks/exhaustive-deps
+  294:46  error    Error: Cannot access variable before it is declared
+
+`branchLength` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\scrollbar\NeuralScrollbar.tsx:294:46
+  292 |         if (lineEl) {
+  293 |             const spXNode = spineX(br.t);
+> 294 |             const bx2 = (spXNode + br.side * branchLength).toFixed(2);
+      |                                              ^^^^^^^^^^^^ `branchLength` accessed before it is declared
+  295 |             lineEl.setAttribute("stroke", isLit ? colorLit : colorDim);
+  296 |             lineEl.setAttribute("stroke-width", isLit ? "0.9" : "0.5");
+  297 |             lineEl.setAttribute("x1", spXNode.toFixed(2));
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\scrollbar\NeuralScrollbar.tsx:401:22
+  399 |     width: W, padding: pad, zigAmplitude, zigFrequency,
+  400 |     colorLit, colorDim, colorThumb, colorBg, colorPulse,
+> 401 |     thumbRadius: TR, branchLength, pulseRing,
+      |                      ^^^^^^^^^^^^ `branchLength` is declared here
+  402 |   } = cfg;
+  403 |
+  404 |   return (  react-hooks/immutability
+  303:6   warning  React Hook useCallback has a missing dependency: 'branchLength'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react-hooks/exhaustive-deps
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\scrollbar\ThreadScrollbar.tsx
+   20:18  warning  'useState' is defined but never used                                                                                                                                       @typescript-eslint/no-unused-vars
+   75:10  warning  'buildSVG' is defined but never used                                                                                                                                       @typescript-eslint/no-unused-vars
+  147:9   warning  The 'cfg' object makes the dependencies of useCallback Hook (at line 203) change on every render. To fix this, wrap the initialization of 'cfg' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  147:9   warning  The 'cfg' object makes the dependencies of useCallback Hook (at line 236) change on every render. To fix this, wrap the initialization of 'cfg' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ui\Dock.tsx
+  45:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ui\SpaceDust.tsx
+  259:7   warning  React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked  react-hooks/exhaustive-deps
+  259:25  warning  React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked  react-hooks/exhaustive-deps
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\components\ui\border-beam.tsx
+  3:10  warning  'motion' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\features\order\OrderWizard.tsx
+    3:27  warning  'useEffect' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+    5:22  warning  'ChevronLeft' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    5:42  warning  'Shirt' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    5:49  warning  'Palette' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+    5:58  warning  'Ruler' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    6:5   warning  'ShoppingCart' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+    6:19  warning  'Package' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+    6:49  warning  'MapPin' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+    6:57  warning  'Truck' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    8:39  warning  'getDiscountLabel' is defined but never used                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+   52:11  warning  'priceBreakdown' is assigned a value but never used                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   73:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  120:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\lib\api\admin-cms.ts
+    4:5    warning  'CMSGalleryRow' is defined but never used      @typescript-eslint/no-unused-vars
+    5:5    warning  'CMSGraphicsRow' is defined but never used     @typescript-eslint/no-unused-vars
+    9:5    warning  'CMSSiteContentRow' is defined but never used  @typescript-eslint/no-unused-vars
+   10:5    warning  'CMSSettingsRow' is defined but never used     @typescript-eslint/no-unused-vars
+   11:5    warning  'CMSAuditLogRow' is defined but never used     @typescript-eslint/no-unused-vars
+  141:40   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  143:53   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  153:55   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  177:78   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  244:86   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  292:40   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  294:53   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  310:79   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  550:110  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  572:13   warning  'data' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\lib\hooks\useAuth.ts
+   86:8   warning  React Hook useEffect has missing dependencies: 'client.auth', 'fetchProfile', 'setLoading', 'setProfile', and 'setSession'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+   97:8   warning  React Hook useEffect has missing dependencies: 'fetchProfile', 'session', and 'setProfile'. Either include them or remove the dependency array                                  react-hooks/exhaustive-deps
+  132:71  error    Unexpected any. Specify a different type                                                                                                                                        @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\lib\hooks\useCMSData.ts
+  13:25  error    Unexpected any. Specify a different type                                                                         @typescript-eslint/no-explicit-any
+  61:22  warning  'error' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+  74:8   warning  React Hook useEffect has a missing dependency: 'selectString'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\lib\services\canvasCapture.ts
+  47:17  error  'timer' is never reassigned. Use 'const' instead  prefer-const
+  90:17  error  'timer' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\lib\services\fittingRoomProgress.ts
+  74:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  90:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\lib\storage\SessionManager.ts
+   44:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   69:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   80:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   96:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:82  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  135:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  155:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  176:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  185:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  186:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  187:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  207:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  231:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  247:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  272:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\lib\utils\performance.ts
+  27:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\proxy.ts
+  58:75  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\scripts\compress-models.js
+  1:22  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  2:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  3:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\scripts\convert-webp.js
+  1:15  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  2:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  3:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\scripts\update-manifests.js
+  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\tmp\fix_cats.js
+  1:1   error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  2:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\mhdha_zeezxk7\Downloads\Programming\Portfolio\DaVinci\types\database.ts
+  123:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  126:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  179:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  182:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  185:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 491 problems (201 errors, 290 warnings)
+

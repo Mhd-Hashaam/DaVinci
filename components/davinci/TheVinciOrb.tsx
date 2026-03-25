@@ -306,10 +306,7 @@ export const TheVinciOrb: React.FC<TheVinciOrbProps> = ({
                     </Suspense>
                 </Canvas>
             </WebGLErrorBoundary>
-
-            {/* Ambient outer glow - multi-layer */}
-            <div className="absolute inset-0 rounded-full blur-3xl -z-10 opacity-40 bg-gradient-to-br from-purple-600/50 via-violet-500/30 to-fuchsia-500/40 animate-pulse" style={{ animationDuration: '4s' }} />
-            <div className="absolute inset-2 rounded-full blur-2xl -z-10 opacity-30 bg-purple-500/50" />
+            {/* Removed Ambient outer glow as per request to keep it clean */}
         </div>
     );
 };

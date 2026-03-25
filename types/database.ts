@@ -138,6 +138,7 @@ export type Database = {
                     bio: string | null
                     website: string | null
                     avatar_url: string | null
+                    role: 'user' | 'admin'
                     created_at: string
                     updated_at: string
                 }
@@ -148,6 +149,7 @@ export type Database = {
                     bio?: string | null
                     website?: string | null
                     avatar_url?: string | null
+                    role?: 'user' | 'admin'
                     created_at?: string
                     updated_at?: string
                 }
@@ -158,6 +160,7 @@ export type Database = {
                     bio?: string | null
                     website?: string | null
                     avatar_url?: string | null
+                    role?: 'user' | 'admin'
                     created_at?: string
                     updated_at?: string
                 }
