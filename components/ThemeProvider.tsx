@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export type Theme = 'aurora' | 'crimson' | 'silver' | 'ember' | 'champagne' | 'rose' | 'forest' | 'mauve';
 export type SparkleMode = 'theme' | 'original';
-export type HoverEffect = 'grab' | 'repulse';
+export type HoverEffect = 'grab' | 'repulse' | 'none';
 export type BackgroundMode = 'stars' | 'smoke';
 
 interface ThemeContextType {

@@ -4,6 +4,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { ExploreFilterBar } from '../explore/ExploreFilterBar';
 import { ExploreMasonry } from '../explore/ExploreMasonry';
 import { ExplorePagination } from '../explore/ExplorePagination';
+import { FeedSkeleton } from '@/components/layout/FeedSkeleton';
+import { useCMSData } from '@/lib/hooks/useCMSData';
+import { getSettingsAction } from '@/app/admin/actions';
 import { Loader2 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import type { GeneratedImage } from '@/types';
@@ -34,8 +37,53 @@ export const DaVinciCommunity = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 60;
 
-    const [galleryItems, setGalleryItems] = useState<(GeneratedImage & { categories: any[] })[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [galleryMode, setGalleryMode] = useState<string>('manual');
+
+    // Fetch Global Gallery Render Mode
+    useEffect(() => {
+        async function fetchMode() {
+            try {
+                const res = await getSettingsAction(true);
+                if (res.data) {
+                    const modeSetting = res.data.find((s: any) => s.key === 'gallery_render_mode');
+                    if (modeSetting?.value) setGalleryMode(modeSetting.value);
+                }
+            } catch (err) {
+                console.error('DaVinciCommunity: failed to fetch gallery mode setting:', err);
+            }
+        }
+        fetchMode();
+    }, []);
+
+    const { data: allCmsImages, isLoading: isCMSLoading } = useCMSData<GeneratedImage & { categories: any[] }>(
+        'cms_gallery',
+        [],
+        (row: any) => ({
+            id: row.id,
+            url: row.storage_url ?? '',
+            prompt: row.title || row.alt_text || 'Untitled Design',
+            aspectRatio: (row.aspect_ratio || '1:1') as any,
+            timestamp: new Date(row.created_at).getTime(),
+            model: 'DaVinci Core',
+            categories: row.category_links?.map((l: any) => l.category).filter(Boolean) || [],
+        }),
+        '*, category_links:cms_gallery_categories(category:cms_categories(*))',
+        galleryMode
+    );
+
+    // Filter for Community items
+    const galleryItems = useMemo(() => {
+        if (!allCmsImages) return [];
+        return allCmsImages.filter(item => 
+            item.categories.some((cat: any) => 
+                cat.slug === 'community' || 
+                cat.name === 'Community Creations' ||
+                cat.name === "Community's Creation"
+            )
+        );
+    }, [allCmsImages]);
+
+    const isLoading = isCMSLoading;
 
     // Scroll to top on page change
     useEffect(() => {
@@ -47,53 +95,7 @@ export const DaVinciCommunity = () => {
         }
     }, [currentPage]);
 
-    useEffect(() => {
-        let isMounted = true;
-
-        async function load() {
-            setIsLoading(true);
-            try {
-                // Fetch ALL published items with their categories, exactly like DaVinciExplore
-                const { data: galleryRes, error } = await supabase
-                    .from('cms_gallery')
-                    .select(`*, category_links:cms_gallery_categories(category:cms_categories(*))`)
-                    .eq('is_published', true)
-                    .order('display_order', { ascending: true });
-
-                if (error) throw error;
-                if (!isMounted) return;
-
-                if (galleryRes) {
-                    const mapped = galleryRes.map((row: any) => {
-                        return {
-                            ...rowToImage(row),
-                            categories: row.category_links?.map((l: any) => l.category).filter(Boolean) || [],
-                        };
-                    });
-
-                    // Filter client-side for the "Community" category to be 100% sure we catch it
-                    // regardless of subtle slug/name differences in the DB
-                    const communityItems = mapped.filter(item => 
-                        item.categories.some(cat => 
-                            cat.slug === 'community' || 
-                            cat.name === 'Community Creations' ||
-                            cat.name === "Community's Creation"
-                        )
-                    );
-
-                    setGalleryItems(communityItems);
-                }
-            } catch (err) {
-                console.error('DaVinciCommunity: failed to load data', err);
-            } finally {
-                if (isMounted) setIsLoading(false);
-            }
-        }
-
-        load();
-        return () => { isMounted = false; };
-    }, []);
-
+    // Filter Logic
     const filteredImages = useMemo(() => {
         let results = galleryItems;
         if (searchQuery.trim()) {
@@ -126,10 +128,7 @@ export const DaVinciCommunity = () => {
 
                 <section className="px-4 sm:px-8 lg:px-12 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     {isLoading ? (
-                        <div className="flex flex-col items-center justify-center py-40 gap-4">
-                            <Loader2 size={32} className="animate-spin text-white/30" />
-                            <p className="text-zinc-600 text-[11px] uppercase tracking-widest font-outfit">Loading community creations...</p>
-                        </div>
+                        <FeedSkeleton count={20} className="sm:columns-2 lg:columns-3 xl:columns-4" />
                     ) : galleryItems.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-40 gap-4">
                             <p className="text-zinc-500 text-sm font-outfit">No community items available yet.</p>

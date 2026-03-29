@@ -63,7 +63,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
 
   // Dynamic class for masonry columns
   const containerClass = cn(
-    "gap-4 pb-20",
+    "gap-2 pb-20",
     columns?.mobile ? `columns-${columns.mobile}` : "columns-1",
     columns?.sm ? `sm:columns-${columns.sm}` : "sm:columns-2",
     columns?.lg ? `lg:columns-${columns.lg}` : "lg:columns-3",
@@ -79,7 +79,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
           <div
             key={image.id}
             className={cn(
-              "group relative break-inside-avoid rounded-2xl overflow-hidden bg-white/5 border transition-all duration-300 mb-4",
+              "group relative break-inside-avoid rounded-2xl overflow-hidden bg-white/5 border transition-all duration-300 mb-2",
               isSelectedForComparison
                 ? "border-indigo-500 ring-2 ring-indigo-500/50 scale-[0.98]"
                 : "border-white/5 hover:border-white/20"

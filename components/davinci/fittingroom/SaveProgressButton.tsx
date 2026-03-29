@@ -97,15 +97,20 @@ export const SaveProgressButton = ({ mirrorRef }: SaveProgressButtonProps) => {
         <>
             <button
                 onClick={handleInitialClick}
-                className="group relative flex items-center justify-center h-10 w-10 bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 z-10 cursor-pointer"
+                className="group relative flex items-center gap-3 h-11 px-6 bg-[#0c0b0a]/90 backdrop-blur-xl border border-white/10 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:border-[#C5A572]/50 hover:bg-[#0c0b0a] active:scale-95 transition-all duration-300 z-10 cursor-pointer overflow-hidden"
                 aria-label="Save Progress"
             >
-                <Save size={18} className="text-white/80 group-hover:text-white transition-colors" />
-
-                {/* Tooltip */}
-                <div className="absolute right-full mr-3 px-2 py-1 bg-black/80 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                {/* Subtle Shine Effect on Hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
+                
+                <Save size={18} className="text-[#C5A572] transition-transform duration-300 group-hover:scale-110" />
+                
+                <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/90 group-hover:text-white transition-colors">
                     Save Progress
-                </div>
+                </span>
+
+                {/* Decorative Dot */}
+                <div className="w-1 h-1 rounded-full bg-[#C5A572]/40 group-hover:bg-[#C5A572] transition-colors" />
             </button>
 
             <SaveProgressModal

@@ -29,7 +29,7 @@ export default function MediaManager() {
             if (res.error) throw res.error;
             
             // Supabase sometimes returns a blank '.emptyFolderPlaceholder' file
-            const cleanFiles = (res.data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
+            const cleanFiles = (res.data || []).filter((f: FileObject) => f.name !== '.emptyFolderPlaceholder');
             setFiles(cleanFiles as unknown as FileObject[]);
         } catch (error: any) {
             toast.error(error.message || 'Failed to load directory');

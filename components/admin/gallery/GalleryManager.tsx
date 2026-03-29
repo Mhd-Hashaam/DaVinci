@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { Plus, Edit2, Trash2, Search, ChevronDown, Filter, Eye, Diamond, Loader2, Check, X, ArrowUpDown, ChevronLeft, ChevronRight, Star, Users } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, ChevronDown, Filter, Eye, Diamond, Loader2, Check, X, ArrowUpDown, ChevronLeft, ChevronRight, Star, Users, LayoutGrid } from 'lucide-react';
 import { toast } from 'sonner';
 import CmsPagination from '../ui/CmsPagination';
 import { 
@@ -13,7 +13,9 @@ import {
     renameMediaAction,
     deleteGalleryItemsAction,
     bulkAddGalleryItemsToCategoriesAction,
-    bulkUpdateGalleryItemsAction
+    bulkUpdateGalleryItemsAction,
+    getSettingsAction,
+    upsertSettingAction
 } from '@/app/admin/actions';
 import type { CMSGalleryRow, CMSGalleryInsert, CMSCategoryRow } from '@/types/cms';
 
@@ -58,6 +60,12 @@ export default function GalleryManager({ initialItems, categories }: GalleryMana
     const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'title_asc' | 'title_desc' | 'order'>('newest');
     const [isSortOpen, setIsSortOpen] = useState(false);
 
+    // Global Gallery Render Mode
+    const [galleryMode, setGalleryMode] = useState<string>('manual');
+    const [isGalleryModeOpen, setIsGalleryModeOpen] = useState(false);
+    const [isUpdatingMode, setIsUpdatingMode] = useState(false);
+    const galleryModeRef = useRef<HTMLDivElement>(null);
+
     // Click Outside Logic
     React.useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -70,11 +78,46 @@ export default function GalleryManager({ initialItems, categories }: GalleryMana
             if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
                 setIsSortOpen(false);
             }
+            if (galleryModeRef.current && !galleryModeRef.current.contains(event.target as Node)) {
+                setIsGalleryModeOpen(false);
+            }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    // Fetch current gallery mode on mount
+    React.useEffect(() => {
+        async function fetchSettings() {
+            const res = await getSettingsAction(true);
+            if (res.data) {
+                const modeSetting = res.data.find((s: any) => s.key === 'gallery_render_mode');
+                if (modeSetting) setGalleryMode(modeSetting.value);
+            }
+        }
+        fetchSettings();
+    }, []);
+
+    const handleUpdateGalleryMode = async (newMode: string) => {
+        setIsUpdatingMode(true);
+        try {
+            const res = await upsertSettingAction({
+                key: 'gallery_render_mode',
+                value: newMode,
+                description: 'Dictates the render order of the public gallery',
+                is_public: true
+            });
+            if (res.error) throw res.error;
+            setGalleryMode(newMode);
+            toast.success(`Gallery display mode set to: ${newMode}`);
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to update mode');
+        } finally {
+            setIsUpdatingMode(false);
+            setIsGalleryModeOpen(false);
+        }
+    };
 
     // Reset page on filter/sort change
     React.useEffect(() => {
@@ -505,6 +548,62 @@ export default function GalleryManager({ initialItems, categories }: GalleryMana
                                     >
                                         {opt.label}
                                         {sortBy === opt.id && <Check className="w-3 h-3" />}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="h-4 w-[1px] bg-white/10" />
+
+                    {/* GLOBAL GALLERY MODE SELECTOR */}
+                    <div className="relative" ref={galleryModeRef}>
+                        <button 
+                            onClick={() => { setIsGalleryModeOpen(!isGalleryModeOpen); setIsCategoryOpen(false); setIsStatusOpen(false); setIsSortOpen(false); }}
+                            className="flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--primary)]/20 bg-[var(--primary)]/5 px-4 py-2 font-outfit text-[11px] uppercase tracking-widest text-[var(--primary)] transition-all hover:bg-[var(--primary)]/10 min-w-[150px] justify-between group shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
+                        >
+                            <span className="flex items-center gap-2">
+                                {isUpdatingMode ? (
+                                    <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                    <LayoutGrid size={14} className="text-[var(--primary)]" />
+                                )}
+                                <span className="text-[10px] opacity-70 mr-1 italic">Render:</span>
+                                {galleryMode === 'manual' ? 'Manual' : 
+                                 galleryMode === 'latest' ? 'Latest' : 
+                                 galleryMode === 'oldest' ? 'Oldest' : 'Shuffle'}
+                            </span>
+                            <ChevronDown size={14} className={cn("transition-transform duration-300", isGalleryModeOpen && "rotate-180")} />
+                        </button>
+
+                        {isGalleryModeOpen && (
+                            <div className="absolute top-full left-0 mt-2 w-56 rounded-xl border border-white/10 bg-[#0a0a0a] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-[100]">
+                                <div className="px-4 py-2 border-b border-white/5 bg-white/[0.02]">
+                                    <p className="font-outfit text-[9px] uppercase tracking-[0.2em] text-zinc-500">Live Gallery Logic</p>
+                                </div>
+                                {[
+                                    { id: 'manual', label: 'Manual (Display Order)', desc: 'Respects manual sorting' },
+                                    { id: 'latest', label: 'Latest (Recently Added)', desc: 'Show newest uploads first' },
+                                    { id: 'oldest', label: 'Oldest (Chronological)', desc: 'Show first uploads first' },
+                                    { id: 'shuffle', label: 'Shuffle (Randomized)', desc: 'Mix categories randomly' }
+                                ].map(opt => (
+                                    <button 
+                                        key={opt.id}
+                                        disabled={isUpdatingMode}
+                                        onClick={() => handleUpdateGalleryMode(opt.id)}
+                                        className={cn(
+                                            "w-full px-4 py-3 text-left transition-colors flex flex-col gap-0.5 cursor-pointer group",
+                                            galleryMode === opt.id ? "bg-[var(--primary)]/10" : "hover:bg-white/5"
+                                        )}
+                                    >
+                                        <div className="flex items-center justify-between w-full">
+                                            <span className={cn(
+                                                "font-outfit text-[11px] uppercase tracking-widest",
+                                                galleryMode === opt.id ? "text-[var(--primary)]" : "text-zinc-400 group-hover:text-white"
+                                            )}>{opt.label}</span>
+                                            {galleryMode === opt.id && <Check className="w-3 h-3 text-[var(--primary)]" />}
+                                        </div>
+                                        <span className="font-outfit text-[9px] text-zinc-600 group-hover:text-zinc-500 transition-colors uppercase tracking-widest">{opt.desc}</span>
                                     </button>
                                 ))}
                             </div>

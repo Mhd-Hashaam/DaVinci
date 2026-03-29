@@ -221,7 +221,7 @@ export const BasicTeeModel = React.memo(({
             const delta = e.uv.clone().sub(dragStartUV.current);
             // Simple scale logic based on horizontal movement
             const scaleDelta = delta.x * 2; 
-            const newScale = Math.max(0.05, Math.min(1.0, initialScale.current + scaleDelta));
+            const newScale = Math.max(0.05, Math.min(3.0, initialScale.current + scaleDelta));
             setDecalState({ ...decalState, scale: newScale });
             return;
         }
@@ -402,8 +402,6 @@ export const BasicTeeModel = React.memo(({
                 uniform vec2 uOffset;
                 varying vec2 vUv;
 
-
-
                 void main() {
                     // Standard UV mapping with fract wrapping
                     vec2 d = vUv - uHitUV - uOffset;
@@ -422,12 +420,10 @@ export const BasicTeeModel = React.memo(({
                     if (texColor.a < 0.05) discard;
                     
                     gl_FragColor = texColor;
-                    gl_FragColor.rgb *= 1.1; 
+                    
+                    #include <tonemapping_fragment>
+                    #include <colorspace_fragment>
                 }
-
-
-
-
             `
         });
     }, []);

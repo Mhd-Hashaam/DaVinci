@@ -31,6 +31,7 @@ import { AIModel } from '@/types/settings';
 import { useCMSData } from '@/lib/hooks/useCMSData';
 import { useSession } from '@/lib/hooks/useSession';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { getSettingsAction } from '@/app/admin/actions';
 import { Footer } from '@/components/layout/Footer';
 import { HelpCircle, Bookmark } from 'lucide-react';
 import { TheVinciOrb } from '@/components/davinci/TheVinciOrb';
@@ -177,6 +178,23 @@ function DaVinciStudioContent() {
 
     const { user, profile, signOut } = useAuth();
 
+    // Fetch Global Gallery Render Mode
+    const [galleryMode, setGalleryMode] = useState<string>('manual');
+    useEffect(() => {
+        async function fetchMode() {
+            try {
+                const res = await getSettingsAction(true);
+                if (res.data) {
+                    const modeSetting = res.data.find((s: any) => s.key === 'gallery_render_mode');
+                    if (modeSetting?.value) setGalleryMode(modeSetting.value);
+                }
+            } catch (err) {
+                console.error('Failed to fetch gallery mode setting:', err);
+            }
+        }
+        fetchMode();
+    }, []);
+
     // CMS Integration for Explore and Fallbacks
     const { data: allCmsImages, isLoading: isCMSLoading } = useCMSData<GeneratedImage & { categories: any[] }>(
         'cms_gallery',
@@ -190,7 +208,8 @@ function DaVinciStudioContent() {
             model: 'DaVinci Core',
             categories: row.category_links?.map((link: any) => link.category) || []
         }),
-        '*, category_links:cms_gallery_categories(category:cms_categories(*))'
+        '*, category_links:cms_gallery_categories(category:cms_categories(*))',
+        galleryMode
     );
 
     const topPicks = allCmsImages.filter(img => 
@@ -297,17 +316,13 @@ function DaVinciStudioContent() {
 
             {/* TheVinci Orb - Top Left, Above Sidebar */}
             <div className="fixed top-0 left-0 z-50 pointer-events-none">
-                <TheVinciOrb size={160} />
+                <TheVinciOrb size={110} />
             </div>
 
             {/* Main Content Area */}
             <ScrollablePanel 
               className="relative z-[1] flex-1 flex flex-col h-screen transition-all duration-500 pl-28 pr-0"
-              config={
-                activeTab === 'create' 
-                  ? { waviness: 5, padding: 160, right: 60 } // Dramatic waves for Landing/Create
-                  : { waviness: 1, padding: 40, right: 12 }   // Compact for Gallery
-              }
+              variant={activeTab === 'create' ? 'landing' : 'others'}
             >
 
                 {/* Very Top Sticky Header (Auxiliary Items) */}
@@ -335,9 +350,10 @@ function DaVinciStudioContent() {
                             />
                         </div>
 
-                        {/* Top Picks Section (2 rows) */}
-                        <div className="w-full max-w-6xl mx-auto mt-24 space-y-32 px-4 sm:px-8">
-                            <section className="animate-grid">
+                        {/* Sections Area */}
+                        <div className="w-full mt-24 space-y-32">
+                            {/* Top Picks Section - Moved Left */}
+                            <section className="animate-grid w-full max-w-[1400px] px-4 sm:px-8">
                                 <SectionHeader 
                                     title="Top Picks" 
                                     viewMoreHref="/davinci?view=gallery&category=top-picks" 
@@ -347,7 +363,7 @@ function DaVinciStudioContent() {
                                 ) : (
                                     <ImageGrid
                                         images={topPicks}
-                                        columns={{ mobile: 1, sm: 2, lg: 3, xl: 4 }}
+                                        columns={{ mobile: 1, sm: 2, lg: 5, xl: 5 }}
                                         onImageClick={setSelectedImage}
                                         onMockupClick={openFittingRoomModal}
                                         onBookmarkClick={(img) => toggleBookmark(img.id, img)}
@@ -355,17 +371,18 @@ function DaVinciStudioContent() {
                                 )}
                             </section>
 
-                            <section className="animate-grid">
+                            {/* Community Section - Aligned with Top Picks */}
+                            <section className="animate-grid w-full max-w-[1400px] px-4 sm:px-8">
                                 <SectionHeader 
                                     title="Community's Creation" 
                                     viewMoreHref="/davinci?view=community"
                                 />
                                 {isCMSLoading ? (
-                                    <FeedSkeleton count={8} />
+                                    <FeedSkeleton count={5} />
                                 ) : (
                                     <ImageGrid
                                         images={communityImages}
-                                        columns={{ mobile: 1, sm: 2, lg: 4, xl: 4 }}
+                                        columns={{ mobile: 1, sm: 2, lg: 5, xl: 5 }}
                                         onImageClick={setSelectedImage}
                                         onMockupClick={openFittingRoomModal}
                                         onBookmarkClick={(img) => toggleBookmark(img.id, img)}

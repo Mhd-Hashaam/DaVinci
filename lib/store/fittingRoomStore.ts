@@ -75,6 +75,7 @@ interface FittingRoomState {
     setShouldOpenFromProgress: (val: boolean) => void;
     getSnapshot: () => FittingRoomSnapshot;
     loadSnapshot: (snapshot: FittingRoomSnapshot) => void;
+    updateActiveDesignImage: (newUrl: string) => void;
 }
 
 export const useFittingRoomStore = create<FittingRoomState>()(
@@ -234,6 +235,19 @@ export const useFittingRoomStore = create<FittingRoomState>()(
                     shouldOpenFromProgress: true,
                     shouldOpenFittingRoom: true
                 });
+            },
+
+            updateActiveDesignImage: (newUrl) => {
+                const { designs, activeDesignId } = get();
+                if (!activeDesignId) return;
+                
+                const updatedDesigns = designs.map(d => 
+                    d.id === activeDesignId 
+                        ? { ...d, fullImage: newUrl, thumbnail: newUrl } 
+                        : d
+                );
+                
+                set({ designs: updatedDesigns });
             },
         }),
         {

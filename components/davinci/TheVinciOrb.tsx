@@ -12,9 +12,9 @@ const TheVinciMaterial = shaderMaterial(
     {
         uTime: 0,
         uFrequency: 1.2,
-        uAmplitude: 4.0,
-        uDensity: 1.0,
-        uStrength: 0.33,
+        uAmplitude: 2.0,
+        uDensity: 0.8,
+        uStrength: 0.22,
         uDeepPurple: 0.7,
         uOpacity: 0.43,
         uBreathPhase: 0,        // Breathing animation
@@ -145,7 +145,7 @@ const TheVinciMaterial = shaderMaterial(
         b = clamp(b, 0.35, 0.95);
         
         // Alpha - more visible on peaks
-        float alpha = clamp(abs(vDistortion) * 2.0 + uOpacity, 0.35, 0.85);
+        float alpha = clamp(abs(vDistortion) * 1.5 + uOpacity, 0.3, 0.7);
         
         gl_FragColor = vec4(r, g, b, alpha);
     }
@@ -251,7 +251,7 @@ interface TheVinciOrbProps {
 }
 
 export const TheVinciOrb: React.FC<TheVinciOrbProps> = ({
-    size = 120,
+    size = 110,
     className = "",
     position = [-0.4, 0.2, 0],
     width = 250,

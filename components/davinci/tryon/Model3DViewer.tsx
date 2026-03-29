@@ -5,11 +5,12 @@ import { Canvas, createPortal, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Center, Decal, useTexture, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
-import { RotateCw, Maximize, RotateCcw, Minus, Plus, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
+import { RotateCw, Maximize, RotateCcw, Minus, Plus, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Crop } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSessionManager } from '@/lib/storage/SessionManager';
 import { BasicTeeModel } from './BasicTeeModel';
 import { FemaleTeeModel } from './FemaleTeeModel';
+import { GraphicCropModal } from './GraphicCropModal';
 
 // Fallback design texture
 const FALLBACK_TEXTURE = '/assets/design-fallback.png';
@@ -130,12 +131,10 @@ const RepeatButton = ({
     );
 };
 
-// ----------------------------------------------------------------------
-// 2. Redesigned Premium Controls (Right Panel)
-// ----------------------------------------------------------------------
-// ----------------------------------------------------------------------
-// 2. Redesigned Premium Controls (Right Panel)
-// ----------------------------------------------------------------------
+
+import { motion, AnimatePresence } from 'framer-motion';
+import { Settings2, Sliders, ChevronLeft, ChevronRight, X } from 'lucide-react';
+
 
 const ControlSlider = ({ 
     label, value, min, max, step, onChange, icon: Icon, formatFn 
@@ -163,14 +162,13 @@ const ControlSlider = ({
                 </div>
                 <input 
                     type="range" min={min} max={max} step={step} value={value}
-                    onChange={(e) => onChange(parseFloat(e.target.value))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(parseFloat(e.target.value))}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
                 <div 
                     className="absolute w-2.5 h-2.5 bg-white rounded-full shadow-[0_0_6px_rgba(255,255,255,0.4)] border border-[#C5A572] pointer-events-none transition-transform duration-200 group-hover/slider:scale-125"
                     style={{ left: `calc(${((value - min) / (max - min)) * 100}% - 5px)` }}
                 />
-
             </div>
         </div>
     );
@@ -194,27 +192,134 @@ const DPadPosition = ({
                 <RepeatButton icon={ArrowLeft} onClick={() => onMove('left')} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-[#C5A572]/50 hover:bg-[#C5A572]/10 hover:text-[#C5A572] transition-all shadow-md" />
                 <RepeatButton icon={ArrowDown} onClick={() => onMove('down')} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-[#C5A572]/50 hover:bg-[#C5A572]/10 hover:text-[#C5A572] transition-all shadow-md" />
                 <RepeatButton icon={ArrowRight} onClick={() => onMove('right')} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-[#C5A572]/50 hover:bg-[#C5A572]/10 hover:text-[#C5A572] transition-all shadow-md" />
-
             </div>
         </div>
     );
 };
 
+const PanelToggle = ({ 
+    isOpen, onClick, side, icon: Icon 
+}: { 
+    isOpen: boolean, onClick: () => void, side: 'left' | 'right', icon: any 
+}) => {
+    if (isOpen) return null;
+    return (
+        <button
+            onClick={onClick}
+            className={cn(
+                "absolute top-4 z-30 w-10 h-10 flex items-center justify-center bg-[#0c0b0a]/90 backdrop-blur-xl border border-white/10 rounded-full shadow-lg hover:border-[#C5A572]/50 transition-all active:scale-95 cursor-pointer",
+                side === 'left' ? "left-4" : "right-4"
+            )}
+        >
+            <Icon size={18} className="text-white/60 hover:text-[#C5A572] transition-colors" />
+        </button>
+    );
+};
 
-const ViewerControls = ({
-    decalState,
-    setDecalState,
+const ShirtSettingsPanel = ({
+    isOpen,
+    onClose,
     onReset,
     onViewChange,
     status
 }: {
-    decalState: DecalState,
-    setDecalState: (s: DecalState) => void,
+    isOpen: boolean,
+    onClose: () => void,
     onReset: () => void,
     onViewChange: (view: 'front' | 'back' | 'left' | 'right' | 'reset') => void,
     status: string
 }) => {
     const { shirtColor, setShirtColor } = useFittingRoomStore();
+    
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div 
+                    initial={{ x: 300, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: 300, opacity: 0 }}
+                    className="absolute top-4 right-4 z-20 w-64 bg-[#0c0b0a]/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 flex flex-col gap-6 text-white shadow-[0_32px_64px_rgba(0,0,0,0.6)] border-t-white/20"
+                >
+                    {/* Header */}
+                    <div className="flex items-center justify-between pb-1">
+                        <div className="flex flex-col gap-0.5">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90">Garment Studio</span>
+                            <div className="flex items-center gap-1">
+                                <div className={cn(
+                                    "w-1 h-1 rounded-full",
+                                    status === "Synced" || status === "Restored" ? "bg-[#C5A572] animate-pulse" : "bg-white/20"
+                                )} />
+                                <span className="text-[8px] text-zinc-500 font-bold tracking-tight uppercase">{status}</span>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button onClick={onReset} className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all group" title="Reset Camera">
+                                <RotateCcw size={12} className="text-zinc-500 group-hover:text-white" />
+                            </button>
+                            <button 
+                                onClick={onClose} 
+                                className="w-10 h-10 flex items-center justify-center bg-[#C5A572]/10 border border-[#C5A572]/30 rounded-full transition-all text-[#C5A572] hover:bg-[#C5A572]/20 active:scale-90"
+                                title="Close Panel"
+                            >
+                                <Settings2 size={18} />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Shirt Color */}
+                    <div className="flex flex-col gap-3">
+                        <span className="text-[8px] uppercase tracking-[0.2em] text-zinc-500 font-black px-1">Shirt Color</span>
+                        <div className="flex flex-wrap gap-2 px-1">
+                            {SHIRT_COLORS.map((color) => (
+                                <button
+                                    key={color.hex}
+                                    onClick={() => setShirtColor(color.hex)}
+                                    className={cn(
+                                        "w-6 h-4 rounded-full transition-all duration-300",
+                                        shirtColor === color.hex ? "ring-1 ring-white ring-offset-1 ring-offset-black scale-110 shadow-[0_0_8px_rgba(255,255,255,0.4)]" : "opacity-40 hover:opacity-100 cursor-pointer border border-white/10"
+                                    )}
+                                    style={{ backgroundColor: color.hex }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* View Selector */}
+                    <div className="flex flex-col gap-3">
+                        <span className="text-[8px] uppercase tracking-[0.2em] text-zinc-500 font-black px-1">Viewing Angle</span>
+                        <div className="grid grid-cols-2 gap-2">
+                            {['Front', 'Back', 'Left', 'Right'].map((label) => (
+                                <button 
+                                    key={label}
+                                    onClick={() => onViewChange(label.toLowerCase() as any)} 
+                                    className="py-2.5 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/10 text-[9px] font-black tracking-widest uppercase transition-all"
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
+
+const GraphicSettingsPanel = ({
+    isOpen,
+    onClose,
+    decalState,
+    setDecalState,
+    onOpenCrop,
+    is3D = true
+}: {
+    isOpen: boolean,
+    onClose: () => void,
+    decalState: DecalState,
+    setDecalState: (s: DecalState) => void,
+    onOpenCrop: () => void,
+    is3D?: boolean
+}) => {
     const update = (field: keyof DecalState, value: any) => {
         setDecalState({ ...decalState, [field]: value });
     };
@@ -234,116 +339,83 @@ const ViewerControls = ({
     };
 
     return (
-        <div className="absolute top-4 right-4 z-20 w-64 bg-[#0c0b0a]/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 flex flex-col gap-5 text-white shadow-[0_32px_64px_rgba(0,0,0,0.6)] border-t-white/20">
-            {/* Header */}
-            <div className="flex items-center justify-between pb-1">
-                <div className="flex flex-col gap-0.5">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90">Design Studio</span>
-                    <div className="flex items-center gap-1">
-                        <div className={cn(
-                            "w-1 h-1 rounded-full",
-                            status === "Synced" ? "bg-[#C5A572] animate-pulse shadow-[0_0_8px_rgba(197,165,114,0.8)]" : "bg-white/20"
-                        )} />
-
-                        <span className="text-[8px] text-zinc-500 font-bold tracking-tight uppercase">{status}</span>
-                    </div>
-                </div>
-                <button 
-                    onClick={onReset} 
-                    className="w-7 h-7 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all group" 
-                    title="Reset All"
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div 
+                    initial={{ x: -300, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: -300, opacity: 0 }}
+                    className="absolute top-4 left-4 z-20 w-60 bg-[#0c0b0a]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-6 flex flex-col gap-6 text-white shadow-[0_32px_64px_rgba(0,0,0,0.6)] border-t-white/20"
                 >
-                    <RotateCcw size={12} className="text-zinc-500 group-hover:text-white group-hover:rotate-[-180deg] transition-all duration-500" />
-                </button>
-            </div>
-
-            {/* Fabric Color - Integrated Horizontal Selector */}
-            <div className="flex flex-col gap-2.5">
-                <span className="text-[8px] uppercase tracking-[0.2em] text-zinc-500 font-black px-1">Fabric Color</span>
-                <div className="flex items-center gap-1.5 px-0.5 overflow-x-auto pb-1 no-scrollbar [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-
-                    {SHIRT_COLORS.map((color) => (
-                        <button
-                            key={color.hex}
-                            onClick={() => setShirtColor(color.hex)}
-                            title={color.name}
-                            className={cn(
-                                "flex-shrink-0 w-6 h-4 rounded-full transition-all duration-300",
-                                shirtColor === color.hex
-                                    ? "ring-1 ring-white ring-offset-1 ring-offset-black scale-110 shadow-[0_0_10px_rgba(255,255,255,0.3)]"
-                                    : "opacity-40 hover:opacity-100 hover:scale-105 cursor-pointer border border-white/10"
-                            )}
-                            style={{ backgroundColor: color.hex }}
-                        />
-                    ))}
-                </div>
-            </div>
-
-            {/* View Selector - More Compact */}
-            <div className="flex flex-col gap-2.5">
-                <span className="text-[8px] uppercase tracking-[0.2em] text-zinc-500 font-black px-1">Viewing Angle</span>
-                <div className="grid grid-cols-2 gap-2">
-                    <div className="grid grid-cols-2 gap-1 px-0.5">
-                        {[
-                            { id: 'front', label: 'FRT' },
-                            { id: 'back', label: 'BCK' },
-                            { id: 'left', label: 'LFT' },
-                            { id: 'right', label: 'RGT' }
-                        ].map((v) => (
-                            <button 
-                                key={v.id}
-                                onClick={() => onViewChange(v.id as any)} 
-                                className="py-2.5 px-1 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/10 text-[9px] font-black tracking-widest uppercase transition-all duration-300"
-                            >
-                                {v.label}
-                            </button>
-                        ))}
+                    {/* Header */}
+                    <div className="flex items-center justify-between pb-1">
+                        <button 
+                            onClick={onClose} 
+                            className="w-10 h-10 flex items-center justify-center bg-[#C5A572]/10 border border-[#C5A572]/30 rounded-full transition-all text-[#C5A572] hover:bg-[#C5A572]/20 active:scale-90"
+                            title="Close Panel"
+                        >
+                            <Sliders size={18} />
+                        </button>
+                        <div className="flex flex-col items-end gap-0.5">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90">Graphic Engine</span>
+                            <div className="flex items-center gap-1">
+                                <div className="w-1 h-1 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                                <span className="text-[8px] text-zinc-500 font-bold tracking-tight uppercase">Active Layer</span>
+                            </div>
+                        </div>
                     </div>
-                    <button 
-                        onClick={() => onViewChange('reset')} 
-                        className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#C5A572]/5 border border-[#C5A572]/20 text-[#C5A572] text-[9px] font-black tracking-[0.1em] uppercase hover:bg-[#C5A572]/10 hover:border-[#C5A572]/40 transition-all"
-                    >
-                        <RotateCcw size={10} />
-                        <span className="mt-0.5">Focus</span>
-                    </button>
 
-                </div>
-            </div>
+                    {/* Transformation Sliders */}
+                    <div className="flex flex-col gap-5 py-2 border-y border-white/5">
+                        <ControlSlider
+                            label="Size"
+                            icon={Maximize}
+                            value={decalState.scale}
+                            min={0.05} max={3.0} step={0.01}
+                            onChange={(v) => update('scale', v)}
+                            formatFn={(v) => `${(v * 100).toFixed(0)}%`}
+                        />
+                        <ControlSlider
+                            label="Rotation"
+                            icon={RotateCw}
+                            value={decalState.rot}
+                            min={-Math.PI} max={Math.PI} step={0.01}
+                            onChange={(v) => update('rot', v)}
+                            formatFn={(v) => `${Math.round((v * 180) / Math.PI)}°`}
+                        />
+                    </div>
 
-            {/* Transformation Sliders - Tighter Vertical Space */}
-            <div className="flex flex-col gap-4 py-2.5 border-y border-white/5">
-                <ControlSlider
-                    label="Size"
-                    icon={Maximize}
-                    value={decalState.scale}
-                    min={0.05} max={1.0} step={0.005}
-                    onChange={(v) => update('scale', v)}
-                    formatFn={(v) => `${(v * 100).toFixed(0)}%`}
-                />
-                <ControlSlider
-                    label="Rotation"
-                    icon={RotateCw}
-                    value={decalState.rot}
-                    min={-Math.PI} max={Math.PI} step={0.01}
-                    onChange={(v) => update('rot', v)}
-                    formatFn={(v) => `${Math.round((v * 180) / Math.PI)}°`}
-                />
-            </div>
+                    {/* Crop Utility */}
+                    <div className="flex flex-col gap-3 px-1">
+                        <span className="text-[8px] uppercase tracking-[0.2em] text-zinc-500 font-black">Design Tools</span>
+                        <button
+                            onClick={onOpenCrop}
+                            className="group flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-[#C5A572]/50 hover:bg-[#C5A572]/5 transition-all text-white active:scale-95 cursor-pointer"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 flex items-center justify-center bg-[#C5A572]/10 rounded-lg text-[#C5A572] group-hover:bg-[#C5A572]/20 transition-colors">
+                                    <Crop size={16} />
+                                </div>
+                                <div className="flex flex-col items-start gap-0.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest leading-none">Crop Graphic</span>
+                                    <span className="text-[7px] text-zinc-500 font-bold uppercase tracking-tighter">Enter 2D Studio</span>
+                                </div>
+                            </div>
+                            <Plus size={14} className="text-zinc-500 group-hover:text-white transition-colors" />
+                        </button>
+                    </div>
 
-            {/* Position D-Pad - Smaller footprint */}
-            <div className="pb-1">
-                <DPadPosition onMove={handleMove} />
-            </div>
-
-            <div className="text-[7px] text-zinc-700 text-center font-bold tracking-[0.4em] uppercase opacity-60">
-                Studio Precision V2
-            </div>
-        </div>
+                    {/* Position D-Pad */}
+                    <div className="pb-1">
+                        <DPadPosition onMove={handleMove} />
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
 
-
-// FemaleTeeModel and BasicTeeModel are now standalone components in their own files.
+// LoadingFallback is now below
 
 const LoadingFallback = () => (
     <Html center>
@@ -362,10 +434,25 @@ const LoadingFallback = () => (
 );
 
 export const Model3DViewer = () => {
-    const { selected3DModelPath, designs, activeDesignId, decalState: storeDecalState, shouldOpenFromProgress, setShouldOpenFromProgress, setDecalState: setStoreDecalState, shirtColor } = useFittingRoomStore();
+    const { 
+        selected3DModelPath, 
+        designs, 
+        activeDesignId, 
+        decalState: storeDecalState, 
+        shouldOpenFromProgress, 
+        setShouldOpenFromProgress, 
+        setDecalState: setStoreDecalState, 
+        shirtColor,
+        updateActiveDesignImage
+    } = useFittingRoomStore();
     const controlsRef = useRef<any>(null);
     const activeDesign = designs.find(d => d.id === activeDesignId);
     const designTexture = activeDesign ? (activeDesign.fullImage || activeDesign.thumbnail || FALLBACK_TEXTURE) : FALLBACK_TEXTURE;
+
+    // UI Panels State
+    const [isShirtPanelOpen, setIsShirtPanelOpen] = useState(true);
+    const [isGraphicPanelOpen, setIsGraphicPanelOpen] = useState(true);
+    const [isCropModalOpen, setIsCropModalOpen] = useState(false);
 
     // Interaction State
     const [isDragging, setIsDragging] = useState(false);
@@ -477,8 +564,38 @@ export const Model3DViewer = () => {
 
     return (
         <div className="w-full h-full bg-transparent rounded-xl overflow-hidden relative">
-            <div className="absolute top-4 left-4 z-10 bg-white/10 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold border border-white/10">🧊 3D MODEL</div>
-            <ViewerControls decalState={decalState} setDecalState={setDecalState} onReset={resetToDefaults} onViewChange={handleViewChange} status={viewerStatus} />
+            {/* Split Control Panels */}
+            {/* Left Panel Toggle */}
+            <PanelToggle 
+                isOpen={isGraphicPanelOpen} 
+                onClick={() => setIsGraphicPanelOpen(!isGraphicPanelOpen)} 
+                side="left" 
+                icon={Sliders} 
+            />
+            {/* Right Panel Toggle */}
+            <PanelToggle 
+                isOpen={isShirtPanelOpen} 
+                onClick={() => setIsShirtPanelOpen(!isShirtPanelOpen)} 
+                side="right" 
+                icon={Settings2} 
+            />
+
+            <GraphicSettingsPanel 
+                isOpen={isGraphicPanelOpen}
+                onClose={() => setIsGraphicPanelOpen(false)}
+                decalState={decalState}
+                setDecalState={setDecalState}
+                onOpenCrop={() => setIsCropModalOpen(true)}
+            />
+
+            <ShirtSettingsPanel 
+                isOpen={isShirtPanelOpen}
+                onClose={() => setIsShirtPanelOpen(false)}
+                onReset={resetToDefaults}
+                onViewChange={handleViewChange}
+                status={viewerStatus}
+            />
+
             <Canvas
                 key={selected3DModelPath}
                 dpr={[1, 1.5]}
@@ -546,6 +663,16 @@ export const Model3DViewer = () => {
                     makeDefault 
                 />
             </Canvas>
+
+            {/* Premium Crop Modal */}
+            <GraphicCropModal
+                isOpen={isCropModalOpen}
+                onClose={() => setIsCropModalOpen(false)}
+                imageSrc={designTexture}
+                onApply={(croppedUrl) => {
+                    updateActiveDesignImage(croppedUrl);
+                }}
+            />
 
         </div>
     );

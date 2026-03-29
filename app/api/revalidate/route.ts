@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Revalidate
-    revalidateTag(tag);
+    (revalidateTag as any)(tag);
 
     return NextResponse.json({ revalidated: true, tag, now: Date.now() });
   } catch (err) {

@@ -51,11 +51,7 @@ export interface ThreadScrollbarConfig {
   bottom: number;
 }
 
-/**
- * DEFAULT_THREAD_CONFIG
- * Tweak these values to match your app's vibe.
- */
-export const DEFAULT_THREAD_CONFIG: ThreadScrollbarConfig = {
+export const LANDING_THREAD_CONFIG: ThreadScrollbarConfig = {
   width:       20,
   padding:     160,
   waviness:    2,
@@ -65,10 +61,23 @@ export const DEFAULT_THREAD_CONFIG: ThreadScrollbarConfig = {
   colorDim:    "rgba(197,165,114,0.18)", // faint, loose thread below thumb
   colorThumb:  "#C5A572",              // thumb ring + dot
   colorBg:     "#0c0b0a",              // thumb interior — match admin-bg
-  right:      4,                     // Balanced default offset
+  right:       15,                     // Balanced default offset
   top:         0,
   bottom:      0,
 };
+
+export const OTHERS_THREAD_CONFIG: ThreadScrollbarConfig = {
+  ...LANDING_THREAD_CONFIG,
+  padding:      130,
+  right:        30,
+  waviness:    3,
+};
+
+/**
+ * DEFAULT_THREAD_CONFIG
+ * Fallback baseline.
+ */
+export const DEFAULT_THREAD_CONFIG: ThreadScrollbarConfig = LANDING_THREAD_CONFIG;
 
 // ─── SVG Builder ─────────────────────────────────────────────────────────────
 
@@ -139,12 +148,15 @@ function buildSVG(
 interface ThreadScrollbarProps {
   /** Ref to the scrollable container element */
   containerRef: React.RefObject<HTMLElement | null>;
-  /** Partial config — any omitted keys fall back to DEFAULT_THREAD_CONFIG */
+  /** Which internal base config to use */
+  variant?: 'landing' | 'others';
+  /** Partial config — any omitted keys fall back to the selected variant base */
   config?: Partial<ThreadScrollbarConfig>;
 }
 
-export function ThreadScrollbar({ containerRef, config = {} }: ThreadScrollbarProps) {
-  const cfg = { ...DEFAULT_THREAD_CONFIG, ...config };
+export function ThreadScrollbar({ containerRef, variant = 'landing', config = {} }: ThreadScrollbarProps) {
+  const baseConfig = variant === 'landing' ? LANDING_THREAD_CONFIG : OTHERS_THREAD_CONFIG;
+  const cfg = { ...baseConfig, ...config };
   
   const railRef       = useRef<HTMLDivElement>(null);
   const litPathRef    = useRef<SVGPathElement>(null);

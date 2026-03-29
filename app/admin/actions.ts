@@ -9,7 +9,8 @@ import type {
     CMSGalleryInsert, CMSGalleryRow,
     CMSGraphicsInsert, CMSGraphicsRow,
     CMSWardrobeInsert, CMSWardrobeRow,
-    CMSSiteContentInsert, CMSSiteContentRow
+    CMSSiteContentInsert, CMSSiteContentRow,
+    CMSSettingsInsert, CMSSettingsRow
 } from '@/types/cms';
 
 // ─── Error Serializer ────────────────────────────────────────
@@ -323,6 +324,23 @@ export async function deleteSiteContentAction(id: string) {
     const res = await cms.deleteSiteContent(adminId, id);
     if (!res.error) {
         revalidatePath('/admin/content', 'page');
+        revalidatePath('/admin', 'layout');
+    }
+    return wrap(res);
+}
+
+// ─── Settings ────────────────────────────────────────────────
+
+export async function getSettingsAction(publicOnly = false) {
+    const res = await cms.getSettings(publicOnly);
+    return wrap(res);
+}
+
+export async function upsertSettingAction(item: CMSSettingsInsert) {
+    const adminId = await getAdminId();
+    const res = await cms.upsertSetting(adminId, item);
+    if (!res.error) {
+        revalidatePath('/admin/gallery', 'page');
         revalidatePath('/admin', 'layout');
     }
     return wrap(res);

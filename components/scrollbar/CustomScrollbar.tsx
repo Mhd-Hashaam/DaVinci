@@ -205,11 +205,13 @@ export function useScrollbar(): ScrollbarContextValue {
 
 interface CustomScrollbarProps {
   containerRef: React.RefObject<HTMLElement | null>;
+  /** Which internal base config to use */
+  variant?: 'landing' | 'others';
   /** Optional: override global scrollbar config for this instance */
   config?: Partial<ThreadScrollbarConfig> | Partial<NeuralScrollbarConfig>;
 }
 
-export function CustomScrollbar({ containerRef, config }: CustomScrollbarProps) {
+export function CustomScrollbar({ containerRef, variant = 'landing', config }: CustomScrollbarProps) {
   const { type, threadConfig, neuralConfig, isVisible } = useScrollbar();
 
   if (!isVisible) return null;
@@ -218,6 +220,7 @@ export function CustomScrollbar({ containerRef, config }: CustomScrollbarProps) 
     return (
       <NeuralScrollbar
         containerRef={containerRef}
+        variant={variant}
         config={{ ...neuralConfig, ...(config as Partial<NeuralScrollbarConfig>) }}
       />
     );
@@ -226,6 +229,7 @@ export function CustomScrollbar({ containerRef, config }: CustomScrollbarProps) 
   return (
     <ThreadScrollbar
       containerRef={containerRef}
+      variant={variant}
       config={{ ...threadConfig, ...(config as Partial<ThreadScrollbarConfig>) }}
     />
   );
@@ -244,13 +248,15 @@ export function CustomScrollbar({ containerRef, config }: CustomScrollbarProps) 
  *   className  — forwarded to the inner scroll div
  *   style      — forwarded to the inner scroll div
  *   innerRef   — optional: get a ref to the scroll element
- *   rightPad   — extra right padding to clear the scrollbar (default: auto)
+ *   variant    — 'landing' | 'others' (default: 'landing')
  */
 interface ScrollablePanelProps {
   children:   ReactNode;
   className?: string;
   style?:     CSSProperties;
   innerRef?:  React.RefObject<HTMLDivElement | null>;
+  /** Which internal base config to use */
+  variant?:   'landing' | 'others';
   /** Optional: override global scrollbar config for this instance */
   config?:    Partial<ThreadScrollbarConfig> | Partial<NeuralScrollbarConfig>;
 }
@@ -260,6 +266,7 @@ export function ScrollablePanel({
   className,
   style,
   innerRef,
+  variant,
   config,
 }: ScrollablePanelProps) {
   const { type, threadConfig, neuralConfig, isVisible } = useScrollbar();
@@ -289,6 +296,7 @@ export function ScrollablePanel({
       </div>
       <CustomScrollbar 
         containerRef={scrollRef as React.RefObject<HTMLElement | null>} 
+        variant={variant}
         config={config}
       />
     </div>

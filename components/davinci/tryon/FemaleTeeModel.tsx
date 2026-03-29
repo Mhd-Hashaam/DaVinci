@@ -209,7 +209,7 @@ export const FemaleTeeModel = React.memo(({
             const delta = e.uv.clone().sub(dragStartUV.current);
             // Simple scale logic based on horizontal movement
             const scaleDelta = delta.x * 2; 
-            const newScale = Math.max(0.05, Math.min(1.0, initialScale.current + scaleDelta));
+            const newScale = Math.max(0.05, Math.min(3.0, initialScale.current + scaleDelta));
             setDecalState({ ...decalState, scale: newScale });
             return;
         }
@@ -382,14 +382,11 @@ export const FemaleTeeModel = React.memo(({
                     vec4 texColor = texture2D(uTexture, vec2(u, v));
                     if (texColor.a < 0.05) discard;
 
-
                     gl_FragColor = texColor;
-                    gl_FragColor.rgb *= 1.1; 
+
+                    #include <tonemapping_fragment>
+                    #include <colorspace_fragment>
                 }
-
-
-
-
             `
         });
     }, []);

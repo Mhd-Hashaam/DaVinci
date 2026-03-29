@@ -89,14 +89,10 @@ export interface NeuralScrollbarConfig {
   bottom: number;
 }
 
-/**
- * DEFAULT_NEURAL_CONFIG
- * Tweak these values to match your app's vibe.
- */
-export const DEFAULT_NEURAL_CONFIG: NeuralScrollbarConfig = {
+export const LANDING_NEURAL_CONFIG: NeuralScrollbarConfig = {
   width:        6,
-  padding:      120,
-  nodeCount:    7,
+  padding:      160,
+  nodeCount:    10,
   branchLength: 5,
   zigAmplitude: 2.5,
   zigFrequency: 5,
@@ -107,10 +103,22 @@ export const DEFAULT_NEURAL_CONFIG: NeuralScrollbarConfig = {
   colorThumb:   "#C5A572",               // thumb ring + dot
   colorBg:      "#0c0b0a",               // thumb interior
   colorPulse:   "rgba(197,165,114,0.3)",  // pulse ring glow
-  right:        40,                      // Balanced default offset
+  right:        20,                      // Balanced default offset
   top:          0,
   bottom:       0,
 };
+
+export const OTHERS_NEURAL_CONFIG: NeuralScrollbarConfig = {
+  ...LANDING_NEURAL_CONFIG,
+  padding:      130,
+  right:        30,
+};
+
+/**
+ * DEFAULT_NEURAL_CONFIG
+ * Fallback baseline.
+ */
+export const DEFAULT_NEURAL_CONFIG: NeuralScrollbarConfig = LANDING_NEURAL_CONFIG;
 
 // ─── SVG Builder ─────────────────────────────────────────────────────────────
 
@@ -198,12 +206,15 @@ function buildSVG(
 interface NeuralScrollbarProps {
   /** Ref to the scrollable container element */
   containerRef: React.RefObject<HTMLElement | null>;
-  /** Partial config — any omitted keys fall back to DEFAULT_NEURAL_CONFIG */
+  /** Which internal base config to use */
+  variant?: 'landing' | 'others';
+  /** Partial config — any omitted keys fall back to the selected variant base */
   config?: Partial<NeuralScrollbarConfig>;
 }
 
-export function NeuralScrollbar({ containerRef, config = {} }: NeuralScrollbarProps) {
-  const cfg = { ...DEFAULT_NEURAL_CONFIG, ...config };
+export function NeuralScrollbar({ containerRef, variant = 'landing', config = {} }: NeuralScrollbarProps) {
+  const baseConfig = variant === 'landing' ? LANDING_NEURAL_CONFIG : OTHERS_NEURAL_CONFIG;
+  const cfg = { ...baseConfig, ...config };
 
   // Pre-compute branch positions (stable, based only on nodeCount)
   const branches = useMemo(() => Array.from({ length: cfg.nodeCount }, (_, i) => ({

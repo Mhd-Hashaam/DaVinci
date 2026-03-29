@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Compass, Brush, LayoutGrid, FolderHeart, Settings, Users, Sparkles, X, Palette, Magnet, Activity } from 'lucide-react';
+import { Compass, Brush, LayoutGrid, FolderHeart, Settings, Users, Sparkles, X, Palette, Magnet, Activity, Cloud } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -82,8 +82,8 @@ const DOCK_CONFIG = {
     },
     drawer: {
         leftOffset: "115px", // Space from dock to drawer
-        top: "5%",          // Match sidebar.top for alignment
-        minWidth: "320px",
+        top: "5%",          // Center vertically
+        minWidth: "330px",
     },
     // --- ANIMATION PARAMETERS ---
     animation: {
@@ -349,7 +349,7 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10 }}
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        className="fixed flex flex-col p-6 rounded-[2rem] border border-white/10 shadow-2xl z-[65] overflow-hidden"
+                        className="fixed flex flex-col p-6 rounded-[2rem] border border-white/10 shadow-2xl z-[65]"
                         style={{ 
                             left: DOCK_CONFIG.drawer.leftOffset,
                             top: DOCK_CONFIG.drawer.top,
@@ -358,7 +358,9 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                             backgroundImage: 'url("/Mockups/Background.webp")',
                             backgroundSize: 'cover',
                             backgroundPosition: 'center center',
-                            backgroundColor: '#000000'
+                            backgroundColor: '#000000',
+                            maxHeight: '90vh',
+                            overflowY: 'auto'
                         }}
                     >
                         {/* Subtle Dark Overlay */}
@@ -421,23 +423,24 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                             </div>
                         </div>
 
-                            {/* Ambiance Section */}
-                            <div className="space-y-4">
+                            {/* Atmosphere Section */}
+                            <div className="space-y-4 mb-8">
                                 <h3 className="text-white font-black text-sm tracking-[0.2em] flex items-center gap-2 mb-4">
-                                    <Sparkles size={16} className="text-zinc-400" />
-                                    PARTICLE EFFECTS
+                                    <Cloud size={16} className="text-zinc-400" />
+                                    ATMOSPHERE
                                 </h3>
 
-                                {/* Atmosphere (Background) Card */}
-                                <div className="space-y-3 mb-6">
+                                <div className="space-y-3">
                                     <div className="flex items-center justify-between px-1">
                                         <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Atmosphere Style</span>
                                         <div className="flex gap-1.5">
                                             <button
                                                 onClick={() => setBackgroundMode('stars')}
                                                 className={cn(
-                                                    "px-2.5 py-1 rounded-lg text-[9px] font-bold tracking-widest uppercase transition-all",
-                                                    backgroundMode === 'stars' ? "bg-white text-black shadow-lg" : "bg-white/5 text-zinc-500 hover:text-white"
+                                                    "px-3 py-1.5 rounded-lg text-[9px] font-bold tracking-widest uppercase transition-all",
+                                                    backgroundMode === 'stars' 
+                                                        ? "bg-white text-black shadow-lg" 
+                                                        : "bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10"
                                                 )}
                                             >
                                                 Stars
@@ -445,8 +448,10 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                                             <button
                                                 onClick={() => setBackgroundMode('smoke')}
                                                 className={cn(
-                                                    "px-2.5 py-1 rounded-lg text-[9px] font-bold tracking-widest uppercase transition-all",
-                                                    backgroundMode === 'smoke' ? "bg-white text-black shadow-lg" : "bg-white/5 text-zinc-500 hover:text-white"
+                                                    "px-3 py-1.5 rounded-lg text-[9px] font-bold tracking-widest uppercase transition-all",
+                                                    backgroundMode === 'smoke' 
+                                                        ? "bg-white text-black shadow-lg" 
+                                                        : "bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10"
                                                 )}
                                             >
                                                 Smoke
@@ -454,114 +459,54 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Sparkles Card */}
+                            {/* Particle Effects Section */}
+                            <div className="space-y-4 mb-8">
+                                <h3 className="text-white font-black text-sm tracking-[0.2em] flex items-center gap-2 mb-4">
+                                    <Sparkles size={16} className="text-zinc-400" />
+                                    PARTICLE EFFECTS
+                                </h3>
+
                                 <button
                                     onClick={toggleSparkleMode}
                                     className={cn(
-                                        "w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-300 group cursor-pointer",
+                                        "w-full flex items-center justify-between p-3.5 rounded-xl border transition-all duration-300 group cursor-pointer",
                                         sparkleMode === 'theme'
                                             ? "bg-white/10 border-white/20"
-                                            : "bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5"
+                                            : "bg-black/20 border-white/5 hover:border-white/10"
                                     )}
                                 >
-                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className={cn(
+                                            "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+                                            sparkleMode === 'theme' ? "bg-white/10 text-yellow-400" : "bg-white/5 text-zinc-500"
+                                        )}>
+                                            <Sparkles size={14} className={cn(sparkleMode === 'theme' && "animate-pulse")} />
+                                        </div>
+                                        <div className="flex flex-col items-start">
+                                            <span className={cn(
+                                                "text-[10px] font-bold uppercase transition-colors tracking-wide",
+                                                sparkleMode === 'theme' ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"
+                                            )}>Sync Starfield</span>
+                                            <span className="text-[9px] text-zinc-600 mt-0.5">Match stars with theme color</span>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Pill Toggle Style */}
                                     <div className={cn(
-                                        "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
-                                        sparkleMode === 'theme' ? "bg-white/10 text-yellow-400" : "bg-white/5 text-zinc-600"
+                                        "w-10 h-5 rounded-full relative transition-colors duration-300 flex items-center shadow-inner",
+                                        sparkleMode === 'theme' ? "bg-white" : "bg-black/50 border border-white/10"
                                     )}>
-                                        <Sparkles size={14} className={cn(sparkleMode === 'theme' && "animate-pulse")} />
+                                        <div className={cn(
+                                            "absolute w-4 h-4 rounded-full transition-all duration-300 shadow-sm",
+                                            sparkleMode === 'theme' 
+                                                ? "left-[22px] bg-black" 
+                                                : "left-[2px] bg-zinc-500"
+                                        )} />
                                     </div>
-                                    <div className="flex flex-col items-start">
-                                        <span className={cn(
-                                            "text-[10px] font-bold uppercase transition-colors",
-                                            sparkleMode === 'theme' ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"
-                                        )}>Sync Starfield</span>
-                                        <span className="text-[9px] text-zinc-600">Match stars with theme color</span>
-                                    </div>
-                                </div>
-                                <div className={cn(
-                                    "w-8 h-4 rounded-full relative transition-colors duration-300",
-                                    sparkleMode === 'theme' ? "bg-white/20" : "bg-white/5"
-                                )}>
-                                    <div className={cn(
-                                        "absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all duration-300",
-                                        sparkleMode === 'theme' ? "left-4.5" : "left-0.5"
-                                    )} />
-                                </div>
-                            </button>
-
-                            {/* Gravity Card */}
-                            <button
-                                onClick={() => hoverEffect !== 'grab' && toggleHoverEffect()}
-                                className={cn(
-                                    "w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 group cursor-pointer mb-2",
-                                    hoverEffect === 'grab'
-                                        ? "bg-white/10 border-white/20"
-                                        : "bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5"
-                                )}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className={cn(
-                                        "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
-                                        hoverEffect === 'grab' ? "bg-white/10 text-indigo-400" : "bg-white/5 text-zinc-600"
-                                    )}>
-                                        <Magnet size={14} />
-                                    </div>
-                                    <div className="flex flex-col items-start">
-                                        <span className={cn(
-                                            "text-[10px] font-bold uppercase transition-colors",
-                                            hoverEffect === 'grab' ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"
-                                        )}>Gravity</span>
-                                        <span className="text-[9px] text-zinc-600">Attracts particles to cursor</span>
-                                    </div>
-                                </div>
-                                <div className={cn(
-                                    "w-8 h-4 rounded-full relative transition-colors duration-300",
-                                    hoverEffect === 'grab' ? "bg-white/20" : "bg-white/5"
-                                )}>
-                                    <div className={cn(
-                                        "absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all duration-300",
-                                        hoverEffect === 'grab' ? "left-4.5" : "left-0.5"
-                                    )} />
-                                </div>
-                            </button>
-
-                            {/* Repulse Card */}
-                            <button
-                                onClick={() => hoverEffect !== 'repulse' && toggleHoverEffect()}
-                                className={cn(
-                                    "w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 group cursor-pointer mb-2",
-                                    hoverEffect === 'repulse'
-                                        ? "bg-white/10 border-white/20"
-                                        : "bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5"
-                                )}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className={cn(
-                                        "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
-                                        hoverEffect === 'repulse' ? "bg-white/10 text-rose-400" : "bg-white/5 text-zinc-600"
-                                    )}>
-                                        <Activity size={14} />
-                                    </div>
-                                    <div className="flex flex-col items-start">
-                                        <span className={cn(
-                                            "text-[10px] font-bold uppercase transition-colors",
-                                            hoverEffect === 'repulse' ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"
-                                        )}>Repulse</span>
-                                        <span className="text-[9px] text-zinc-600">Pushes particles away</span>
-                                    </div>
-                                </div>
-                                <div className={cn(
-                                    "w-8 h-4 rounded-full relative transition-colors duration-300",
-                                    hoverEffect === 'repulse' ? "bg-white/20" : "bg-white/5"
-                                )}>
-                                    <div className={cn(
-                                        "absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all duration-300",
-                                        hoverEffect === 'repulse' ? "left-4.5" : "left-0.5"
-                                    )} />
-                                </div>
-                            </button>
+                                </button>
+                            </div>
 
                             {/* Scrollbar Style Section */}
                             <div className="pt-2">
@@ -601,7 +546,6 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                                     ))}
                                 </div>
                             </div>
-                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

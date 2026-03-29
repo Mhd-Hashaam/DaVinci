@@ -4,9 +4,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { ExploreFilterBar } from './ExploreFilterBar';
 import { ExploreMasonry } from './ExploreMasonry';
 import { ExplorePagination } from './ExplorePagination';
+import { FeedSkeleton } from '@/components/layout/FeedSkeleton';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
+import { useCMSData } from '@/lib/hooks/useCMSData';
+import { getSettingsAction } from '@/app/admin/actions';
 import type { GeneratedImage } from '@/types';
 import type { CMSGalleryRow, CMSCategoryRow } from '@/types/cms';
 
@@ -36,74 +39,61 @@ export const DaVinciExplore = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 60; // 15 rows * 4 columns
 
-    const [galleryItems, setGalleryItems] = useState<(GeneratedImage & { categories: any[] })[]>([]);
     const [categories, setCategories] = useState<CMSCategoryRow[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [galleryMode, setGalleryMode] = useState<string>('manual');
 
-    // URL Category Sync
+    // Fetch Global Gallery Render Mode
     useEffect(() => {
-        if (typeof window === 'undefined') return;
-        const params = new URLSearchParams(window.location.search);
-        const categorySlug = params.get('category');
-        if (categorySlug && categories.length > 0) {
-            const cat = categories.find(c => c.slug === categorySlug);
-            if (cat) setActiveFilter(cat.id);
-        }
-    }, [categories]);
-
-
-    // Scroll to top on page change
-    useEffect(() => {
-        const scrollHost = document.querySelector('.csb-host');
-        if (scrollHost) {
-            scrollHost.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    }, [currentPage]);
-
-    useEffect(() => {
-        let isMounted = true;
-
-        async function load() {
-            setIsLoading(true);
+        async function fetchMode() {
             try {
-                // Fetch gallery items with their category links
-                const [galleryRes, catRes] = await Promise.all([
-                    supabase
-                        .from('cms_gallery')
-                        .select(`*, category_links:cms_gallery_categories(category:cms_categories(*))`)
-                        .eq('is_published', true)
-                        .order('display_order', { ascending: true }),
-                    supabase
-                        .from('cms_categories')
-                        .select('*')
-                        .order('display_order', { ascending: true }),
-                ]);
-
-                if (!isMounted) return;
-
-                if (galleryRes.data) {
-                    const mapped = galleryRes.data.map((row: any) => {
-                        const withCats = {
-                            ...row,
-                            categories: row.category_links?.map((l: any) => l.category).filter(Boolean) || [],
-                        };
-                        return rowToImage(withCats);
-                    });
-                    setGalleryItems(mapped);
+                const res = await getSettingsAction(true);
+                if (res.data) {
+                    const modeSetting = res.data.find((s: any) => s.key === 'gallery_render_mode');
+                    if (modeSetting?.value) setGalleryMode(modeSetting.value);
                 }
-                if (catRes.data) setCategories(catRes.data);
             } catch (err) {
-                console.error('DaVinciExplore: failed to load data', err);
-            } finally {
-                if (isMounted) setIsLoading(false);
+                console.error('DaVinciExplore: failed to fetch gallery mode setting:', err);
             }
         }
+        fetchMode();
+    }, []);
 
-        load();
+    const { data: allCmsImages, isLoading: isCMSLoading } = useCMSData<GeneratedImage & { categories: any[] }>(
+        'cms_gallery',
+        [],
+        (row: any) => ({
+            id: row.id,
+            url: row.storage_url ?? '',
+            prompt: row.title || row.alt_text || 'Untitled Design',
+            aspectRatio: (row.aspect_ratio || '1:1') as any,
+            timestamp: new Date(row.created_at).getTime(),
+            model: 'DaVinci Core',
+            categories: row.category_links?.map((l: any) => l.category).filter(Boolean) || [],
+        }),
+        '*, category_links:cms_gallery_categories(category:cms_categories(*))',
+        galleryMode
+    );
+
+    // Categories still need to be fetched separately as useCMSData is per-table
+    useEffect(() => {
+        let isMounted = true;
+        async function loadCats() {
+            try {
+                const { data } = await supabase
+                    .from('cms_categories')
+                    .select('*')
+                    .order('display_order', { ascending: true });
+                if (isMounted && data) setCategories(data);
+            } catch (err) {
+                console.error('Failed to load categories', err);
+            }
+        }
+        loadCats();
         return () => { isMounted = false; };
     }, []);
+
+    const isLoading = isCMSLoading || categories.length === 0;
+    const galleryItems = allCmsImages;
 
     // Filter Logic
     const filteredImages = useMemo(() => {
@@ -157,10 +147,7 @@ export const DaVinciExplore = () => {
                 {/* 2. Gallery Masonry */}
                 <section className="px-4 sm:px-8 lg:px-12 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     {isLoading ? (
-                        <div className="flex flex-col items-center justify-center py-40 gap-4">
-                            <Loader2 size={32} className="animate-spin text-white/30" />
-                            <p className="text-zinc-600 text-[11px] uppercase tracking-widest font-outfit">Loading gallery...</p>
-                        </div>
+                        <FeedSkeleton count={20} className="sm:columns-2 lg:columns-3 xl:columns-4" />
                     ) : galleryItems.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-40 gap-4">
                             <p className="text-zinc-500 text-sm font-outfit">No published gallery items yet.</p>
