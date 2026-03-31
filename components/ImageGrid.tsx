@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GeneratedImage } from '../types';
-import { Shirt, Share2, Download, Maximize2, Wand2, Image as ImageIcon, MoreVertical, Repeat, CheckCircle2 } from 'lucide-react';
+import { Shirt, Share2, Download, Maximize2, Wand2, Image as ImageIcon, MoreVertical, Repeat, CheckCircle2, Sparkles } from 'lucide-react';
 import ImageContextMenu from './ImageContextMenu';
 import { cn } from '@/lib/utils';
 import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
@@ -280,12 +280,21 @@ const ImageGrid: React.FC<ImageGridProps> = ({
               </>
             )}
 
-            {/* Aspect Ratio Badge */}
+            {/* Aspect Ratio / AI Badge Array (Idle Mode) */}
             {!selectionMode && (
-              <div className="absolute top-3 left-3 opacity-100 group-hover:opacity-0 transition-opacity duration-200">
-                <span className="text-[10px] font-mono text-white bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
+              <div className="absolute top-3 left-3 right-3 flex justify-between items-start opacity-100 group-hover:opacity-0 transition-opacity duration-200 pointer-events-none">
+                {/* Aspect Ratio */}
+                <span className="text-[10px] font-mono text-white bg-black/40 backdrop-blur-md px-2 py-1 rounded border border-white/5">
                   {image.aspectRatio}
                 </span>
+
+                {/* AI Disclosure Badge */}
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-black/40 backdrop-blur-md border border-white/5 shadow-sm">
+                  <Sparkles size={10} className="text-amber-400" />
+                  <span className="text-[9px] font-medium text-white/90 uppercase tracking-[0.15em] whitespace-nowrap">
+                    AI Generated
+                  </span>
+                </div>
               </div>
             )}
           </div>

@@ -12,6 +12,7 @@ import { useTheme, Theme } from '@/components/ThemeProvider';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { useScrollbar, ScrollbarType } from '@/components/scrollbar/CustomScrollbar';
+import CreditIndicator from './CreditIndicator';
 
 interface FloatingDockProps {
     activeTab: string;
@@ -197,7 +198,10 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                 animate={isFittingRoomModalOpen ? "modal" : "sidebar"}
                 variants={dockVariants}
                 transition={DOCK_CONFIG.animation.dock}
-                className="fixed z-[70] flex flex-col items-center justify-center backdrop-blur-3xl border shadow-[0_0_80px_rgba(0,0,0,0.7)]"
+                className={cn(
+                    "fixed z-[60] flex flex-col items-center backdrop-blur-3xl border border-white/10 transition-all duration-500 shadow-[0_0_50px_rgba(0,0,0,0.5)]",
+                    !isFittingRoomModalOpen ? "sidebar-capsule" : "modal-dock-capsule"
+                )}
                 style={{
                     borderColor: 'var(--lamp-glow)',
                     boxShadow: isFittingRoomModalOpen 
@@ -339,6 +343,21 @@ export const DaVinciFloatingDock: React.FC<FloatingDockProps> = ({
                         </div>
                     );
                 })}
+
+                {/* Credit Indicator Widget */}
+                <AnimatePresence>
+                    {!isFittingRoomModalOpen && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.3, delay: 0.1 }}
+                            className="w-full mt-auto pt-4 flex-shrink-0"
+                        >
+                            <CreditIndicator />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </motion.aside>
 
             {/* Settings Drawer - Slides out to the right */}

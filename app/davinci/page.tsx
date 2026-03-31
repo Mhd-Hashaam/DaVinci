@@ -37,6 +37,10 @@ import { HelpCircle, Bookmark } from 'lucide-react';
 import { TheVinciOrb } from '@/components/davinci/TheVinciOrb';
 import { cn } from '@/lib/utils';
 import { useFittingRoomStore } from '@/lib/store/fittingRoomStore';
+import { toast } from 'sonner';
+import { useCredits } from '@/lib/hooks/useCredits';
+import { AupModal } from '@/components/davinci/AupModal';
+import { GenerationSkeletonLoader } from '@/components/davinci/GenerationSkeletonLoader';
 
 // Extracted from IIFE to fix react-hooks/rules-of-hooks
 function StoreNavigationListener({ setActiveTab, openFittingRoomModal }: {
@@ -163,6 +167,11 @@ function DaVinciStudioContent() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [model, setModel] = useState<AIModel>('gemini-2.5-flash');
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
+    const [isAupModalOpen, setIsAupModalOpen] = useState(false);
+
+    // AI Pipeline Logic
+    const { credits: creditsRemaining, hasAcceptedTerms, mutate: mutateCredits, acceptTerms } = useCredits();
+    const [lastApiStatus, setLastApiStatus] = useState<{ status: 'idle' | 'success' | 'error', message?: string }>({ status: 'idle' });
 
     // We don't strictly need previousTab state for URL routing unless we want to go 'back' intelligently
     // Implementing simple 'back to create' logic for apparel close for now.
@@ -225,39 +234,74 @@ function DaVinciStudioContent() {
     const displayImages = combinedImages.length > 0 ? combinedImages : allCmsImages;
 
     const handleGenerate = async (prompt: string) => {
+        if (!user) {
+            toast.error('You must be signed in to generate images');
+            return;
+        }
+
+        if (hasAcceptedTerms === false) {
+            setIsAupModalOpen(true);
+            return;
+        }
+
+        if (creditsRemaining === 0) {
+            toast.error('You have reached your daily generation limit. Please try again tomorrow.');
+            return;
+        }
+
         setIsGenerating(true);
 
         try {
             const newImages: GeneratedImage[] = [];
 
-            for (let i = 0; i < generationCount; i++) {
-                const response = await api.generate({
+            // Execute the batch (we now limit to actual API call count)
+            // Note: Our new pipeline requires 1 generation token per image. 
+            // We'll generate 1 image at a time natively to prevent burst quota hits.
+            // Using Promise.all is fast but we need to ensure the DB limits are respected.
+            const response = await api.generate({
+                prompt,
+                aspectRatio: Array.isArray(aspectRatio) ? aspectRatio[0] : aspectRatio,
+            });
+
+            if (response.success && response.storageUrl) {
+                const img: GeneratedImage = {
+                    id: crypto.randomUUID(),
+                    url: response.storageUrl,
                     prompt,
-                    aspectRatio, // Use state
-                    model,
-                });
-
-                if (response.success && response.imageUrl) {
-                    const img: GeneratedImage = {
-                        id: crypto.randomUUID(),
-                        url: response.imageUrl,
-                        prompt,
-                        aspectRatio: '1:1',
-                        timestamp: Date.now(),
-                        model,
-                    };
-                    newImages.push(img);
+                    aspectRatio: Array.isArray(aspectRatio) ? aspectRatio[0] : aspectRatio,
+                    timestamp: Date.now(),
+                    model: 'Gemini 2.5 Flash',
+                };
+                newImages.push(img);
+                
+                setLocalImages((prev) => [...newImages, ...prev]);
+                setLastApiStatus({ status: 'success' });
+                
+                for (const img of newImages) {
+                    await saveToSession(img);
                 }
+                toast.success('Generation complete ✨');
+            } else {
+                // Handle specific pipeline error codes
+                const code = response.error?.code;
+                if (code === 'SAFETY_BLOCKED') {
+                    toast.error('Prompt blocked by safety filters. Please revise and try again.');
+                } else if (code === 'QUOTA_EXCEEDED') {
+                    toast.error('Daily credit limit exceeded. Refills at midnight.');
+                } else if (code === 'UNAUTHORIZED') {
+                    toast.error('Session expired. Please sign in again.');
+                } else {
+                    toast.error(response.error?.message || 'Generation failed. Please try again.');
+                }
+                setLastApiStatus({ status: 'error', message: response.error?.code });
             }
-
-            setLocalImages((prev) => [...newImages, ...prev]);
-            for (const img of newImages) {
-                await saveToSession(img);
-            }
-        } catch (error) {
-            console.error('Generation failed:', error);
+        } catch (error: any) {
+            console.error('[API/Frontend] Unexpected error:', error);
+            toast.error('An unexpected error occurred during generation');
+            setLastApiStatus({ status: 'error', message: error.message });
         } finally {
             setIsGenerating(false);
+            mutateCredits(); // Fetch latest accurate credit tally from db
         }
     };
 
@@ -325,8 +369,19 @@ function DaVinciStudioContent() {
               variant={activeTab === 'create' ? 'landing' : 'others'}
             >
 
-                {/* Very Top Sticky Header (Auxiliary Items) */}
-                <header className="sticky top-0 z-40 flex items-center justify-end px-8 pt-6 pb-2">
+                {/* Auxiliary Header Items */}
+                <header className="sticky top-0 z-40 flex items-center justify-end px-8 pt-6 pb-2 gap-4">
+                    {/* Diagnostic Indicator (Temporary) */}
+                    <div className={cn(
+                        "text-[9px] font-black tracking-widest uppercase px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-500",
+                        lastApiStatus.status === 'idle' ? "bg-white/5 border-white/10 text-zinc-500" :
+                        lastApiStatus.status === 'success' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.1)]" :
+                        "bg-red-500/10 border-red-500/20 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.1)]"
+                    )}>
+                        API_STREAMS: {lastApiStatus.status.toUpperCase()} 
+                        {lastApiStatus.message && ` // ${lastApiStatus.message}`}
+                    </div>
+                    
                     <button className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all flex items-center justify-center cursor-pointer backdrop-blur-md">
                         <HelpCircle size={18} />
                     </button>
@@ -337,7 +392,7 @@ function DaVinciStudioContent() {
                     <div className="w-full flex flex-col items-center justify-center pb-20 pt-4 z-30">
                         <LeVinCiBranding />
                         
-                        <div className="w-full mt-4">
+                        <div className="w-full mt-4 flex flex-col items-center">
                             <PromptCapsule
                                 onGenerate={handleGenerate}
                                 isGenerating={isGenerating}
@@ -348,6 +403,33 @@ function DaVinciStudioContent() {
                                 generationCount={generationCount}
                                 setGenerationCount={setGenerationCount}
                             />
+                            
+                            {/* Glassmorphic Loader */}
+                            {isGenerating && (
+                                <div className="w-full mt-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                                    <GenerationSkeletonLoader />
+                                </div>
+                            )}
+
+                            {/* Recent Generations Hook */}
+                            {localImages.length > 0 && !isGenerating && (
+                                <div className="w-full max-w-[1400px] mt-12 px-4 sm:px-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3 shrink-0">
+                                            <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] animate-pulse" />
+                                            Active_Session_Outputs
+                                        </h3>
+                                        <div className="flex-1 h-px bg-white/5" />
+                                    </div>
+                                    <ImageGrid
+                                        images={localImages}
+                                        columns={{ mobile: 1, sm: 2, lg: 4, xl: 4 }}
+                                        onImageClick={setSelectedImage}
+                                        onMockupClick={openFittingRoomModal}
+                                        onBookmarkClick={(img) => toggleBookmark(img.id, img)}
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         {/* Sections Area */}
@@ -492,6 +574,15 @@ function DaVinciStudioContent() {
                 onClose={() => {
                     closeModals();
                 }}
+            />
+            <AupModal
+                isOpen={isAupModalOpen}
+                onAccept={async () => {
+                    await acceptTerms();
+                    setIsAupModalOpen(false);
+                    toast.success('Terms accepted. You can now generate images!');
+                }}
+                onDecline={() => setIsAupModalOpen(false)}
             />
 
             {/* Debug: Memory Performance Overlay (Shift+M to toggle) */}
